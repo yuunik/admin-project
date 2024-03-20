@@ -10,5 +10,6 @@ declare module 'vue' {
     ElButton: (typeof import('element-plus/es'))['ElButton']
     ElConfigProvider: (typeof import('element-plus/es'))['ElConfigProvider']
     ElPagination: (typeof import('element-plus/es'))['ElPagination']
+    Son: (typeof import('./src/components/Son.vue'))['default']
   }
 }

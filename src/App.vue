@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Plus, Edit, Minus } from '@element-plus/icons-vue'
-//@ts-ignore忽略当前文件ts类型的检测否则有红色提示(打包会失败)
+//@ts-expect-error 忽略当前文件ts类型的检测否则有红色提示(打包会失败)
 import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
+import Son from '@/components/Son.vue'
 </script>
 
 <template>
@@ -15,6 +16,7 @@ import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
       :total="1000"
     />
   </el-config-provider>
+  <Son />
 </template>
 
 <style scoped lang="scss"></style>

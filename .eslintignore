@@ -1,0 +1,4 @@
+# 打包文件
+dist
+# 安装包文件
+node_modules

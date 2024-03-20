@@ -1,25 +1,20 @@
 <script setup lang="ts">
-import { Fragment } from 'vue'
+import { Plus, Edit, Minus } from '@element-plus/icons-vue'
+//@ts-ignore忽略当前文件ts类型的检测否则有红色提示(打包会失败)
+import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
 </script>
 
 <template>
-  <Fragment class="container">
-    <header>
-      <h1>Application</h1>
-    </header>
-    <main>
-      <h2>Content</h2>
-    </main>
-  </Fragment>
+  <el-button type="primary" size="default" :icon="Plus">测试按键</el-button>
+  <el-button type="success" size="default" :icon="Edit">测试按键</el-button>
+  <el-button type="danger" size="default" :icon="Minus">测试按键</el-button>
+  <el-config-provider :locale="Chinese">
+    <el-pagination
+      :page-size="100"
+      layout="total, prev, pager, next"
+      :total="1000"
+    />
+  </el-config-provider>
 </template>
 
-<style scoped>
-.container {
-  width: 600px;
-  height: 400px;
-  background: skyblue;
-  h1 {
-    color: red;
-  }
-}
-</style>
+<style scoped lang="scss"></style>

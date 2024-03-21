@@ -1,23 +1,23 @@
 <script setup lang="ts">
 const props = defineProps({
-  // å›¾æ ‡åå‰ç¼€
+  // Í¼±êÃûÇ°×º
   prefix: {
     type: String,
     default: '#icon-',
   },
-  // å›¾æ ‡å
+  // Í¼±êÃû
   name: String,
-  // å›¾æ ‡é¢œè‰²
+  // Í¼±êÑÕÉ«
   color: {
     type: String,
     default: '',
   },
-  // å›¾æ ‡å®½åº¦
+  // Í¼±ê¿í¶È
   width: {
     type: String,
     default: '16px',
   },
-  // å›¾æ ‡é«˜åº¦
+  // Í¼±ê¸ß¶È
   height: {
     type: String,
     default: '16px',

@@ -1,5 +1,95 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { LoginReq } from '@/types/user'
+import { User, Lock } from '@element-plus/icons-vue'
+import { reactive } from 'vue'
 
-<template>我是登录页</template>
+// 表单数据
+const form = reactive<LoginReq>({
+  username: '',
+  password: '',
+})
+</script>
 
-<style scoped lang="scss"></style>
+<template>
+  <div class="login-container">
+    <el-row>
+      <el-col :span="12" :xs="0" />
+      <el-col :span="12" :xs="24">
+        <el-form class="login-form">
+          <div class="form-title">
+            <h1>
+              <strong>Hello</strong>
+            </h1>
+            <h2>
+              <em>欢迎来到 Chow 平台</em>
+            </h2>
+          </div>
+          <el-form-item class="form-item">
+            <el-input
+              :prefix-icon="User"
+              placeholder="请输入您的用户名"
+              v-model="form.username"
+            />
+          </el-form-item>
+          <el-form-item class="form-item">
+            <el-input
+              :prefix-icon="Lock"
+              type="password"
+              placeholder="请输入您的密码"
+              show-password
+              v-model="form.password"
+            />
+          </el-form-item>
+          <el-form-item class="form-item">
+            <el-button type="primary" size="default" class="form-button">
+              登录
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
+  </div>
+</template>
+
+<style scoped lang="scss">
+.login-container {
+  width: 100%;
+  height: 100vh;
+  background: url('../../assets/images/background.jpg') no-repeat 0px 0px /
+    cover;
+
+  .login-form {
+    position: absolute;
+    width: calc(100vw / 2 * 0.75);
+    top: 30vh;
+    background: url('../../assets/images/login_form.png') no-repeat 0px 0px /
+      cover;
+    padding: 30px;
+
+    .form-title {
+      color: #fff;
+      font-style: italic;
+      -webkit-text-stroke: #000 0.5px;
+      text-shadow: 2px 2px 5px skyblue;
+
+      h1 {
+        font-size: 40px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+
+    .form-item {
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .form-button {
+      width: 100%;
+    }
+  }
+}
+</style>

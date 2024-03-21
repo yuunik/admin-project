@@ -1,13 +1,37 @@
 <script setup lang="ts">
 import { LoginReq } from '@/types/user'
 import { User, Lock } from '@element-plus/icons-vue'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
 
+// 表单对象
+const formRef = ref<FormInstance>()
 // 表单数据
 const form = reactive<LoginReq>({
   username: '',
   password: '',
 })
+// 表单校验规则
+const formRules = reactive<FormRules<LoginReq>>({
+  username: [
+    {
+      required: true,
+      message: '用户名不能为空,请重新输入',
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: '密码不能为空,请重新输入',
+    },
+  ],
+})
+
+// 提交表单
+const submitForm = async () => {
+  await formRef.value?.validate()
+  console.log(1)
+}
 </script>
 
 <template>
@@ -15,7 +39,7 @@ const form = reactive<LoginReq>({
     <el-row>
       <el-col :span="12" :xs="0" />
       <el-col :span="12" :xs="24">
-        <el-form class="login-form">
+        <el-form class="login-form" ref="formRef" :rules="formRules">
           <div class="form-title">
             <h1>
               <strong>Hello</strong>
@@ -24,14 +48,14 @@ const form = reactive<LoginReq>({
               <em>欢迎来到 Chow 平台</em>
             </h2>
           </div>
-          <el-form-item class="form-item">
+          <el-form-item class="form-item" prop="username">
             <el-input
               :prefix-icon="User"
               placeholder="请输入您的用户名"
               v-model="form.username"
             />
           </el-form-item>
-          <el-form-item class="form-item">
+          <el-form-item class="form-item" prop="password">
             <el-input
               :prefix-icon="Lock"
               type="password"
@@ -41,7 +65,12 @@ const form = reactive<LoginReq>({
             />
           </el-form-item>
           <el-form-item class="form-item">
-            <el-button type="primary" size="default" class="form-button">
+            <el-button
+              type="primary"
+              size="default"
+              class="form-button"
+              @click="submitForm"
+            >
               登录
             </el-button>
           </el-form-item>
@@ -54,9 +83,7 @@ const form = reactive<LoginReq>({
 <style scoped lang="scss">
 .login-container {
   width: 100%;
-  height: 100vh;
-  background: url('../../assets/images/background.jpg') no-repeat 0px 0px /
-    cover;
+  height: 100%;
 
   .login-form {
     position: absolute;

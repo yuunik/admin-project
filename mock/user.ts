@@ -1,8 +1,10 @@
+import { v4 as getUUID } from 'uuid'
+
 //用户信息数据
 function createUserList() {
   return [
     {
-      userId: 1,
+      userId: getUUID(),
       avatar:
         'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
       username: 'admin',
@@ -14,11 +16,11 @@ function createUserList() {
       token: 'Admin Token',
     },
     {
-      userId: 2,
+      userId: getUUID(),
       avatar:
         'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-      username: 'system',
-      password: '111111',
+      username: 'root',
+      password: 'root',
       desc: '系统管理员',
       roles: ['系统管理员'],
       buttons: ['cuser.detail', 'cuser.user'],

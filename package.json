@@ -23,6 +23,7 @@
     "axios": "^1.6.8",
     "element-plus": "^2.6.1",
     "normalize.css": "^8.0.1",
+    "uuid": "^9.0.1",
     "vue": "^3.4.21"
   },
   "devDependencies": {

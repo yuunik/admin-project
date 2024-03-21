@@ -30,4 +30,13 @@ export default defineConfig({
       '@': path.resolve('./src'), // 相对路径别名配置，使用 @ 代替 src
     },
   },
+  // 样式配置
+  css: {
+    preprocessorOptions: {
+      scss: {
+        javascriptEnabled: true,
+        additionalData: '@import "@/styles/variable.scss";',
+      },
+    },
+  },
 })

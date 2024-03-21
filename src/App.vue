@@ -1,9 +1,11 @@
-<script setup lang="ts">
-import SvgIcon from '@/components/SvgIcon/index.vue'
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <SvgIcon name="brain" color="red" width="200px" height="200px" />
+  <span>测试文本</span>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+span {
+  color: $font-color;
+}
+</style>

@@ -15,7 +15,8 @@ login()
 </script>
 
 <template>
-  <span>测试 axios 封装工具</span>
+  <span>测试 vue-router</span>
+  <RouterView />
 </template>
 
 <style scoped lang="scss">

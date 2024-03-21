@@ -1,22 +1,15 @@
 <script setup lang="ts">
-import { http } from '@/utils'
-import { ElMessage } from 'element-plus'
+import { onMounted } from 'vue'
+import { loginAPI } from '@/apis/user'
 
+// 用户登录
 const login = async () => {
-  const result = await http({
-    url: '/user/login',
-    method: 'post',
-    data: {
-      usename: 'root',
-      password: 'root',
-    },
-  })
-  console.log(result)
-  ElMessage({
-    type: 'success',
-    message: '登录成功',
-  })
+  const result = await loginAPI({ username: 'root', password: 'root' })
+  console.log(result.data.data.token)
 }
+onMounted(() => {
+  login()
+})
 
 login()
 </script>

@@ -10,8 +10,10 @@ export type LoginReq = {
 
 /* 用户登录响应类型 */
 export type LoginRes = {
-  /* 用户 token */
-  token: string
+  /* 请求成功时, 返回用户 token */
+  token?: string
+  /* 请求失败时, 返回错误信息 message */
+  message?: string
 }
 
 /* 用户信息类型 */

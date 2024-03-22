@@ -184,7 +184,7 @@ const submitForm = async () => {
     .form-title {
       color: #fff;
       font-style: italic;
-      -webkit-text-stroke: #000 0.5px;
+      -webkit-text-stroke: 0.5px #000;
       text-shadow: 2px 2px 5px skyblue;
 
       h1 {

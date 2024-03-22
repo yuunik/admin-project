@@ -1,14 +1,9 @@
 // 全局样式
-$background-color: tomato;
 // 引入重置样式
 @import 'normalize.css';
 
 html,
-body {
-  width: 100%;
-  height: 100%;
-}
-
+body,
 #app {
   width: 100%;
   height: 100%;

@@ -14,19 +14,57 @@ const form = reactive<LoginReq>({
   username: '',
   password: '',
 })
+
+// 用户名自定义校验规则
+const validateUsername = (rult: any, value: any, callback: any) => {
+  // 正则校验
+  if (/^\d{4,10}$/.test(value)) {
+    // 校验通过
+    callback()
+  } else {
+    // 校验不通过
+    callback(new Error('用户名长度须在 4 - 10 位之间'))
+  }
+}
+
+// 密码自定义校验规则
+const validatePassword = (rule: any, value: any, callback: any) => {
+  console.log(/^\d{4,15}$/.test(value))
+
+  // 正则校验
+  if (/^\d{6,15}$/.test(value)) {
+    // 校验通过
+    callback()
+  } else {
+    // 校验不通过
+    callback(new Error('密码长度必须在4 - 15 位'))
+  }
+}
+
 // 表单校验规则
 const formRules = reactive<FormRules<LoginReq>>({
   username: [
+    // {
+    //   required: true,
+    //   min: 4,
+    //   max: 10,
+    //   message: '用户名长度应在 4 - 10 位',
+    //   trigger: 'change',
+    // },
     {
       required: true,
-      message: '用户名不能为空,请重新输入',
+      validator: validateUsername,
+      trigger: 'change',
     },
   ],
   password: [
-    {
-      required: true,
-      message: '密码不能为空,请重新输入',
-    },
+    // {
+    //   required: true,
+    //   min: 6,
+    //   message: '密码长度不能少于 6 位',
+    //   trigger: 'blur',
+    // },
+    { required: true, validator: validatePassword, trigger: 'change' },
   ],
 })
 
@@ -87,6 +125,7 @@ const submitForm = async () => {
           ref="formRef"
           :rules="formRules"
           :model="form"
+          status-icon
         >
           <div class="form-title">
             <h1>

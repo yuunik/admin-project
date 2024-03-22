@@ -13,6 +13,8 @@ const http = axios.create({
 // 请求拦截器
 http.interceptors.request.use(
   (config) => {
+    // 添加 token
+    config.headers.token = 'System Token'
     return config
   },
   (error) => {

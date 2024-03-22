@@ -21,5 +21,5 @@ export const loginAPI = (data: LoginReq) =>
 export const getUserInfoAPI = () =>
   http<ResType<UserInfo>>({
     url: API.USERINFO_API,
-    method: 'POST',
+    method: 'GET',
   })

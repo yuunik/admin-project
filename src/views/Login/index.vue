@@ -18,7 +18,7 @@ const form = reactive<LoginReq>({
 // 用户名自定义校验规则
 const validateUsername = (rult: any, value: any, callback: any) => {
   // 正则校验
-  if (/^\d{4,10}$/.test(value)) {
+  if (value.length >= 4) {
     // 校验通过
     callback()
   } else {
@@ -29,15 +29,13 @@ const validateUsername = (rult: any, value: any, callback: any) => {
 
 // 密码自定义校验规则
 const validatePassword = (rule: any, value: any, callback: any) => {
-  console.log(/^\d{4,15}$/.test(value))
-
   // 正则校验
-  if (/^\d{6,15}$/.test(value)) {
+  if (value.length >= 6) {
     // 校验通过
     callback()
   } else {
     // 校验不通过
-    callback(new Error('密码长度必须在4 - 15 位'))
+    callback(new Error('密码长度必须在6 - 15 位'))
   }
 }
 
@@ -171,7 +169,7 @@ const submitForm = async () => {
 <style scoped lang="scss">
 .login-container {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: url('../../assets/images/background.jpg') no-repeat 0px 0px /
     cover;
 

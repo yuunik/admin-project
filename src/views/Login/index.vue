@@ -5,6 +5,7 @@ import { type FormInstance, type FormRules } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
 import { LoginReq } from '@/types/user'
+import { getTime } from '@/utils'
 
 // 表单对象
 const formRef = ref<FormInstance>()
@@ -39,6 +40,10 @@ const router = useRouter()
 
 // 是否处于加载状态
 const isLoading = ref<boolean>(false)
+// 获取时间提示信息
+// msg --- 问候语
+// timeIcon --- 当前时间图标
+const { msg, timeIcon } = getTime()
 
 // 提交表单
 const submitForm = async () => {
@@ -53,8 +58,9 @@ const submitForm = async () => {
     isLoading.value = false
     // 提示成功信息
     ElNotification({
-      type: 'success',
+      icon: timeIcon,
       message: '登录成功',
+      title: msg,
     })
     // 路由跳转
     router.push('/')

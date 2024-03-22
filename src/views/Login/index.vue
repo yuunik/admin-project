@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { LoginReq } from '@/types/user'
 import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import { type FormInstance, type FormRules } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store'
+import { LoginReq } from '@/types/user'
 
 // 表单对象
 const formRef = ref<FormInstance>()
@@ -27,10 +29,45 @@ const formRules = reactive<FormRules<LoginReq>>({
   ],
 })
 
+// 获取用户的状态管理库
+const userStore = useUserStore()
+// 获取方法
+const { login } = userStore
+
+// 获取路由器对象
+const router = useRouter()
+
+// 是否处于加载状态
+const isLoading = ref<boolean>(false)
+
 // 提交表单
 const submitForm = async () => {
-  await formRef.value?.validate()
-  console.log(1)
+  // 开启加载状态
+  isLoading.value = true
+  // 表单校验
+  await formRef?.value?.validate()
+  try {
+    // 调用接口, 实现登录
+    await login(form)
+    // 关闭加载状态
+    isLoading.value = false
+    // 提示成功信息
+    ElNotification({
+      type: 'success',
+      message: '登录成功',
+    })
+    // 路由跳转
+    router.push('/')
+  } catch (error) {
+    console.log(111111)
+    // 关闭加载状态
+    isLoading.value = false
+    // 提示失败信息
+    ElNotification({
+      type: 'error',
+      message: (error as Error).message,
+    })
+  }
 }
 </script>
 
@@ -39,7 +76,12 @@ const submitForm = async () => {
     <el-row>
       <el-col :span="12" :xs="0" />
       <el-col :span="12" :xs="24">
-        <el-form class="login-form" ref="formRef" :rules="formRules">
+        <el-form
+          class="login-form"
+          ref="formRef"
+          :rules="formRules"
+          :model="form"
+        >
           <div class="form-title">
             <h1>
               <strong>Hello</strong>
@@ -70,6 +112,7 @@ const submitForm = async () => {
               size="default"
               class="form-button"
               @click="submitForm"
+              :loading="isLoading"
             >
               登录
             </el-button>
@@ -83,7 +126,9 @@ const submitForm = async () => {
 <style scoped lang="scss">
 .login-container {
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  background: url('../../assets/images/background.jpg') no-repeat 0px 0px /
+    cover;
 
   .login-form {
     position: absolute;

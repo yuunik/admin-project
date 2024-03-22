@@ -1,4 +1,6 @@
 import { createApp } from 'vue'
+// 引入 pinia
+import pinia from './store'
 // svg 图标所需的文件
 import 'virtual:svg-icons-register'
 import App from './App.vue'
@@ -15,6 +17,7 @@ const app = createApp(App)
 // 使用中间件
 app.use(GlobalCOmponentsPlugin)
 app.use(router)
+app.use(pinia)
 
 // 渲染页面
 app.mount('#app')

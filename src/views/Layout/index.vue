@@ -67,6 +67,10 @@ const mainRoute = menuRoute.value.find((route) => route.name === 'layout')
     .menu-list {
       height: calc(100vh - $base-menu-logo-height);
       color: #fff;
+
+      .el-menu {
+        border: none;
+      }
     }
   }
 

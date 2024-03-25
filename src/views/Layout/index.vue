@@ -1,15 +1,10 @@
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue'
-import {
-  HomeFilled,
-  DataBoard,
-  Lock,
-  Handbag,
-  ArrowUp,
-  ArrowDown,
-} from '@element-plus/icons-vue'
+import { storeToRefs } from 'pinia'
 import { getUserInfoAPI } from '@/apis/user'
 import Logo from './components/Logo/index.vue'
+import Menu from './components/Menu/index.vue'
+import { useUserStore } from '@/store/index.ts'
 
 // 用户信息
 let userInfo = reactive({})
@@ -19,13 +14,19 @@ const getUserInfo = async () => {
   const result = await getUserInfoAPI()
   // 响应信息
   userInfo = result.data.data
-  console.log(userInfo)
 }
 // 组件挂载后执行
 onMounted(() => {
   // 获取用户信息
   getUserInfo()
 })
+
+// 获取用户的状态管理库
+const userStore = useUserStore()
+// 解构获取路由表
+const { menuRoute } = storeToRefs(userStore)
+// 获取layout的路由表
+const mainRoute = menuRoute.value.find((route) => route.name === 'layout')
 </script>
 
 <template>
@@ -33,32 +34,22 @@ onMounted(() => {
     <aside class="layout-aside">
       <!--   侧边菜单标题   -->
       <div class="aside-title">
+        <!-- 网站图标 -->
         <Logo />
       </div>
       <!--   侧边菜单列表   -->
       <el-scrollbar class="menu-list">
         <el-menu text-color="#fff" background-color="#001529">
-          <el-menu-item index="1">首页</el-menu-item>
-          <el-menu-item index="2">数据大屏</el-menu-item>
-          <!-- 二级菜单 -->
-          <el-sub-menu index="3">
-            <template #title>权限管理</template>
-            <el-menu-item index="3-1">item one</el-menu-item>
-            <el-menu-item index="3-2">item two</el-menu-item>
-            <el-menu-item index="3-3">item three</el-menu-item>
-          </el-sub-menu>
-          <el-sub-menu index="4">
-            <template #title>商品管理</template>
-            <el-menu-item index="4-1">item one</el-menu-item>
-            <el-menu-item index="4-2">item two</el-menu-item>
-            <el-menu-item index="4-3">item three</el-menu-item>
-          </el-sub-menu>
+          <!-- 菜单 -->
+          <Menu :mainRoute="mainRoute" />
         </el-menu>
       </el-scrollbar>
     </aside>
     <div class="layout-tarbar">23</div>
     <main class="layout-main">
-      <div class="content">11111</div>
+      <div class="content">
+        <RouterView />
+      </div>
     </main>
   </div>
 </template>

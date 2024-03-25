@@ -2,8 +2,25 @@
 const routes = [
   {
     name: 'layout',
+    redirect: 'home',
     path: '/',
     component: () => import('@/views/Layout/index.vue'),
+    children: [
+      {
+        path: 'home',
+        component: () => import('@/views/Home/index.vue'),
+        children: [
+          {
+            path: 'category',
+            component: () => import('@/views/Category/index.vue'),
+          },
+          {
+            path: 'product',
+            component: () => import('@/views/Product/index.vue'),
+          },
+        ],
+      },
+    ],
   },
   {
     name: 'login',

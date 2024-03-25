@@ -1,30 +1,23 @@
 <script setup lang="ts">
-const props = defineProps({
-  // 图标名前缀
+defineProps({
   prefix: {
     type: String,
     default: '#icon-',
   },
-  // 图标名
   name: String,
-  // 图标颜色
   color: {
     type: String,
     default: '',
   },
-  // 图标宽度
   width: {
     type: String,
     default: '16px',
   },
-  // 图标高度
   height: {
     type: String,
     default: '16px',
   },
 })
-
-console.log(props)
 </script>
 
 <template>

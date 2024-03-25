@@ -9,13 +9,16 @@ const routes = [
       {
         path: 'home',
         component: () => import('@/views/Home/index.vue'),
+        icon: 'Operation',
         children: [
           {
             path: 'category',
+            icon: 'Operation',
             component: () => import('@/views/Category/index.vue'),
           },
           {
             path: 'product',
+            icon: 'Open',
             component: () => import('@/views/Product/index.vue'),
           },
         ],

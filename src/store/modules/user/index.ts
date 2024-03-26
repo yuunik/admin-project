@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia'
+import type { RouteRecordRaw } from 'vue-router'
 import { LoginReq } from '@/types/user'
 import { loginAPI } from '@/apis/user'
 import { SET_TOKEN, GET_TOKEN } from '@/utils'
-import { ref } from 'vue'
-import routes from '@/router/routes'
+import { routes } from '@/router'
 
 // 创建 store
 const useUserStore = defineStore('user', () => {
   // 用户 token
-  let token = GET_TOKEN()
+  let token: string | null = GET_TOKEN()
   // 路由表信息
-  const menuRoute = ref(routes)
+  const menuRoute: RouteRecordRaw[] = routes
 
   // 异步 actions
   // 登录, 获取用户 token

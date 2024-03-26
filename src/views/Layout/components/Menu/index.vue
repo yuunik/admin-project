@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { RouteRecordRaw, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import Menu from '@/views/Layout/components/Menu/index.vue'
 
 interface Props {
-  mainRoute: RouteRecordRaw
+  menuList: any
 }
 
 // 接收路由对象
@@ -14,36 +14,38 @@ const router = useRouter()
 const goMenu = (menu: any) => {
   router.push('/home/' + menu.index)
 }
+
+console.log(props.menuList)
 </script>
 
 <template>
-  <div class="menu">
-    <template v-for="subRoute in mainRoute.children" :key="subRoute.path">
-      <!-- 二级路由没有子路由 -->
-      <el-menu-item
-        :index="subRoute.path"
-        v-if="!subRoute.children"
-        @click="goMenu"
-      >
-        <el-icon>
-          <component :is="subRoute.icon" />
-        </el-icon>
-        <em>{{ subRoute.path }}</em>
+  <template v-for="menu in menuList" :key="menu.path">
+    <!-- 没有子路由 -->
+    <template v-if="!menu.children">
+      <el-menu-item v-if="menu.meta.isShow" :index="menu.path">
+        <em>{{ menu.meta.title }}</em>
       </el-menu-item>
-      <!-- 二级路由有子路由, 且子路由只有 1 个-->
-      <el-sub-menu :index="subRoute.path" v-if="subRoute.children">
-        <template #title>
-          <!-- 路由图标 -->
-          <el-icon>
-            <component :is="subRoute.icon" />
-          </el-icon>
-          {{ subRoute.path }}
-        </template>
-        <!-- 路由图标 -->
-        <Menu :mainRoute="subRoute" />
-      </el-sub-menu>
     </template>
-  </div>
+    <!-- 只有 1 个子路由 -->
+    <template v-if="menu.children && menu.children.length === 1">
+      <el-menu-item
+        v-if="menu.children[0].meta.isShow"
+        :index="menu.children[0].path"
+      >
+        {{ menu.children[0].meta.title }}
+      </el-menu-item>
+    </template>
+    <!-- 子路由数量大于 1 -->
+    <el-sub-menu
+      v-if="menu.children && menu.children.length > 1"
+      :index="menu.path"
+    >
+      <template #title>
+        <em>{{ menu.meta.title }}</em>
+      </template>
+      <Menu :menuList="menu.children" />
+    </el-sub-menu>
+  </template>
 </template>
 
 <style scoped lang="scss"></style>

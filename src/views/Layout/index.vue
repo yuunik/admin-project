@@ -1,32 +1,10 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
-import { storeToRefs } from 'pinia'
-import { getUserInfoAPI } from '@/apis/user'
 import Logo from './components/Logo/index.vue'
 import Menu from './components/Menu/index.vue'
 import { useUserStore } from '@/store/index.ts'
 
-// 用户信息
-let userInfo = reactive({})
-
-// 获取用户信息
-const getUserInfo = async () => {
-  const result = await getUserInfoAPI()
-  // 响应信息
-  userInfo = result.data.data
-}
-// 组件挂载后执行
-onMounted(() => {
-  // 获取用户信息
-  getUserInfo()
-})
-
 // 获取用户的状态管理库
 const userStore = useUserStore()
-// 解构获取路由表
-const { menuRoute } = storeToRefs(userStore)
-// 获取layout的路由表
-const mainRoute = menuRoute.value.find((route) => route.name === 'layout')
 </script>
 
 <template>
@@ -41,7 +19,7 @@ const mainRoute = menuRoute.value.find((route) => route.name === 'layout')
       <el-scrollbar class="menu-list">
         <el-menu text-color="#fff" background-color="#001529">
           <!-- 菜单 -->
-          <Menu :mainRoute="mainRoute" />
+          <Menu :menuList="userStore.menuRoute" />
         </el-menu>
       </el-scrollbar>
     </aside>

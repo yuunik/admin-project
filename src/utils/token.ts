@@ -7,7 +7,7 @@ export const SET_TOKEN = (token: string) => {
 
 // 获取用户 token
 export const GET_TOKEN = () => {
-  return localStorage.getItem('token') as string | ''
+  return localStorage.getItem('token')
 }
 
 // 删除 token

@@ -15,4 +15,10 @@ const router = createRouter({
   },
 })
 
+// console.log(routes)
+
+// 分别导出
+export { routes }
+
+// 默认导出
 export default router

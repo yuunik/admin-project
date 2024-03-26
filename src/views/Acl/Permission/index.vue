@@ -1,5 +1,12 @@
 <script setup lang="ts"></script>
 
-<template>我是 菜单管理</template>
+<template>
+  <div class="permission">我是 菜单管理</div>
+</template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.permission {
+  height: 400px;
+  background-color: yellow;
+}
+</style>

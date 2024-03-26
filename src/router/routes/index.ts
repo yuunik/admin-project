@@ -63,6 +63,7 @@ const routes = [
   {
     name: 'Acl',
     path: '/acl',
+    redirect: '/acl/user',
     component: () => import('@/views/Layout/index.vue'),
     children: [
       {
@@ -105,6 +106,7 @@ const routes = [
   {
     name: 'Product',
     path: '/product',
+    redirect: '/product/trademark',
     component: () => import('@/views/Layout/index.vue'),
     children: [
       {

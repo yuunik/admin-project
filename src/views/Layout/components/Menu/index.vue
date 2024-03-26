@@ -12,17 +12,17 @@ const props = defineProps<Props>()
 // 菜单跳转
 const router = useRouter()
 const goMenu = (menu: any) => {
-  router.push('/home/' + menu.index)
+  console.log(menu.index)
+  // router.push(menu.index)
+  router.push(menu.index)
 }
-
-console.log(props.menuList)
 </script>
 
 <template>
   <template v-for="menu in menuList" :key="menu.path">
     <!-- 没有子路由 -->
     <template v-if="!menu.children">
-      <el-menu-item v-if="menu.meta.isShow" :index="menu.path">
+      <el-menu-item v-if="menu.meta.isShow" :index="menu.path" @click="goMenu">
         <!-- 菜单图标 -->
         <el-icon>
           <component :is="menu.meta.icon" />
@@ -36,6 +36,7 @@ console.log(props.menuList)
       <el-menu-item
         v-if="menu.children[0].meta.isShow"
         :index="menu.children[0].path"
+        @click="goMenu"
       >
         <!-- 菜单图标 -->
         <el-icon>

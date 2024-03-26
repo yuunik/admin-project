@@ -18,7 +18,11 @@ const userStore = useUserStore()
       </div>
       <!--   侧边菜单列表   -->
       <el-scrollbar class="menu-list">
-        <el-menu text-color="#fff" background-color="#001529">
+        <el-menu
+          text-color="#fff"
+          background-color="#001529"
+          :default-active="$route.path"
+        >
           <!-- 菜单 -->
           <Menu :menuList="userStore.menuRoute" />
         </el-menu>

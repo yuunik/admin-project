@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Menu">
 import { useRouter } from 'vue-router'
 import Menu from '@/views/Layout/components/Menu/index.vue'
 
@@ -23,11 +23,13 @@ const goMenu = (menu: any) => {
     <template v-if="!menu.children">
       <el-menu-item v-if="menu.meta.isShow" :index="menu.path" @click="goMenu">
         <!-- 菜单图标 -->
-        <el-icon>
+        <el-icon size="25">
           <component :is="menu.meta.icon" />
         </el-icon>
         <!-- 菜单标题-->
-        <em>{{ menu.meta.title }}</em>
+        <template #title>
+          <em>{{ menu.meta.title }}</em>
+        </template>
       </el-menu-item>
     </template>
     <!-- 只有 1 个子路由 -->
@@ -38,11 +40,13 @@ const goMenu = (menu: any) => {
         @click="goMenu"
       >
         <!-- 菜单图标 -->
-        <el-icon>
+        <el-icon size="25">
           <component :is="menu.children[0].meta.icon" />
         </el-icon>
         <!-- 菜单标题-->
-        <em>{{ menu.children[0].meta.title }}</em>
+        <template #title>
+          <em>{{ menu.children[0].meta.title }}</em>
+        </template>
       </el-menu-item>
     </template>
     <!-- 子路由数量大于 1 -->
@@ -50,13 +54,13 @@ const goMenu = (menu: any) => {
       v-if="menu.children && menu.children.length > 1"
       :index="menu.path"
     >
+      <!-- 菜单标题-->
       <template #title>
         <!-- 菜单图标 -->
-        <el-icon>
+        <el-icon size="25">
           <component :is="menu.meta.icon" />
         </el-icon>
-        <!-- 菜单标题-->
-        <em>{{ menu.meta.title }}</em>
+        <span>{{ menu.meta.title }}</span>
       </template>
       <Menu :menuList="menu.children" />
     </el-sub-menu>

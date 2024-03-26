@@ -91,7 +91,7 @@ const routes = [
         path: '/acl/permission',
         component: () => import('@/views/Acl/Permission/index.vue'),
         meta: {
-          icon: 'Menu',
+          icon: 'Memo',
           isShow: true,
           title: '菜单管理',
         },

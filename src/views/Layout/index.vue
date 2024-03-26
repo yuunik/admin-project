@@ -1,17 +1,22 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Layout">
+import { storeToRefs } from 'pinia'
 import Logo from './components/Logo/index.vue'
 import Menu from './components/Menu/index.vue'
 import Content from './components/Content/index.vue'
 import Tabbar from './components/Tabbar/index.vue'
-import { useUserStore } from '@/store/index.ts'
+import { useUserStore, useLayoutSettingStore } from '@/store'
 
 // 获取用户的状态管理库
 const userStore = useUserStore()
+// 获取状态管理库
+const layoutSettingStore = useLayoutSettingStore()
+// 获取是否折叠的标记
+const { isFold } = storeToRefs(layoutSettingStore)
 </script>
 
 <template>
   <div class="layout-container">
-    <aside class="layout-aside">
+    <aside class="layout-aside" :class="{ fold: isFold }">
       <!--   侧边菜单标题   -->
       <div class="aside-title">
         <!-- 网站图标 -->
@@ -23,6 +28,7 @@ const userStore = useUserStore()
           text-color="#fff"
           background-color="#001529"
           :default-active="$route.path"
+          :collapse="isFold"
         >
           <!-- 菜单 -->
           <Menu :menuList="userStore.menuRoute" />
@@ -30,11 +36,11 @@ const userStore = useUserStore()
       </el-scrollbar>
     </aside>
     <!-- 顶部导航区 -->
-    <div class="layout-tabbar">
+    <div class="layout-tabbar" :class="{ fold: isFold }">
       <Tabbar />
     </div>
     <!--  内容展示区 -->
-    <main class="layout-main">
+    <main class="layout-main" :class="{ fold: isFold }">
       <Content />
     </main>
   </div>
@@ -49,6 +55,11 @@ const userStore = useUserStore()
     width: 18%;
     height: 100%;
     background-color: $base-menu-background-color;
+    overflow: hidden;
+
+    &.fold {
+      width: 4%;
+    }
 
     .menu-list {
       height: calc(100vh - $base-menu-logo-height);
@@ -66,6 +77,12 @@ const userStore = useUserStore()
     position: fixed;
     top: 0;
     left: 18%;
+    transition: 0.25s all linear;
+
+    &.fold {
+      width: 96%;
+      left: 4%;
+    }
   }
 
   .layout-main {
@@ -78,6 +95,12 @@ const userStore = useUserStore()
     padding: 20px;
     box-sizing: border-box;
     overflow: auto;
+    transition: 0.25s all linear;
+
+    &.fold {
+      width: 96%;
+      left: 4%;
+    }
 
     .content {
       height: 2000px;

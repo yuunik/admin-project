@@ -1,20 +1,25 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Logo">
+import { storeToRefs } from 'pinia'
 import basicSetting from '@/setting.ts'
+import { useLayoutSettingStore } from '@/store'
 
 const { logo, isLoadingLogo, websiteName } = basicSetting
+// 获取状态管理库
+const layoutSettingStore = useLayoutSettingStore()
+// 获取是否折叠的标记
+const { isFold } = storeToRefs(layoutSettingStore)
 </script>
 
 <template>
   <div class="logo-container">
-    <img :src="logo" alt="网站图标" class="logo" v-if="isLoadingLogo" />
-    <strong class="website-name">{{ websiteName }}</strong>
+    <img :src="logo" :alt="websiteName" class="logo" v-if="isLoadingLogo" />
+    <strong class="website-name" v-show="!isFold">{{ websiteName }}</strong>
   </div>
 </template>
 
 <style scoped lang="scss">
 .logo-container {
   display: flex;
-  justify-content: center;
   align-items: center;
   padding-left: 10px;
   box-sizing: border-box;

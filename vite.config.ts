@@ -8,6 +8,7 @@ import path from 'path'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 // mockjs 插件
 import { viteMockServe } from 'vite-plugin-mock'
+import ComponentNamedPlugin from 'vite-plugin-vue-setup-extend'
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -30,6 +31,8 @@ export default defineConfig(() => {
       }),
       // mockjs 插件
       viteMockServe(),
+      // vue 组件命名插件
+      ComponentNamedPlugin(),
     ],
     resolve: {
       alias: {

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Setting">
 import userAvatar from '@/assets/images/userAvatar.jpg'
 </script>
 

@@ -23,6 +23,11 @@ console.log(props.menuList)
     <!-- 没有子路由 -->
     <template v-if="!menu.children">
       <el-menu-item v-if="menu.meta.isShow" :index="menu.path">
+        <!-- 菜单图标 -->
+        <el-icon>
+          <component :is="menu.meta.icon" />
+        </el-icon>
+        <!-- 菜单标题-->
         <em>{{ menu.meta.title }}</em>
       </el-menu-item>
     </template>
@@ -32,7 +37,12 @@ console.log(props.menuList)
         v-if="menu.children[0].meta.isShow"
         :index="menu.children[0].path"
       >
-        {{ menu.children[0].meta.title }}
+        <!-- 菜单图标 -->
+        <el-icon>
+          <component :is="menu.children[0].meta.icon" />
+        </el-icon>
+        <!-- 菜单标题-->
+        <em>{{ menu.children[0].meta.title }}</em>
       </el-menu-item>
     </template>
     <!-- 子路由数量大于 1 -->
@@ -41,6 +51,11 @@ console.log(props.menuList)
       :index="menu.path"
     >
       <template #title>
+        <!-- 菜单图标 -->
+        <el-icon>
+          <component :is="menu.meta.icon" />
+        </el-icon>
+        <!-- 菜单标题-->
         <em>{{ menu.meta.title }}</em>
       </template>
       <Menu :menuList="menu.children" />

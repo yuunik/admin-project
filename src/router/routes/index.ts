@@ -7,11 +7,13 @@ const routes = [
     component: () => import('@/views/Layout/index.vue'),
     children: [
       {
-        path: 'home',
+        path: '/home',
         component: () => import('@/views/Home/index.vue'),
         meta: {
           title: '首页',
           isShow: true,
+          // 菜单图标
+          icon: 'HomeFilled',
         },
       },
     ],
@@ -28,24 +30,6 @@ const routes = [
       title: '登录',
       isShow: false,
     },
-    children: [
-      {
-        path: 'category',
-        component: () => import('@/views/Category/index.vue'),
-        meta: {
-          title: '分类',
-          isShow: true,
-        },
-      },
-      {
-        path: 'product',
-        component: () => import('@/views/Product/index.vue'),
-        meta: {
-          title: '产品',
-          isShow: true,
-        },
-      },
-    ],
   },
   {
     name: '404',
@@ -64,6 +48,110 @@ const routes = [
     meta: {
       title: '随机匹配',
       isShow: false,
+    },
+  },
+  {
+    name: 'Screen',
+    path: '/screen',
+    component: () => import('@/views/Screen/index.vue'),
+    meta: {
+      icon: 'Platform',
+      isShow: true,
+      title: '数据大屏',
+    },
+  },
+  {
+    name: 'Acl',
+    path: '/acl',
+    component: () => import('@/views/Layout/index.vue'),
+    children: [
+      {
+        name: 'User',
+        path: '/acl/user',
+        component: () => import('@/views/Acl/User/index.vue'),
+        meta: {
+          icon: 'User',
+          isShow: true,
+          title: '用户管理',
+        },
+      },
+      {
+        name: 'Role',
+        path: '/acl/role',
+        component: () => import('@/views/Acl/Role/index.vue'),
+        meta: {
+          icon: 'Avatar',
+          isShow: true,
+          title: '角色管理',
+        },
+      },
+      {
+        name: 'Permission',
+        path: '/acl/permission',
+        component: () => import('@/views/Acl/Permission/index.vue'),
+        meta: {
+          icon: 'Menu',
+          isShow: true,
+          title: '菜单管理',
+        },
+      },
+    ],
+    meta: {
+      icon: 'Lock',
+      isShow: true,
+      title: '权限管理',
+    },
+  },
+  {
+    name: 'Product',
+    path: '/product',
+    component: () => import('@/views/Layout/index.vue'),
+    children: [
+      {
+        name: 'Trademark',
+        path: '/product/trademark',
+        component: () => import('@/views/Product/Trademark/index.vue'),
+        meta: {
+          icon: 'ShoppingCartFull',
+          isShow: true,
+          title: '品牌管理',
+        },
+      },
+      {
+        name: 'Attr',
+        path: '/product/attr',
+        component: () => import('@/views/Product/Attr/index.vue'),
+        meta: {
+          icon: 'ChromeFilled',
+          isShow: true,
+          title: '属性管理',
+        },
+      },
+      {
+        name: 'Spu',
+        path: '/product/spu',
+        component: () => import('@/views/Product/SPU/index.vue'),
+        meta: {
+          icon: 'Calendar',
+          isShow: true,
+          title: 'SPU管理',
+        },
+      },
+      {
+        name: 'Sku',
+        path: '/product/sku',
+        component: () => import('@/views/Product/SKU/index.vue'),
+        meta: {
+          icon: 'Orange',
+          isShow: true,
+          title: 'SKU管理',
+        },
+      },
+    ],
+    meta: {
+      icon: 'ShoppingBag',
+      isShow: true,
+      title: '商品管理',
     },
   },
 ]

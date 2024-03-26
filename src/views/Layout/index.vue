@@ -2,6 +2,7 @@
 import Logo from './components/Logo/index.vue'
 import Menu from './components/Menu/index.vue'
 import Content from './components/Content/index.vue'
+import Tabbar from './components/Tabbar/index.vue'
 import { useUserStore } from '@/store/index.ts'
 
 // 获取用户的状态管理库
@@ -28,9 +29,12 @@ const userStore = useUserStore()
         </el-menu>
       </el-scrollbar>
     </aside>
-    <div class="layout-tabbar">23</div>
+    <!-- 顶部导航区 -->
+    <div class="layout-tabbar">
+      <Tabbar />
+    </div>
+    <!--  内容展示区 -->
     <main class="layout-main">
-      <!--  内容展示区-->
       <Content />
     </main>
   </div>
@@ -59,7 +63,6 @@ const userStore = useUserStore()
   .layout-tabbar {
     width: 82%;
     height: 10%;
-    background-color: red;
     position: fixed;
     top: 0;
     left: 18%;

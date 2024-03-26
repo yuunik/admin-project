@@ -7,12 +7,11 @@ interface Props {
 }
 
 // 接收路由对象
-const props = defineProps<Props>()
+defineProps<Props>()
 
 // 菜单跳转
 const router = useRouter()
 const goMenu = (menu: any) => {
-  console.log(menu.index)
   // router.push(menu.index)
   router.push(menu.index)
 }

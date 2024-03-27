@@ -1,6 +1,6 @@
 <script setup lang="ts" name="Setting">
 import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import userAvatar from '@/assets/images/userAvatar.jpg'
 import { useUserStore, useLayoutSettingStore } from '@/store'
 
@@ -27,7 +27,10 @@ const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
 const { logout } = userStore
 
+// 获取路由器对象
 const router = useRouter()
+// 获取路由对象
+const route = useRoute()
 // 退出系统
 const quitSystem = async () => {
   await ElMessageBox.confirm('是否确认退出?', '提示', {
@@ -43,7 +46,12 @@ const quitSystem = async () => {
     message: '退出成功',
   })
   // 跳转登录页
-  router.push('/login')
+  router.push({
+    path: '/login',
+    query: {
+      redirect: route.path,
+    },
+  })
 }
 </script>
 

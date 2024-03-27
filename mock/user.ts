@@ -7,8 +7,8 @@ function createUserList() {
       userId: getUUID(),
       avatar:
         'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-      username: 'admin',
-      password: '111111',
+      username: 'yuunik',
+      password: 'yuunik',
       desc: '平台管理员',
       roles: ['平台管理员'],
       buttons: ['cuser.detail'],
@@ -19,8 +19,8 @@ function createUserList() {
       userId: getUUID(),
       avatar:
         'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-      username: 'root',
-      password: 'root123',
+      username: 'Chorria',
+      password: 'chorria',
       desc: '系统管理员',
       roles: ['系统管理员'],
       buttons: ['cuser.detail', 'cuser.user'],

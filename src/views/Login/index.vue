@@ -2,7 +2,7 @@
 import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { type FormInstance, type FormRules } from 'element-plus'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/store'
 import { LoginReq } from '@/types/user'
 import { getTime } from '@/utils'
@@ -81,6 +81,10 @@ const isLoading = ref<boolean>(false)
 // timeIcon --- 当前时间图标
 const { msg, timeIcon } = getTime()
 
+// 获取路由对象
+const {
+  query: { redirect },
+} = useRoute()
 // 提交表单
 const submitForm = async () => {
   // 开启加载状态
@@ -99,7 +103,7 @@ const submitForm = async () => {
       title: msg,
     })
     // 路由跳转
-    router.push('/')
+    router.push((redirect as string) || '/')
   } catch (error) {
     console.log(111111)
     // 关闭加载状态

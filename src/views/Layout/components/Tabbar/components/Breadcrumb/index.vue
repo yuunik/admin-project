@@ -11,28 +11,44 @@ const { changeIsFold } = layoutSettingStore
 </script>
 
 <template>
-  <div class="breadcrumb">
+  <div class="breadcrumb-container">
     <!-- 图标 -->
     <el-icon class="icon-collapse" @click="changeIsFold">
       <!-- 展开 -->
       <component :is="isFold ? 'Fold' : 'Expand'" />
     </el-icon>
     <!-- 面包屑 -->
-    <el-breadcrumb separator-icon="ArrowRight">
-      <el-breadcrumb-item :to="{ path: '/acl' }">权限管理</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+    <el-breadcrumb separator-icon="ArrowRight" class="breadcrumb">
+      <el-breadcrumb-item
+        v-for="route in $route.matched"
+        :key="route.path"
+        :to="route.path"
+        v-show="route.path !== '/'"
+      >
+        <!-- 图标 -->
+        <el-icon class="icon-permission">
+          <component :is="route.meta.icon" />
+        </el-icon>
+        <!-- 标题 -->
+        <em>{{ route.meta.title }}</em>
+      </el-breadcrumb-item>
     </el-breadcrumb>
   </div>
 </template>
 
 <style scoped lang="scss">
-.breadcrumb {
+.breadcrumb-container {
   display: flex;
   align-items: center;
 
   .icon-collapse {
     margin: 0 20px;
     cursor: pointer;
+  }
+
+  .icon-permission {
+    margin-right: 3px;
+    vertical-align: top;
   }
 }
 </style>

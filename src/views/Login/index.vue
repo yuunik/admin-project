@@ -16,7 +16,7 @@ const form = reactive<LoginReq>({
 })
 
 // 用户名自定义校验规则
-const validateUsername = (rult: any, value: any, callback: any) => {
+const validateUsername = (_: any, value: any, callback: any) => {
   // 正则校验
   if (value.length >= 4) {
     // 校验通过
@@ -28,7 +28,7 @@ const validateUsername = (rult: any, value: any, callback: any) => {
 }
 
 // 密码自定义校验规则
-const validatePassword = (rule: any, value: any, callback: any) => {
+const validatePassword = (_: any, value: any, callback: any) => {
   // 正则校验
   if (value.length >= 6) {
     // 校验通过

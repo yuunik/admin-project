@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
-import { LoginReq } from '@/types/user'
-import { loginAPI } from '@/apis/user'
-import { SET_TOKEN, GET_TOKEN } from '@/utils'
+import { ref } from 'vue'
+import { LoginReq, UserInfo } from '@/types/user'
+import { loginAPI, getUserInfoAPI } from '@/apis/user'
+import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from '@/utils'
 import { routes } from '@/router'
 
 // 创建 store
@@ -11,8 +12,12 @@ const useUserStore = defineStore('user', () => {
   let token: string | null = GET_TOKEN()
   // 路由表信息
   const menuRoute: RouteRecordRaw[] = routes
+  // 用户信息
+  const userInfo = ref<UserInfo | undefined>()
 
-  // 异步 actions
+  /**
+   * 异步actions
+   */
   // 登录, 获取用户 token
   const login = async (form: LoginReq) => {
     // 调用接口, 获取用户 token
@@ -33,10 +38,36 @@ const useUserStore = defineStore('user', () => {
     }
   }
 
+  // 获取用户信息
+  const getUserInfo = async () => {
+    const result = await getUserInfoAPI()
+    const {
+      data: { code, data },
+    } = result
+    if (code === 200) {
+      // 保存用户信息
+      userInfo.value = result.data.data.checkUser as UserInfo
+      return 'ok'
+    } else {
+      return Promise.reject(new Error(data.message))
+    }
+  }
+
+  // 清除用户信息
+  const logout = () => {
+    // 清除用户信息
+    userInfo.value = undefined
+    // 清除 token 信息
+    REMOVE_TOKEN()
+  }
+
   return {
     token,
     login,
     menuRoute,
+    userInfo,
+    getUserInfo,
+    logout,
   }
 })
 

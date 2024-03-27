@@ -8,7 +8,7 @@ import Setting from '@/views/Layout/components/Tabbar/components/Setting/index.v
     <!-- 面包屑区 -->
     <Breadcrumb />
     <!-- 基础设置 -->
-    <Setting />
+    <Setting class="setting" />
   </div>
 </template>
 
@@ -18,6 +18,12 @@ import Setting from '@/views/Layout/components/Tabbar/components/Setting/index.v
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-image: linear-gradient(to right, #fff, #ddd, #fff);
+  // background-image: linear-gradient(to right, #fff, #ddd, #fff);
+  box-sizing: border-box;
+  box-shadow: 0 0 5px #ddd;
+
+  .setting {
+    margin-right: 20px;
+  }
 }
 </style>

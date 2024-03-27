@@ -17,7 +17,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
 <template>
   <div class="layout-container">
     <aside class="layout-aside" :class="{ fold: isFold }">
-      <!--   侧边菜单标题   -->
+      <!-- 侧边菜单标题 -->
       <div class="aside-title">
         <!-- 网站图标 -->
         <Logo />
@@ -78,6 +78,8 @@ const { isFold } = storeToRefs(layoutSettingStore)
     top: 0;
     left: 18%;
     transition: 0.25s all linear;
+    padding: 10px;
+    box-sizing: border-box;
 
     &.fold {
       width: 96%;

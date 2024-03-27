@@ -1,6 +1,6 @@
 // 用户相关的接口
 import type { ResType } from '@/types/common'
-import type { LoginReq, LoginRes, UserInfo } from '@/types/user'
+import type { LoginReq, LoginRes, UserInfoContainer } from '@/types/user'
 import { http } from '@/utils'
 
 // 接口的枚举值
@@ -19,7 +19,7 @@ export const loginAPI = (data: LoginReq) =>
 
 // 获取用户信息接口
 export const getUserInfoAPI = () =>
-  http<ResType<UserInfo>>({
+  http<ResType<UserInfoContainer>>({
     url: API.USERINFO_API,
     method: 'GET',
   })

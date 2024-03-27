@@ -18,5 +18,6 @@ import Setting from '@/views/Layout/components/Tabbar/components/Setting/index.v
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-image: linear-gradient(to right, #fff, #ddd, #fff);
 }
 </style>

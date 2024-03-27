@@ -6,6 +6,20 @@ import { useLayoutSettingStore } from '@/store'
 const layoutSettingStore = useLayoutSettingStore()
 // 获取修改是否刷新的方法
 const { changeIsRefresh } = layoutSettingStore
+
+// 全屏模式
+const getFullScreenMode = () => {
+  // 判断当前是否为全屏模式
+  const fullscreenElement = document.fullscreenElement
+  console.log(fullscreenElement)
+  if (!fullscreenElement) {
+    // 不是全屏模式, 则切换为全屏模式
+    document.documentElement.requestFullscreen()
+  } else {
+    // 是全屏模式, 则退出全屏模式
+    document.exitFullscreen()
+  }
+}
 </script>
 
 <template>
@@ -19,7 +33,13 @@ const { changeIsRefresh } = layoutSettingStore
       @click="changeIsRefresh"
     />
     <!-- 全屏 -->
-    <el-button plain size="small" circle icon="FullScreen" />
+    <el-button
+      plain
+      size="small"
+      circle
+      icon="FullScreen"
+      @click="getFullScreenMode"
+    />
     <!-- 用户设置 -->
     <el-button plain size="small" circle icon="Setting" />
     <!-- 用户头像 -->

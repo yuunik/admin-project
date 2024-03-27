@@ -1,11 +1,23 @@
 <script setup lang="ts" name="Setting">
 import userAvatar from '@/assets/images/userAvatar.jpg'
+import { useLayoutSettingStore } from '@/store'
+
+// 获取基础设置的状态管理库
+const layoutSettingStore = useLayoutSettingStore()
+// 获取修改是否刷新的方法
+const { changeIsRefresh } = layoutSettingStore
 </script>
 
 <template>
   <div class="setting">
     <!-- 刷新 -->
-    <el-button plain size="small" circle icon="Refresh" />
+    <el-button
+      plain
+      size="small"
+      circle
+      icon="Refresh"
+      @click="changeIsRefresh"
+    />
     <!-- 全屏 -->
     <el-button plain size="small" circle icon="FullScreen" />
     <!-- 用户设置 -->

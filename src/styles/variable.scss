@@ -7,3 +7,13 @@ $base-menu-background-color: #001529;
 $base-menu-logo-height: 50px;
 // 系统名称的字体大小
 $base-logo-title-fontSize: 20px;
+
+// 菜单栏折叠后的宽度
+$fold-menu-width: 4%;
+
+// 导航区 和 内容区 折叠后的共有属性
+%fold-common {
+  width: 96%;
+  left: 4%;
+}
+

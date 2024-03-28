@@ -58,7 +58,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
     overflow: hidden;
 
     &.fold {
-      width: 4%;
+      width: $fold-menu-width;
     }
 
     .menu-list {
@@ -82,8 +82,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
     box-sizing: border-box;
 
     &.fold {
-      width: 96%;
-      left: 4%;
+      @extend %fold-common;
     }
   }
 
@@ -100,8 +99,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
     transition: 0.25s all linear;
 
     &.fold {
-      width: 96%;
-      left: 4%;
+      @extend %fold-common;
     }
 
     .content {

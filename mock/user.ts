@@ -20,7 +20,7 @@ function createUserList() {
       avatar:
         'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
       username: 'Chorria',
-      password: 'chorria',
+      password: 'Chorria',
       desc: '系统管理员',
       roles: ['系统管理员'],
       buttons: ['cuser.detail', 'cuser.user'],

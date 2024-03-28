@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-const useLayoutSettingStore = defineStore('layoutSettingStore', () => {
+const useLayoutSettingStore = defineStore('layoutSetting', () => {
   // 控制 layout 左侧菜单是否折叠的标记
   const isFold = ref<boolean>(false)
   // 控制 layout 内容区是否刷新的标记

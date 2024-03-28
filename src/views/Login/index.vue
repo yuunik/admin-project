@@ -90,7 +90,7 @@ const submitForm = async () => {
   // 开启加载状态
   isLoading.value = true
   // 表单校验
-  await formRef?.value?.validate()
+  await formRef.value?.validate()
   try {
     // 调用接口, 实现登录
     await login(form)
@@ -105,7 +105,6 @@ const submitForm = async () => {
     // 路由跳转
     router.push((redirect as string) || '/')
   } catch (error) {
-    console.log(111111)
     // 关闭加载状态
     isLoading.value = false
     // 提示失败信息

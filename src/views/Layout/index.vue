@@ -89,7 +89,6 @@ const { isFold } = storeToRefs(layoutSettingStore)
   .layout-main {
     width: 82%;
     height: 90%;
-    background-color: skyblue;
     position: absolute;
     top: 10%;
     left: 18%;

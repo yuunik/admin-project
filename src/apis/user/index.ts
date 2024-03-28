@@ -1,12 +1,16 @@
 // 用户相关的接口
 import type { ResType } from '@/types/common'
-import type { LoginReq, LoginRes, UserInfoContainer } from '@/types/user'
+import type { LoginReq, LoginRes, UserInfo } from '@/types/user'
 import { http } from '@/utils'
 
 // 接口的枚举值
 enum API {
-  LOGIN_API = '/user/login',
-  USERINFO_API = '/user/info',
+  // 登录接口的请求地址
+  LOGIN_API = '/admin/acl/index/login',
+  // 获取用户信息的请求地址
+  USERINFO_API = '/admin/acl/index/info',
+  // 用户退出登录的请求地址
+  LOGOUT_API = '/admin/acl/index/logout',
 }
 
 // 用户登录接口
@@ -19,7 +23,14 @@ export const loginAPI = (data: LoginReq) =>
 
 // 获取用户信息接口
 export const getUserInfoAPI = () =>
-  http<ResType<UserInfoContainer>>({
+  http<ResType<UserInfo>>({
     url: API.USERINFO_API,
     method: 'GET',
+  })
+
+// 用户注销接口
+export const logoutAPI = () =>
+  http<ResType<any>>({
+    url: API.LOGOUT_API,
+    method: 'POST',
   })

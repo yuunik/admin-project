@@ -80,7 +80,7 @@ const quitSystem = async () => {
     <!-- 退出 -->
     <el-dropdown size="small" class="quit">
       <span class="el-dropdown-link">
-        <em class="username">{{ userInfo?.username }}</em>
+        <em class="username">{{ userInfo?.name }}</em>
         <el-icon><ArrowDownBold /></el-icon>
       </span>
       <template #dropdown>
@@ -101,6 +101,11 @@ const quitSystem = async () => {
     border: 1px solid var(--el-button-bg-color);
     margin: 0 12px;
     cursor: pointer;
+    transition: 0.25s all linear;
+
+    &:hover {
+      border: 1px solid #409eff;
+    }
   }
 
   .quit {
@@ -109,8 +114,7 @@ const quitSystem = async () => {
     transition: 0.25s all linear;
 
     &:hover {
-      color: skyblue;
-      border: none;
+      color: #409eff;
     }
 
     .username {

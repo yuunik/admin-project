@@ -2,14 +2,15 @@ import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
 import { ref } from 'vue'
 import { LoginReq, UserInfo } from '@/types/user'
-import { loginAPI, getUserInfoAPI } from '@/apis/user'
+import { loginAPI, getUserInfoAPI, logoutAPI } from '@/apis/user'
 import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from '@/utils'
 import { routes } from '@/router'
+import { ElMessage } from 'element-plus'
 
 // 创建 store
 const useUserStore = defineStore('user', () => {
   // 用户 token
-  let token: string | null = GET_TOKEN()
+  let token: any | null = GET_TOKEN()
   // 路由表信息
   const menuRoute: RouteRecordRaw[] = routes
   // 用户信息
@@ -28,13 +29,13 @@ const useUserStore = defineStore('user', () => {
     if (code === 200) {
       // 请求成功
       // 保存 token
-      token = data.token as string
+      token = data
       // token 本地持久化
       SET_TOKEN(token)
       return Promise.resolve('success')
     } else {
       // 请求失败
-      return Promise.reject(new Error(data.message))
+      return Promise.reject(new Error('登录失败'))
     }
   }
 
@@ -46,19 +47,40 @@ const useUserStore = defineStore('user', () => {
     } = result
     if (code === 200) {
       // 保存用户信息
-      userInfo.value = result.data.data.checkUser as UserInfo
+      userInfo.value = data as UserInfo
       return 'ok'
     } else {
-      return Promise.reject(new Error(data.message))
+      return Promise.reject(new Error('获取用户信息失败'))
     }
   }
 
   // 清除用户信息
-  const logout = () => {
-    // 清除用户信息
-    userInfo.value = undefined
-    // 清除 token 信息
-    REMOVE_TOKEN()
+  const logout = async () => {
+    // 用户注销, 注销 token 信息
+    const {
+      data: { code },
+    } = await logoutAPI()
+    if (code === 200) {
+      // 注销成功
+      ElMessage({
+        type: 'success',
+        message: '注销成功',
+      })
+      // 清除用户信息
+      userInfo.value = undefined
+      // 清除 token 信息
+      REMOVE_TOKEN()
+
+      return 'ok'
+    } else {
+      // 提示失败信息
+      ElMessage({
+        type: 'error',
+        message: '注销失败',
+      })
+      // 抛出错误
+      return Promise.reject(new Error('注销失败'))
+    }
   }
 
   return {

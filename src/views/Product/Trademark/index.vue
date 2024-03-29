@@ -15,8 +15,6 @@ import type {
   UploadProps,
   UploadRawFile,
 } from 'element-plus'
-import { ElMessage } from 'element-plus'
-import { logoutAPI } from '@/apis/user'
 
 // 分页相关数据
 const pageData = reactive({
@@ -358,41 +356,40 @@ const deleteTrademark = (id: number) => {
     border: 1px solid #ddd;
     cursor: not-allowed;
   }
+}
+.avatar-uploader {
+  .el-upload.el-upload--text {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
 
-  .avatar-uploader {
-    .el-upload.el-upload--text {
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
+    .avatar {
+      width: 178px;
+      height: 178px;
+      display: block;
+      border: 1px solid var(--el-border-color);
+      border-radius: 6px;
+      transition: 0.25s all linear;
 
-      .avatar {
+      &:hover {
+        transform: translate(0px, -5px) scale(1.02);
+        box-shadow: 0 0 10px black;
+      }
+    }
+
+    .el-icon {
+      &.avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
         width: 178px;
         height: 178px;
-        display: block;
-        border: 1px solid var(--el-border-color);
+        text-align: center;
+        border: 1px dashed var(--el-border-color);
         border-radius: 6px;
-        transition: 0.25s all linear;
+        transition: var(--el-transition-duration-fast);
 
         &:hover {
-          transform: translate(0px, -5px) scale(1.02);
-          box-shadow: 0 0 10px black;
-        }
-      }
-
-      .el-icon {
-        &.avatar-uploader-icon {
-          font-size: 28px;
-          color: #8c939d;
-          width: 178px;
-          height: 178px;
-          text-align: center;
-          border: 1px dashed var(--el-border-color);
-          border-radius: 6px;
-          transition: var(--el-transition-duration-fast);
-
-          &:hover {
-            border-color: var(--el-color-primary);
-          }
+          border-color: var(--el-color-primary);
         }
       }
     }

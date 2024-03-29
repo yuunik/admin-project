@@ -6,6 +6,7 @@ import {
   addOrUpdateTrademarkAPI,
   getTrademarkListAPI,
   getTrademarkInfoAPI,
+  deleteTrademarkAPI,
 } from '@/apis/product/trademark'
 import type { TradeMark } from '@/types/product/trademark'
 import type {
@@ -15,6 +16,7 @@ import type {
   UploadRawFile,
 } from 'element-plus'
 import { ElMessage } from 'element-plus'
+import { logoutAPI } from '@/apis/user'
 
 // 分页相关数据
 const pageData = reactive({
@@ -102,7 +104,7 @@ const isEdit = ref<boolean>(false)
 // 打开表单
 const openFormDialog = async (id?: number) => {
   // 表单重置
-  formRef.value?.resetFields()
+  await formRef.value?.resetFields()
   // 表单重置
   if (id) {
     // 编辑模式, 回显数据
@@ -112,9 +114,11 @@ const openFormDialog = async (id?: number) => {
       data: { code, data },
     } = await getTrademarkInfoAPI(id)
     if (code === 200) {
-      form = data
+      Object.assign(form, data)
     }
   }
+  // 关闭编辑模式
+  isEdit.value = false
   // 打开弹框
   isShowDialog.value = true
 }
@@ -135,6 +139,8 @@ const addOrUpdateTrademark = async () => {
     })
     // 关闭弹窗
     isShowDialog.value = false
+    // 重新渲染数据
+    getTradeMarkList()
   } else {
     // 提示错误信息
     ElMessage({
@@ -190,6 +196,33 @@ const uploadLogo = (response: any) => {
     })
   }
 }
+
+// 删除品牌
+const deleteTrademark = (id: number) => {
+  ElMessageBox.confirm('是否确认删除该品牌信息', '删除提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      // 调用接口, 删除品牌
+      const {
+        data: { code },
+      } = await deleteTrademarkAPI(id)
+      if (code === 200) {
+        // 提示成功信息
+        ElMessage({
+          type: 'success',
+          message: '删除成功',
+        })
+        // 当前页重置
+        pageData.page = 1
+        // 重新渲染数据
+        getTradeMarkList()
+      }
+    })
+    .catch(() => {})
+}
 </script>
 
 <template>
@@ -204,54 +237,6 @@ const uploadLogo = (response: any) => {
     >
       添加品牌
     </el-button>
-    <!-- 添加品牌弹框 -->
-    <el-dialog
-      v-model="isShowDialog"
-      :title="isEdit ? '添加品牌' : '编辑品牌'"
-      width="500"
-    >
-      <el-form
-        :model="form"
-        :rules="formRules"
-        ref="formRef"
-        label-position="left"
-        label-width="100"
-        style="width: 80%"
-      >
-        <!-- 品牌名称 -->
-        <el-form-item label="品牌名称" prop="tmName">
-          <el-input v-model="form.tmName" autocomplete="off" />
-        </el-form-item>
-        <!-- 品牌 logo -->
-        <el-form-item label="品牌LOGO" prop="logoUrl">
-          <!-- 上传图片 -->
-          <el-upload
-            class="avatar-uploader"
-            action="/api/admin/product/fileUpload"
-            :show-file-list="false"
-            :on-success="uploadLogo"
-            :before-upload="beforeUpload"
-          >
-            <el-image
-              v-if="form.logoUrl"
-              :src="form.logoUrl"
-              fit="cover"
-              alt="品牌图标"
-              class="avatar"
-            />
-            <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
-          </el-upload>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button @click="isShowDialog = false">取消</el-button>
-          <el-button type="primary" @click="addOrUpdateTrademark">
-            确认
-          </el-button>
-        </div>
-      </template>
-    </el-dialog>
     <!-- 表格展示区 -->
     <el-table border style="margin: 20px 0" :data="tradeMarkList">
       <el-table-column label="序号" width="80" align="center" type="index" />
@@ -280,7 +265,9 @@ const uploadLogo = (response: any) => {
           <el-button type="primary" icon="Edit" @click="openFormDialog(id)">
             编辑
           </el-button>
-          <el-button type="danger" icon="Delete">删除</el-button>
+          <el-button type="danger" icon="Delete" @click="deleteTrademark(id)">
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -301,6 +288,53 @@ const uploadLogo = (response: any) => {
       />
     </el-config-provider>
   </el-card>
+
+  <!-- 添加品牌弹框 -->
+  <el-dialog
+    v-model="isShowDialog"
+    :title="isEdit ? '编辑品牌' : '添加品牌'"
+    width="500"
+  >
+    <el-form
+      :model="form"
+      :rules="formRules"
+      ref="formRef"
+      label-position="left"
+      label-width="100"
+      style="width: 80%"
+    >
+      <!-- 品牌名称 -->
+      <el-form-item label="品牌名称" prop="tmName">
+        <el-input v-model="form.tmName" autocomplete="off" />
+      </el-form-item>
+      <!-- 品牌 logo -->
+      <el-form-item label="品牌LOGO" prop="logoUrl">
+        <!-- 上传图片 -->
+        <el-upload
+          class="avatar-uploader"
+          action="/api/admin/product/fileUpload"
+          :show-file-list="false"
+          :on-success="uploadLogo"
+          :before-upload="beforeUpload"
+        >
+          <el-image
+            v-if="form.logoUrl"
+            :src="form.logoUrl"
+            fit="cover"
+            alt="品牌图标"
+            class="avatar"
+          />
+          <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
+        </el-upload>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="isShowDialog = false">取消</el-button>
+        <el-button type="primary" @click="addOrUpdateTrademark">确认</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss">

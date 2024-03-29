@@ -2,7 +2,11 @@
 import { ref, watch, reactive, onMounted } from 'vue'
 //@ts-expect-error '无组件声明文件类型'
 import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
-import { getTrademarkListAPI } from '@/apis/product/trademark'
+import {
+  addOrUpdateTrademarkAPI,
+  getTrademarkListAPI,
+  getTrademarkInfoAPI,
+} from '@/apis/product/trademark'
 import type { TradeMark } from '@/types/product/trademark'
 import type {
   FormInstance,
@@ -67,7 +71,7 @@ watch(
 // 是否展示添加品牌弹框的标记
 const isShowDialog = ref<boolean>(false)
 // 表单数据
-const form = reactive<TradeMark>({
+let form = reactive<TradeMark>({
   // 品牌 id
   tmName: '',
   // 品牌 logo
@@ -87,17 +91,56 @@ const formRules = ref<FormRules<TradeMark>>({
   logoUrl: [
     {
       required: true,
-      message: '请上传品牌的logo',
+      message: '品牌logo不能为空',
     },
   ],
 })
 
-// 新增与编辑品牌
-const addOrUpdateTrademark = (id) => {
+// 是否为编辑状态
+const isEdit = ref<boolean>(false)
+
+// 打开表单
+const openFormDialog = async (id?: number) => {
+  // 表单重置
+  formRef.value?.resetFields()
+  // 表单重置
   if (id) {
-    // 编辑
+    // 编辑模式, 回显数据
+    isEdit.value = true
+    // 调用接口, 回显数据
+    const {
+      data: { code, data },
+    } = await getTrademarkInfoAPI(id)
+    if (code === 200) {
+      form = data
+    }
+  }
+  // 打开弹框
+  isShowDialog.value = true
+}
+
+// 新增与编辑品牌
+const addOrUpdateTrademark = async () => {
+  // 表单预校验
+  await formRef.value?.validate()
+  // 调用接口, 新增或编辑品牌
+  const {
+    data: { code },
+  } = await addOrUpdateTrademarkAPI(form)
+  if (code === 200) {
+    // 提示成功信息
+    ElMessage({
+      type: 'success',
+      message: `${isEdit.value ? '编辑' : '新增'}品牌成功`,
+    })
+    // 关闭弹窗
+    isShowDialog.value = false
   } else {
-    // 新增
+    // 提示错误信息
+    ElMessage({
+      type: 'error',
+      message: `${isEdit.value ? '编辑' : '新增'}品牌失败`,
+    })
   }
 }
 
@@ -157,12 +200,16 @@ const uploadLogo = (response: any) => {
       type="primary"
       size="default"
       icon="Plus"
-      @click="isShowDialog = true"
+      @click="() => openFormDialog()"
     >
       添加品牌
     </el-button>
     <!-- 添加品牌弹框 -->
-    <el-dialog v-model="isShowDialog" title="添加品牌" width="500">
+    <el-dialog
+      v-model="isShowDialog"
+      :title="isEdit ? '添加品牌' : '编辑品牌'"
+      width="500"
+    >
       <el-form
         :model="form"
         :rules="formRules"
@@ -172,11 +219,11 @@ const uploadLogo = (response: any) => {
         style="width: 80%"
       >
         <!-- 品牌名称 -->
-        <el-form-item label="品牌名称" prop="name">
+        <el-form-item label="品牌名称" prop="tmName">
           <el-input v-model="form.tmName" autocomplete="off" />
         </el-form-item>
         <!-- 品牌 logo -->
-        <el-form-item label="品牌LOGO" prop="logo">
+        <el-form-item label="品牌LOGO" prop="logoUrl">
           <!-- 上传图片 -->
           <el-upload
             class="avatar-uploader"
@@ -199,7 +246,9 @@ const uploadLogo = (response: any) => {
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="isShowDialog = false">取消</el-button>
-          <el-button type="primary" @click="addTrademark">确认</el-button>
+          <el-button type="primary" @click="addOrUpdateTrademark">
+            确认
+          </el-button>
         </div>
       </template>
     </el-dialog>
@@ -227,8 +276,8 @@ const uploadLogo = (response: any) => {
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
-        <template #default>
-          <el-button type="primary" icon="Edit" @click="isShowDialog = true">
+        <template #default="{ row: { id } }">
+          <el-button type="primary" icon="Edit" @click="openFormDialog(id)">
             编辑
           </el-button>
           <el-button type="danger" icon="Delete">删除</el-button>

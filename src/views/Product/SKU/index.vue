@@ -1,4 +1,4 @@
-<script setup lang="ts"></script>
+<script setup lang="ts" name="SKU"></script>
 
 <template>我是 SKU 管理</template>
 

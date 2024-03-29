@@ -1,10 +1,16 @@
-<script setup lang="ts">
-import { ref } from 'vue'
+<script setup lang="ts" name="trademark">
+import { ref, watch, reactive, onMounted } from 'vue'
 //@ts-expect-error '无组件声明文件类型'
 import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
-import { onMounted, reactive } from 'vue'
 import { getTrademarkListAPI } from '@/apis/product/trademark'
 import type { TradeMark } from '@/types/product/trademark'
+import type {
+  FormInstance,
+  FormRules,
+  UploadProps,
+  UploadRawFile,
+} from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 // 分页相关数据
 const pageData = reactive({
@@ -23,14 +29,24 @@ const tradeMarkList = ref<TradeMark[]>()
 
 // 获取品牌列表
 const getTradeMarkList = async () => {
-  const result = await getTrademarkListAPI({
+  const {
+    data: { code, data },
+  } = await getTrademarkListAPI({
     page: pageData.page,
     limit: pageData.limit,
   })
-  // 保存品牌列表
-  tradeMarkList.value = result.data.data.records
-  // 保存总条数
-  pageData.total = result.data.data.total
+  if (code === 200) {
+    // 保存品牌列表
+    tradeMarkList.value = data.records
+    // 保存总条数
+    pageData.total = data.total
+  } else {
+    // 提示信息
+    ElMessage({
+      type: 'error',
+      message: '网路异常, 请稍后再试',
+    })
+  }
 }
 
 // 组件挂载后调用
@@ -39,12 +55,97 @@ onMounted(() => {
   getTradeMarkList()
 })
 
-// 换页事件
-const handleChange = (current: number) => {
-  // 换页
-  pageData.page = current
-  // 重新渲染数据
-  getTradeMarkList()
+// 监听显示条数
+watch(
+  () => pageData.limit,
+  () => {
+    // 显示条数变化, 则当前页重置
+    pageData.page = 1
+  },
+)
+
+// 是否展示添加品牌弹框的标记
+const isShowDialog = ref<boolean>(false)
+// 表单数据
+const form = reactive<TradeMark>({
+  // 品牌 id
+  tmName: '',
+  // 品牌 logo
+  logoUrl: '',
+})
+// 表单实例
+const formRef = ref<FormInstance>()
+// 表单校验规则
+const formRules = ref<FormRules<TradeMark>>({
+  tmName: [
+    {
+      required: true,
+      message: '品牌名不能为空',
+      trigger: 'blur',
+    },
+  ],
+  logoUrl: [
+    {
+      required: true,
+      message: '请上传品牌的logo',
+    },
+  ],
+})
+
+// 新增与编辑品牌
+const addOrUpdateTrademark = (id) => {
+  if (id) {
+    // 编辑
+  } else {
+    // 新增
+  }
+}
+
+// 上传品牌封面前的回调
+const beforeUpload: UploadProps['beforeUpload'] = (rawFile: UploadRawFile) => {
+  // 文件格式校验
+  // eslint-disable-next-line no-constant-condition
+  if (
+    rawFile.type === 'image/jpeg' ||
+    rawFile.type === 'image/png' ||
+    rawFile.type === 'image/gif'
+  ) {
+    // 文件大小判断
+    if (rawFile.size / 1024 / 1024 < 4) {
+      // 允许上传文件
+      return true
+    } else {
+      // 文件大小超过指定
+      // 提示错误信息
+      ElMessage({
+        type: 'error',
+        message: '图片大小不得超过 4 MB',
+      })
+    }
+  } else {
+    // 上传文件的格式不对
+    // 提示错误信息
+    ElMessage({
+      type: 'error',
+      message: '仅支持上传格式为 jpg 、 png 及 gif 的图片',
+    })
+  }
+  return false
+}
+
+// 上传品牌封面成功的回调
+const uploadLogo = (response: any) => {
+  const { code, data } = response
+  if (code === 200) {
+    // 上传成功
+    form.logoUrl = data
+  } else {
+    // 上传失败
+    ElMessage({
+      type: 'error',
+      message: '上传封面失败',
+    })
+  }
 }
 </script>
 
@@ -52,7 +153,56 @@ const handleChange = (current: number) => {
   <!-- 品牌管理容器 -->
   <el-card shadow="hover" class="trademark">
     <!-- 顶部添加按键 -->
-    <el-button type="primary" size="default" icon="Plus">添加品牌</el-button>
+    <el-button
+      type="primary"
+      size="default"
+      icon="Plus"
+      @click="isShowDialog = true"
+    >
+      添加品牌
+    </el-button>
+    <!-- 添加品牌弹框 -->
+    <el-dialog v-model="isShowDialog" title="添加品牌" width="500">
+      <el-form
+        :model="form"
+        :rules="formRules"
+        ref="formRef"
+        label-position="left"
+        label-width="100"
+        style="width: 80%"
+      >
+        <!-- 品牌名称 -->
+        <el-form-item label="品牌名称" prop="name">
+          <el-input v-model="form.tmName" autocomplete="off" />
+        </el-form-item>
+        <!-- 品牌 logo -->
+        <el-form-item label="品牌LOGO" prop="logo">
+          <!-- 上传图片 -->
+          <el-upload
+            class="avatar-uploader"
+            action="/api/admin/product/fileUpload"
+            :show-file-list="false"
+            :on-success="uploadLogo"
+            :before-upload="beforeUpload"
+          >
+            <el-image
+              v-if="form.logoUrl"
+              :src="form.logoUrl"
+              fit="cover"
+              alt="品牌图标"
+              class="avatar"
+            />
+            <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="isShowDialog = false">取消</el-button>
+          <el-button type="primary" @click="addTrademark">确认</el-button>
+        </div>
+      </template>
+    </el-dialog>
     <!-- 表格展示区 -->
     <el-table border style="margin: 20px 0" :data="tradeMarkList">
       <el-table-column label="序号" width="80" align="center" type="index" />
@@ -76,9 +226,11 @@ const handleChange = (current: number) => {
           />
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" align="center">
         <template #default>
-          <el-button type="primary" icon="Edit">编辑</el-button>
+          <el-button type="primary" icon="Edit" @click="isShowDialog = true">
+            编辑
+          </el-button>
           <el-button type="danger" icon="Delete">删除</el-button>
         </template>
       </el-table-column>
@@ -96,7 +248,7 @@ const handleChange = (current: number) => {
         :total="pageData.total"
         prev-icon="DArrowLeft"
         next-icon="DArrowRight"
-        @change="handleChange"
+        @change="getTradeMarkList"
       />
     </el-config-provider>
   </el-card>
@@ -122,6 +274,45 @@ const handleChange = (current: number) => {
     border-radius: 8px;
     border: 1px solid #ddd;
     cursor: not-allowed;
+  }
+
+  .avatar-uploader {
+    .el-upload.el-upload--text {
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+
+      .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+        border: 1px solid var(--el-border-color);
+        border-radius: 6px;
+        transition: 0.25s all linear;
+
+        &:hover {
+          transform: translate(0px, -5px) scale(1.02);
+          box-shadow: 0 0 10px black;
+        }
+      }
+
+      .el-icon {
+        &.avatar-uploader-icon {
+          font-size: 28px;
+          color: #8c939d;
+          width: 178px;
+          height: 178px;
+          text-align: center;
+          border: 1px dashed var(--el-border-color);
+          border-radius: 6px;
+          transition: var(--el-transition-duration-fast);
+
+          &:hover {
+            border-color: var(--el-color-primary);
+          }
+        }
+      }
+    }
   }
 }
 </style>

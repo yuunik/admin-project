@@ -31,7 +31,7 @@ export type TradeMarkRes = {
 // 品牌类型
 export type TradeMark = {
   /* 品牌编号 */
-  id: number
+  id?: number
   /* 品牌名 */
   tmName: string
   /* 品牌 logo 地址*/

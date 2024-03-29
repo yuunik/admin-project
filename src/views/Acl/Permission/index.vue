@@ -1,4 +1,4 @@
-<script setup lang="ts"></script>
+<script setup lang="ts" name="Permission"></script>
 
 <template>
   <div class="permission">我是 菜单管理</div>

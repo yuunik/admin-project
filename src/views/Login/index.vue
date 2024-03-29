@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="Login">
 import { User, Lock } from '@element-plus/icons-vue'
 import { reactive, ref } from 'vue'
 import { type FormInstance, type FormRules } from 'element-plus'

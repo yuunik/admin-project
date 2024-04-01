@@ -102,7 +102,9 @@ const isEdit = ref<boolean>(false)
 // 打开表单
 const openFormDialog = async (id?: number) => {
   // 表单重置
-  await formRef.value?.resetFields()
+  form.logoUrl = ''
+  form.tmName = ''
+  form.id = 0
   // 表单重置
   if (id) {
     // 编辑模式, 回显数据
@@ -114,9 +116,10 @@ const openFormDialog = async (id?: number) => {
     if (code === 200) {
       Object.assign(form, data)
     }
+  } else {
+    // 关闭编辑模式
+    isEdit.value = false
   }
-  // 关闭编辑模式
-  isEdit.value = false
   // 打开弹框
   isShowDialog.value = true
 }

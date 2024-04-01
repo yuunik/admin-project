@@ -10,17 +10,17 @@ import {
 
 const useCategoryStore = defineStore('category', () => {
   // 一级分类列表
-  const categoryList = ref<Category>()
+  const categoryList = ref<Category[]>()
   // 所选中的一级分类的 id
   const selectedCategoryId = ref<number>()
 
   // 二级分类列表
-  const subCategoryList = ref<SubCategory>()
+  const subCategoryList = ref<SubCategory[]>()
   // 所选中的二级分类的 id
   const selectedSubCategoryId = ref<number>()
 
   // 三级分类列表
-  const thirdCategoryList = ref<ThirdCategory>()
+  const thirdCategoryList = ref<ThirdCategory[]>()
   // 所选中的三级分类的 id
   const selectedThirdCategoryId = ref<number>()
 

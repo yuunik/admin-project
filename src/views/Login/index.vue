@@ -42,13 +42,6 @@ const validatePassword = (_: any, value: any, callback: any) => {
 // 表单校验规则
 const formRules = reactive<FormRules<LoginReq>>({
   username: [
-    // {
-    //   required: true,
-    //   min: 4,
-    //   max: 10,
-    //   message: '用户名长度应在 4 - 10 位',
-    //   trigger: 'change',
-    // },
     {
       required: true,
       validator: validateUsername,
@@ -56,12 +49,6 @@ const formRules = reactive<FormRules<LoginReq>>({
     },
   ],
   password: [
-    // {
-    //   required: true,
-    //   min: 6,
-    //   message: '密码长度不能少于 6 位',
-    //   trigger: 'blur',
-    // },
     { required: true, validator: validatePassword, trigger: 'change' },
   ],
 })

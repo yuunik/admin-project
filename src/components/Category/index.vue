@@ -22,17 +22,22 @@ onMounted(() => getCategoryList())
 
 // 监听一级分类 id 的变化
 watch(selectedCategoryId, () => {
+  // 清空二级分级及三级分类
+  selectedSubCategoryId.value = undefined
+  thirdCategoryList.value = []
+  selectedThirdCategoryId.value = undefined
   // 检测一级分类 id 是否存在
   // 一级分类 id 发生变化, 则调用接口, 获取二级分类列表
   getSubCategoryList()
 })
 
-// 监听二级分类 id 的变化
-watch(selectedSubCategoryId, () => {
-  // 检测二级分类 id 是否存在
-  // 二级分类 id 发生变化, 则调用接口, 获取二级分类列表
+// 二级分类改变的回调
+const handleSubCategoryListChanged = () => {
+  // 清空三级分类
+  selectedThirdCategoryId.value = undefined
+  // 调用接口, 获取三级分类
   getThirdCategoryList()
-})
+}
 </script>
 
 <template>
@@ -59,6 +64,7 @@ watch(selectedSubCategoryId, () => {
           placeholder="请选择二级分类"
           style="width: 240px"
           v-model="selectedSubCategoryId"
+          @change="handleSubCategoryListChanged"
         >
           <el-option
             v-for="subCategory in subCategoryList"

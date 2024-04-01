@@ -4,7 +4,6 @@ import Category from './Category/index.vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const globalComponents: any = { SvgIcon, Pagination, Category }
-console.log(globalComponents)
 
 // 注册全局组件的自定义插件
 const GlobalComponentsPlugin = {

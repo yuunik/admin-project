@@ -3,7 +3,12 @@
 // 接口常量管理
 import { http } from '@/utils'
 import type { ResType } from '@/types/common'
-import type { Category, SubCategory, ThirdCategory } from '@/types/product/attr'
+import type {
+  AttrInfo,
+  Category,
+  SubCategory,
+  ThirdCategory,
+} from '@/types/product/attr'
 
 enum API {
   // 获取一级分类的地址
@@ -12,6 +17,8 @@ enum API {
   GETSUBCATEGORY_API = '/admin/product/getCategory2/',
   // 获取三级分类的地址
   GETTHIRDCATEGORY_API = '/admin/product/getCategory3/',
+  // 获取属性信息列表
+  GETATTRINFOLIST_API = '/admin/product/attrInfoList/',
 }
 
 // 获取一级分类的接口
@@ -21,13 +28,26 @@ export const getCategoryListAPI = () =>
 // 获取二级分类的接口
 export const getSubCategoryListAPI = (id: number) =>
   http<ResType<SubCategory[]>>({
-    url: API.GETSUBCATEGORY_API + `${id}`,
+    url: API.GETSUBCATEGORY_API + id,
     method: 'GET',
   })
 
 // 获取三级分类的接口
 export const getThirdCategoryListAPI = (id: number) =>
-  http<ResType<ThirdCategory>>({
-    url: API.GETTHIRDCATEGORY_API + `${id}`,
+  http<ResType<ThirdCategory[]>>({
+    url: API.GETTHIRDCATEGORY_API + id,
+    method: 'GET',
+  })
+
+// 获取属性列表的接口
+export const getAttrInfoListAPI = (
+  categoryId: number,
+  subCategoryId: number,
+  thirdCategoryId: number,
+) =>
+  http<ResType<AttrInfo[]>>({
+    url:
+      API.GETATTRINFOLIST_API +
+      `${categoryId}/${subCategoryId}/${thirdCategoryId}`,
     method: 'GET',
   })

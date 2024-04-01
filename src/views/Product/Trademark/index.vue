@@ -153,7 +153,7 @@ const addOrUpdateTrademark = async () => {
     // 关闭弹窗
     isShowDialog.value = false
     // 重新渲染数据
-    getTradeMarkList()
+    getTradeMarkList(isEdit.value ? pageData.page : (pageData.page = 1))
   } else {
     // 提示错误信息
     ElMessage({
@@ -284,6 +284,10 @@ const deleteTrademark = async (id: number) => {
           </el-button>
         </template>
       </el-table-column>
+      <!-- 空数据状态 -->
+      <template #empty>
+        <el-empty description="当前无数据" />
+      </template>
     </el-table>
     <!-- 底部分页器 -->
     <el-config-provider :locale="Chinese">

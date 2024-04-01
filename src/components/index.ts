@@ -1,15 +1,18 @@
 import SvgIcon from './SvgIcon/index.vue'
+import Pagination from './Pagination/index.vue'
+import Category from './Category/index.vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-const globalComponents = { SvgIcon }
+const globalComponents: any = { SvgIcon, Pagination, Category }
+console.log(globalComponents)
 
 // 注册全局组件的自定义插件
-const GlobalCOmponentsPlugin = {
+const GlobalComponentsPlugin = {
   install: (app: any) => {
-    Object.keys(globalComponents).forEach((key) => {
+    Object.keys(globalComponents).forEach((key) =>
       // 注册全局组件
-      app.component(key, globalComponents[key])
-    })
+      app.component(key, globalComponents[key]),
+    )
     // 注册所有 elementPlus 图标
     for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
       app.component(key, component)
@@ -17,4 +20,4 @@ const GlobalCOmponentsPlugin = {
   },
 }
 
-export default GlobalCOmponentsPlugin
+export default GlobalComponentsPlugin

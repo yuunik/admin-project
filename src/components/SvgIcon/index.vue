@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" name="SvgIcon">
 defineProps({
   // svg 图标前缀名
   prefix: {

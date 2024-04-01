@@ -1,5 +1,5 @@
 <script setup lang="ts" name="trademark">
-import { ref, watch, reactive, onMounted } from 'vue'
+import { ref, watch, reactive, onMounted, nextTick } from 'vue'
 //@ts-expect-error '无组件声明文件类型'
 import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
 import {
@@ -84,14 +84,21 @@ const formRules = ref<FormRules<TradeMark>>({
   tmName: [
     {
       required: true,
-      message: '品牌名不能为空',
+      min: 2,
+      message: '品牌名需非空且大于 2 位',
       trigger: 'blur',
     },
   ],
   logoUrl: [
     {
       required: true,
-      message: '品牌logo不能为空',
+      validator: (_: any, value: any, callback: any) => {
+        if (value.trim() !== '') {
+          callback()
+        } else {
+          callback(new Error('请上传 logo 封面'))
+        }
+      },
     },
   ],
 })
@@ -105,6 +112,10 @@ const openFormDialog = async (id?: number) => {
   form.logoUrl = ''
   form.tmName = ''
   form.id = 0
+  // 表单校验信息重置
+  nextTick(() => {
+    formRef.value!.clearValidate()
+  })
   // 表单重置
   if (id) {
     // 编辑模式, 回显数据
@@ -199,30 +210,30 @@ const uploadLogo = (response: any) => {
 }
 
 // 删除品牌
-const deleteTrademark = (id: number) => {
-  ElMessageBox.confirm('是否确认删除该品牌信息', '删除提示', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning',
-  })
-    .then(async () => {
-      // 调用接口, 删除品牌
-      const {
-        data: { code },
-      } = await deleteTrademarkAPI(id)
-      if (code === 200) {
-        // 提示成功信息
-        ElMessage({
-          type: 'success',
-          message: '删除成功',
-        })
-        // 当前页重置
-        pageData.page = 1
-        // 重新渲染数据
-        getTradeMarkList()
-      }
+const deleteTrademark = async (id: number) => {
+  try {
+    await ElMessageBox.confirm('是否确认删除该品牌信息', '删除提示', {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
     })
-    .catch(() => {})
+    const {
+      data: { code },
+    } = await deleteTrademarkAPI(id)
+    if (code === 200) {
+      // 提示成功信息
+      ElMessage({
+        type: 'success',
+        message: '删除成功',
+      })
+      // 当前页重置
+      pageData.page = 1
+      // 重新渲染数据
+      getTradeMarkList()
+    }
+  } catch (err) {
+    console.log(1)
+  }
 }
 </script>
 
@@ -242,7 +253,7 @@ const deleteTrademark = (id: number) => {
     <el-table border style="margin: 20px 0" :data="tradeMarkList">
       <el-table-column label="序号" width="80" align="center" type="index" />
       <el-table-column label="品牌名称" prop="tmName" />
-      <el-table-column label="品牌 logo">
+      <el-table-column label="品牌 logo" prop="logoUrl">
         <template #default="{ row: { logoUrl } }">
           <!-- 有图片数据 -->
           <el-image
@@ -321,7 +332,7 @@ const deleteTrademark = (id: number) => {
           <el-image
             v-if="form.logoUrl"
             :src="form.logoUrl"
-            fit="cover"
+            fit="fill"
             alt="品牌图标"
             class="avatar"
           />

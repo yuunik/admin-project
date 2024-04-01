@@ -1,5 +1,5 @@
 <script setup lang="ts" name="trademark">
-import { ref, watch, reactive, onMounted, nextTick } from 'vue'
+import { ref, watch, reactive, onMounted, nextTick, markRaw } from 'vue'
 //@ts-expect-error '无组件声明文件类型'
 import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
 import {
@@ -15,6 +15,7 @@ import type {
   UploadProps,
   UploadRawFile,
 } from 'element-plus'
+import { Delete } from '@element-plus/icons-vue'
 
 // 分页相关数据
 const pageData = reactive({
@@ -215,7 +216,8 @@ const deleteTrademark = async (id: number) => {
     await ElMessageBox.confirm('是否确认删除该品牌信息', '删除提示', {
       confirmButtonText: '确认',
       cancelButtonText: '取消',
-      type: 'warning',
+      icon: markRaw(Delete),
+      type: 'error',
     })
     const {
       data: { code },
@@ -226,13 +228,13 @@ const deleteTrademark = async (id: number) => {
         type: 'success',
         message: '删除成功',
       })
-      // 当前页重置
-      pageData.page = 1
       // 重新渲染数据
-      getTradeMarkList()
+      getTradeMarkList(
+        tradeMarkList.value!.length >= 1 ? pageData.page : pageData.page - 1,
+      )
     }
   } catch (err) {
-    console.log(1)
+    console.log(tradeMarkList.value!.length)
   }
 }
 </script>

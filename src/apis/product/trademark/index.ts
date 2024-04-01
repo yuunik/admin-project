@@ -18,7 +18,7 @@ enum API {
   // 获取品牌信息
   GETTRADEINFO_API = '/admin/product/baseTrademark/get',
   // 删除品牌
-  DELETETRADE_API = '/admin/product/baseTrademark/remove',
+  DELETETRADEMARK_API = '/admin/product/baseTrademark/remove',
 }
 
 // 获取品牌列表接口
@@ -57,6 +57,6 @@ export const getTrademarkInfoAPI = (id: number) =>
 // 删除品牌接口
 export const deleteTrademarkAPI = (id: number) =>
   http<ResType<any>>({
-    url: API.DELETETRADE_API + `/${id}`,
+    url: API.DELETETRADEMARK_API + `/${id}`,
     method: 'DELETE',
   })

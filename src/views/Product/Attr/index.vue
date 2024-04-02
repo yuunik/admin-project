@@ -241,8 +241,19 @@ const editTag = (attrValue: AttrValue, index: number) => {
             </template>
           </el-table-column>
           <el-table-column label="操作" width="100" align="center">
-            <template #default>
-              <el-button type="danger" size="default" icon="Delete" />
+            <template #default="{ $index }">
+              <el-popconfirm
+                title="是否删除该属性值"
+                confirm-button-text="确认"
+                cancel-button-text="取消"
+                icon="Delete"
+                width="220"
+                @confirm="attrFormData.attrValueList.splice($index, 1)"
+              >
+                <template #reference>
+                  <el-button type="danger" size="default" icon="Delete" />
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
           <!-- 表格没有数据时显示 -->

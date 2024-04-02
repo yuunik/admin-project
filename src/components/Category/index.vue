@@ -38,6 +38,14 @@ const handleSubCategoryListChanged = () => {
   // 调用接口, 获取三级分类
   getThirdCategoryList()
 }
+
+// 传入参数的类型约束
+interface Props {
+  isShowAddPage: boolean
+}
+
+// 接收参数
+defineProps<Props>()
 </script>
 
 <template>
@@ -49,6 +57,7 @@ const handleSubCategoryListChanged = () => {
           placeholder="请选择一级分类"
           style="width: 240px"
           v-model="selectedCategoryId"
+          :disabled="isShowAddPage"
         >
           <el-option
             v-for="category in categoryList"
@@ -65,6 +74,7 @@ const handleSubCategoryListChanged = () => {
           style="width: 240px"
           v-model="selectedSubCategoryId"
           @change="handleSubCategoryListChanged"
+          :disabled="isShowAddPage"
         >
           <el-option
             v-for="subCategory in subCategoryList"
@@ -80,6 +90,7 @@ const handleSubCategoryListChanged = () => {
           placeholder="请选择三级分类"
           style="width: 240px"
           v-model="selectedThirdCategoryId"
+          :disabled="isShowAddPage"
         >
           <el-option
             v-for="thirdCategory in thirdCategoryList"

@@ -19,6 +19,8 @@ enum API {
   GETTHIRDCATEGORY_API = '/admin/product/getCategory3/',
   // 获取属性信息列表
   GETATTRINFOLIST_API = '/admin/product/attrInfoList/',
+  // 新增或修改属性的地址
+  ADDORUPDATEATTR_API = '/admin/product/saveAttrInfo',
 }
 
 // 获取一级分类的接口
@@ -50,4 +52,12 @@ export const getAttrInfoListAPI = (
       API.GETATTRINFOLIST_API +
       `${categoryId}/${subCategoryId}/${thirdCategoryId}`,
     method: 'GET',
+  })
+
+// 新增或修改属性的接口
+export const addOrUpdateAttrInfoAPI = (data: AttrInfo) =>
+  http<ResType<any>>({
+    url: API.ADDORUPDATEATTR_API,
+    method: 'POST',
+    data,
   })

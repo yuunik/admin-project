@@ -1,9 +1,9 @@
 <script setup lang="ts" name="Attr">
-import { ref, watch } from 'vue'
-import { useCategoryStore } from '@/store'
+import { ref, watch, reactive } from 'vue'
 import { storeToRefs } from 'pinia'
-import { AttrInfo } from '@/types/product/attr'
-import { getAttrInfoListAPI } from '@/apis/product/attr'
+import { useCategoryStore } from '@/store'
+import type { AttrInfo, AttrValue } from '@/types/product/attr'
+import { addOrUpdateAttrInfoAPI, getAttrInfoListAPI } from '@/apis/product/attr'
 
 const categoryStore = useCategoryStore()
 // 解构属性
@@ -31,15 +31,59 @@ watch(selectedThirdCategoryId, () => {
 // 是否展示添加属性页面的标记
 const isShowAddPage = ref<boolean>(false)
 
-watch(
-  isShowAddPage,
-  () => {
-    console.log(isShowAddPage.value)
-  },
-  {
-    immediate: true,
-  },
-)
+// 添加属性按键的回调
+const addAttr = () => {
+  // 添加表单重置
+  Object.assign(attrFormData, {
+    attrName: '',
+    attrValueList: [],
+    categoryId: selectedThirdCategoryId.value,
+    categoryLevel: 3,
+  })
+  // 修改是否展示添加属性页面的标记
+  isShowAddPage.value = true
+}
+
+// 属性对象数据
+const attrFormData = reactive<AttrInfo>({
+  attrName: '',
+  attrValueList: [],
+  categoryId: undefined,
+  categoryLevel: 3,
+})
+
+// 是否展示属性值的标记
+const isShowAttrValue = ref<boolean>(false)
+// 添加属性值的回调
+const addAttrValue = () => {
+  isShowAttrValue.value = false
+  ;(attrFormData.attrValueList as AttrValue[]).push({ valueName: '' })
+}
+
+// 保存属性值
+const saveAttrValue = async () => {
+  console.log(attrFormData)
+  const {
+    data: { code },
+  } = await addOrUpdateAttrInfoAPI(attrFormData)
+  if (code === 200) {
+    // 提示成功信息
+    ElMessage({
+      type: 'success',
+      message: '属性添加成功',
+    })
+    // 关闭添加页面
+    isShowAddPage.value = false
+    // 重新渲染数据
+    getAttrInfoList()
+  } else {
+    // 提示错误信息
+    ElMessage({
+      type: 'error',
+      message: '属性添加失败',
+    })
+  }
+}
 </script>
 
 <template>
@@ -54,7 +98,7 @@ watch(
           size="default"
           icon="Plus"
           :disabled="!selectedThirdCategoryId"
-          @click="isShowAddPage = true"
+          @click="addAttr"
         >
           添加属性
         </el-button>
@@ -74,7 +118,7 @@ watch(
                 :key="attrValue.id"
                 style="margin-right: 10px"
               >
-                {{ attrValue.valueName }}
+                {{ (attrValue as AttrValue)?.valueName }}
               </el-tag>
             </template>
           </el-table-column>
@@ -88,25 +132,50 @@ watch(
         </el-table>
       </div>
       <div class="add-attr-card" v-show="isShowAddPage">
-        <el-form inline>
-          <el-form-item label="属性名称">
-            <el-input placeholder="请输入属性名称" />
+        <el-form inline :model="attrFormData">
+          <el-form-item label="属性名称" prop="attrName">
+            <el-input
+              placeholder="请输入属性名称"
+              v-model="attrFormData.attrName"
+            />
           </el-form-item>
         </el-form>
-        <el-button type="primary" size="default" icon="Plus">
+        <el-button
+          type="primary"
+          size="default"
+          icon="Plus"
+          @click="addAttrValue"
+          :disabled="!attrFormData.attrName"
+        >
           添加属性值
         </el-button>
         <el-button icon="CloseBold" @click="isShowAddPage = false">
           取消
         </el-button>
-        <el-table border style="margin-top: 20px">
+        <el-table
+          border
+          style="margin: 20px 0"
+          :data="attrFormData.attrValueList"
+        >
           <el-table-column
             label="序号"
             type="index"
             align="center"
             width="80"
           />
-          <el-table-column label="属性值"></el-table-column>
+          <el-table-column label="属性值">
+            <template #default="{ row: attrValue }">
+              <el-input
+                placeholder="请输入属性值的名称"
+                v-model="attrValue.valueName"
+                v-show="!isShowAttrValue"
+                @blur="isShowAttrValue = true"
+              />
+              <el-tag v-show="isShowAttrValue">
+                {{ (attrValue as AttrValue).valueName }}
+              </el-tag>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="100" align="center">
             <template #default>
               <el-button type="danger" size="default" icon="Delete" />
@@ -117,7 +186,14 @@ watch(
             <el-empty description="无数据" />
           </template>
         </el-table>
-        <el-button type="primary" size="default" icon="House">保存</el-button>
+        <el-button
+          type="primary"
+          size="default"
+          icon="House"
+          @click="saveAttrValue"
+        >
+          保存
+        </el-button>
         <el-button icon="CloseBold" @click="isShowAddPage = false">
           取消
         </el-button>

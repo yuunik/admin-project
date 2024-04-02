@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useCategoryStore } from '@/store'
 import type { AttrInfo, AttrValue } from '@/types/product/attr'
 import { addOrUpdateAttrInfoAPI, getAttrInfoListAPI } from '@/apis/product/attr'
+import { ElMessage } from 'element-plus'
 
 const categoryStore = useCategoryStore()
 // 解构属性
@@ -52,17 +53,18 @@ const attrFormData = reactive<AttrInfo>({
   categoryLevel: 3,
 })
 
-// 是否展示属性值的标记
-const isShowAttrValue = ref<boolean>(false)
 // 添加属性值的回调
 const addAttrValue = () => {
-  isShowAttrValue.value = false
-  ;(attrFormData.attrValueList as AttrValue[]).push({ valueName: '' })
+  ;(attrFormData.attrValueList as AttrValue[]).push({
+    valueName: '',
+    // 是否展示属性值的标记
+    isShowAttrValue: false,
+  })
 }
 
 // 保存属性值
 const saveAttrValue = async () => {
-  console.log(attrFormData)
+  // 调用接口, 添加属性值
   const {
     data: { code },
   } = await addOrUpdateAttrInfoAPI(attrFormData)
@@ -70,7 +72,7 @@ const saveAttrValue = async () => {
     // 提示成功信息
     ElMessage({
       type: 'success',
-      message: '属性添加成功',
+      message: attrFormData.id ? '属性编辑成功' : '属性添加成功',
     })
     // 关闭添加页面
     isShowAddPage.value = false
@@ -80,9 +82,41 @@ const saveAttrValue = async () => {
     // 提示错误信息
     ElMessage({
       type: 'error',
-      message: '属性添加失败',
+      message: attrFormData.id ? '属性编辑失败' : '属性添加失败',
     })
   }
+}
+
+// 属性值输入框失焦后的回调
+const showAttr = (attrValue: AttrValue, index: number) => {
+  // 属性值非空判断
+  if (attrValue.valueName.trim() === '') {
+    // 删除空的属性值对象
+    attrFormData.attrValueList.splice(index, 1)
+    // 提示错误信息
+    return ElMessage({
+      type: 'error',
+      message: '属性值不能为空',
+    })
+  }
+  // 属性值是否重复的判断
+  const foundItem = attrFormData.attrValueList.find((item) => {
+    // 排除待检索的元素
+    if (item !== attrValue) {
+      return item.valueName === attrValue.valueName
+    }
+  })
+  if (foundItem) {
+    // 删除为空的 attrValue 对象
+    attrFormData.attrValueList.splice(index, 1)
+    // 提示错误信息
+    return ElMessage({
+      type: 'error',
+      message: '属性值不能为空',
+    })
+  }
+  // 展示属性值
+  attrValue.isShowAttrValue = true
 }
 </script>
 
@@ -164,15 +198,22 @@ const saveAttrValue = async () => {
             width="80"
           />
           <el-table-column label="属性值">
-            <template #default="{ row: attrValue }">
+            <template
+              #default="{ row, $index }: { row: AttrValue; $index: number }"
+            >
               <el-input
                 placeholder="请输入属性值的名称"
-                v-model="attrValue.valueName"
-                v-show="!isShowAttrValue"
-                @blur="isShowAttrValue = true"
+                v-model="row.valueName"
+                v-show="!row.isShowAttrValue"
+                @blur="showAttr(row, $index)"
               />
-              <el-tag v-show="isShowAttrValue">
-                {{ (attrValue as AttrValue).valueName }}
+              <el-tag
+                v-show="row.isShowAttrValue"
+                @click="row.isShowAttrValue = false"
+                style="cursor: pointer"
+                class="attrValue-tag"
+              >
+                {{ row.valueName }}
               </el-tag>
             </template>
           </el-table-column>
@@ -191,6 +232,7 @@ const saveAttrValue = async () => {
           size="default"
           icon="House"
           @click="saveAttrValue"
+          :disabled="attrFormData.attrValueList.length === 0"
         >
           保存
         </el-button>
@@ -206,6 +248,16 @@ const saveAttrValue = async () => {
 .attr {
   .attr-content {
     margin-top: 10px;
+
+    .attrValue-tag {
+      transition: 0.25s all linear;
+
+      &:hover {
+        border: 1px solid #ce8f1c;
+        color: #ce8f1c;
+        background-color: rgba(206, 143, 28, 0.24);
+      }
+    }
   }
 }
 </style>

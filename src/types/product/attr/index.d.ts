@@ -50,4 +50,6 @@ export type AttrValue = {
   id?: number
   /* 属性值名称 */
   valueName: string
+  /* 控制属性值的显示模式与编辑模式 */
+  isShowAttrValue?: boolean
 }

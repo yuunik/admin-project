@@ -1,10 +1,10 @@
 <script setup lang="ts" name="Attr">
-import { ref, watch, reactive } from 'vue'
+import { ref, watch, reactive, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
+import type { InputInstance } from 'element-plus'
 import { useCategoryStore } from '@/store'
 import type { AttrInfo, AttrValue } from '@/types/product/attr'
 import { addOrUpdateAttrInfoAPI, getAttrInfoListAPI } from '@/apis/product/attr'
-import { ElMessage } from 'element-plus'
 
 const categoryStore = useCategoryStore()
 // 解构属性
@@ -55,10 +55,16 @@ const attrFormData = reactive<AttrInfo>({
 
 // 添加属性值的回调
 const addAttrValue = () => {
+  // 添加属性值的模板对象
   ;(attrFormData.attrValueList as AttrValue[]).push({
     valueName: '',
     // 是否展示属性值的标记
     isShowAttrValue: false,
+  })
+  // 属性值输入框获取焦点
+  nextTick(() => {
+    // nextTick ---> 当响应式数据发生变化完成后, 才会获取更新的 dom
+    attrValueInputRef.value[attrFormData.attrValueList.length - 1].focus()
   })
 }
 
@@ -117,6 +123,19 @@ const showAttr = (attrValue: AttrValue, index: number) => {
   }
   // 展示属性值
   attrValue.isShowAttrValue = true
+}
+
+// 添加属性值的表单实例
+const attrValueInputRef = ref<HTMLInputElement[]>([])
+
+// 编辑 属性值
+const editTag = (attrValue: AttrValue, index: number) => {
+  // 修改为编辑模式
+  attrValue.isShowAttrValue = false
+  // 输入框获取焦点
+  nextTick(() => {
+    attrValueInputRef.value[index].focus()
+  })
 }
 </script>
 
@@ -206,10 +225,14 @@ const showAttr = (attrValue: AttrValue, index: number) => {
                 v-model="row.valueName"
                 v-show="!row.isShowAttrValue"
                 @blur="showAttr(row, $index)"
+                :ref="
+                  (element: HTMLInputElement) =>
+                    (attrValueInputRef[$index] = element)
+                "
               />
               <el-tag
                 v-show="row.isShowAttrValue"
-                @click="row.isShowAttrValue = false"
+                @click="editTag(row, $index)"
                 style="cursor: pointer"
                 class="attrValue-tag"
               >

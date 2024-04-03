@@ -1,6 +1,9 @@
 <script setup lang="ts" name="Menu">
 import { useRouter } from 'vue-router'
+import { useLayoutSettingStore, useUserStore } from '@/store'
+import { storeToRefs } from 'pinia'
 import Menu from '@/views/Layout/components/Menu/index.vue'
+import { watch } from 'vue'
 
 interface Props {
   menuList: any
@@ -15,6 +18,11 @@ const goMenu = (menu: any) => {
   // router.push(menu.index)
   router.push(menu.index)
 }
+
+// 获取状态管理库
+const layoutSettingStore = useLayoutSettingStore()
+// 获取是否折叠的标记
+const { isFold } = storeToRefs(layoutSettingStore)
 </script>
 
 <template>

@@ -21,6 +21,8 @@ enum API {
   GETATTRINFOLIST_API = '/admin/product/attrInfoList/',
   // 新增或修改属性的地址
   ADDORUPDATEATTR_API = '/admin/product/saveAttrInfo',
+  // 删除属性的地址
+  DELETEATTR_API = '/admin/product/deleteAttr/',
 }
 
 // 获取一级分类的接口
@@ -60,4 +62,11 @@ export const addOrUpdateAttrInfoAPI = (data: AttrInfo) =>
     url: API.ADDORUPDATEATTR_API,
     method: 'POST',
     data,
+  })
+
+// 删除属性的接口
+export const deleteAttrInfoAPI = (id: number) =>
+  http<ResType<any>>({
+    url: API.DELETEATTR_API + id,
+    method: 'DELETE',
   })

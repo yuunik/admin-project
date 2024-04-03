@@ -1,9 +1,13 @@
 <script setup lang="ts" name="Attr">
-import { ref, watch, reactive, nextTick } from 'vue'
+import { ref, watch, reactive, nextTick, onBeforeUnmount } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCategoryStore } from '@/store'
 import type { AttrInfo, AttrValue } from '@/types/product/attr'
-import { addOrUpdateAttrInfoAPI, getAttrInfoListAPI } from '@/apis/product/attr'
+import {
+  addOrUpdateAttrInfoAPI,
+  deleteAttrInfoAPI,
+  getAttrInfoListAPI,
+} from '@/apis/product/attr'
 
 const categoryStore = useCategoryStore()
 // 解构属性
@@ -150,7 +154,7 @@ const deleteAttrValue = async (index: number) => {
 }
 
 // 编辑属性
-const editAttr = (attr: AttrInfo) => {
+const editAttrInfo = (attrInfo: AttrInfo) => {
   // 重置表单
   Object.assign(attrFormData, {
     attrName: '',
@@ -162,12 +166,40 @@ const editAttr = (attr: AttrInfo) => {
   isShowAddPage.value = true
   // 显示所编辑的属性对象信息
   // 解决浅拷贝带来的问题
-  Object.assign(attrFormData, JSON.parse(JSON.stringify(attr)))
+  Object.assign(attrFormData, JSON.parse(JSON.stringify(attrInfo)))
   // 属性对象中所有属性值为阅读模式
   attrFormData.attrValueList.forEach(
     (attrValue) => (attrValue.isShowAttrValue = true),
   )
 }
+
+// 删除属性
+const deleteAttrInfo = async (attrId: number) => {
+  const {
+    data: { code },
+  } = await deleteAttrInfoAPI(attrId)
+  if (code === 200) {
+    // 删除成功
+    ElMessage({
+      type: 'success',
+      message: '属性删除成功',
+    })
+    // 重新渲染页面
+    getAttrInfoList()
+  } else {
+    // 删除失败
+    ElMessage({
+      type: 'error',
+      message: '属性删除失败',
+    })
+  }
+}
+
+// 组件卸载前执行
+onBeforeUnmount(() => {
+  // 清除分类的状态管理库中的所有数据
+  categoryStore.$reset()
+})
 </script>
 
 <template>
@@ -212,9 +244,19 @@ const editAttr = (attr: AttrInfo) => {
                 type="primary"
                 size="default"
                 icon="Edit"
-                @click="editAttr(row)"
+                @click="editAttrInfo(row)"
               />
-              <el-button type="danger" size="default" icon="Delete" />
+              <el-popconfirm
+                title="是否删除该属性"
+                confirm-button-text="确认"
+                cancel-button-text="取消"
+                icon="Delete"
+                @confirm="deleteAttrInfo(row.id as number)"
+              >
+                <template #reference>
+                  <el-button type="danger" size="default" icon="Delete" />
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
           <template #empty><el-empty description="无数据" /></template>

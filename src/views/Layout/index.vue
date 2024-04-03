@@ -59,6 +59,9 @@ const { isFold } = storeToRefs(layoutSettingStore)
 
     &.fold {
       width: $fold-menu-width;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
     .menu-list {

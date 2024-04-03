@@ -11,7 +11,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
 </script>
 
 <template>
-  <div class="logo-container">
+  <div class="logo-container" :class="{ fold: isFold }">
     <img :src="logo" :alt="websiteName" class="logo" v-if="isLoadingLogo" />
     <strong class="website-name" v-show="!isFold">{{ websiteName }}</strong>
   </div>
@@ -24,6 +24,10 @@ const { isFold } = storeToRefs(layoutSettingStore)
   padding-left: 10px;
   box-sizing: border-box;
   height: $base-menu-logo-height;
+
+  &.fold {
+    padding: 0;
+  }
 
   img {
     width: 50px;

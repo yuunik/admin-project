@@ -63,7 +63,6 @@ const { isFold } = storeToRefs(layoutSettingStore)
       justify-content: center;
       flex-wrap: wrap;
     }
-
     .menu-list {
       height: calc(100vh - $base-menu-logo-height);
       color: #fff;

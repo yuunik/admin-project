@@ -33,14 +33,18 @@ const useCategoryStore = defineStore('category', () => {
 
   // 获取二级分类
   const getSubCategoryList = async () => {
-    const result = await getSubCategoryListAPI(selectedCategoryId.value)
+    const result = await getSubCategoryListAPI(
+      selectedCategoryId.value as number,
+    )
     // 保存一级分类
     subCategoryList.value = result.data.data
   }
 
   // 获取一级分类
   const getThirdCategoryList = async () => {
-    const result = await getThirdCategoryListAPI(selectedSubCategoryId.value)
+    const result = await getThirdCategoryListAPI(
+      selectedSubCategoryId.value as number,
+    )
     // 保存一级分类
     thirdCategoryList.value = result.data.data
   }

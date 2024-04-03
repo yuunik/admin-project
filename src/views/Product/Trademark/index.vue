@@ -1,14 +1,8 @@
 <script setup lang="ts" name="trademark">
 import { ref, watch, reactive, onMounted, nextTick, markRaw } from 'vue'
+import type { Ref } from 'vue'
 //@ts-expect-error '无组件声明文件类型'
 import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
-import {
-  addOrUpdateTrademarkAPI,
-  getTrademarkListAPI,
-  getTrademarkInfoAPI,
-  deleteTrademarkAPI,
-} from '@/apis/product/trademark'
-import type { TradeMark } from '@/types/product/trademark'
 import type {
   FormInstance,
   FormRules,
@@ -16,17 +10,41 @@ import type {
   UploadRawFile,
 } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
+import type { TradeMark } from '@/types/product/trademark'
+import type { PageData } from '@/types/common'
+import {
+  addOrUpdateTrademarkAPI,
+  getTrademarkListAPI,
+  getTrademarkInfoAPI,
+  deleteTrademarkAPI,
+} from '@/apis/product/trademark'
 
 // 分页相关数据
-const pageData = reactive({
-  // 当前页
-  page: 1,
-  // 每页展示条数
-  limit: 4,
-  // 每页展示条数选项
-  pageSizes: [2, 4, 6, 8, 10],
-  // 数据总条数
-  total: 0,
+// const pageData = reactive({
+//   // 当前页
+//   page: 1,
+//   // 每页展示条数
+//   limit: 4,
+//   // 每页展示条数选项
+//   pageSizes: [2, 4, 6, 8, 10],
+//   // 数据总条数
+//   total: 0,
+// })
+
+// 分页器模板对象
+const paginationRef = ref<{
+  pageData: PageData
+}>()
+let pageData = ref<PageData>()
+// 组件挂载后调用
+
+onMounted(async () => {
+  // 获取分页数据
+  await (() => {
+    pageData.value = paginationRef.value!.pageData
+  })()
+  // 获取品牌列表
+  getTradeMarkList()
 })
 
 // 品牌列表
@@ -37,14 +55,16 @@ const getTradeMarkList = async () => {
   const {
     data: { code, data },
   } = await getTrademarkListAPI({
-    page: pageData.page,
-    limit: pageData.limit,
+    page: pageData.value?.page as number,
+    limit: pageData.value?.limit as number,
   })
   if (code === 200) {
     // 保存品牌列表
     tradeMarkList.value = data.records
     // 保存总条数
-    pageData.total = data.total
+    if (pageData.value) {
+      pageData.value.total = data.total
+    }
   } else {
     // 提示信息
     ElMessage({
@@ -54,18 +74,14 @@ const getTradeMarkList = async () => {
   }
 }
 
-// 组件挂载后调用
-onMounted(() => {
-  // 获取品牌列表
-  getTradeMarkList()
-})
-
 // 监听显示条数
 watch(
-  () => pageData.limit,
+  () => pageData.value?.limit,
   () => {
-    // 显示条数变化, 则当前页重置
-    pageData.page = 1
+    if (pageData.value) {
+      // 显示条数变化, 则当前页重置
+      pageData.value.page = 1
+    }
   },
 )
 
@@ -153,7 +169,12 @@ const addOrUpdateTrademark = async () => {
     // 关闭弹窗
     isShowDialog.value = false
     // 重新渲染数据
-    getTradeMarkList(isEdit.value ? pageData.page : (pageData.page = 1))
+    if (pageData.value) {
+      // 编辑模式 ---> 留在当前页
+      // 新增模式 ---> 回到第 1 页
+      pageData.value.page = isEdit.value ? pageData.value.page : 1
+      getTradeMarkList()
+    }
   } else {
     // 提示错误信息
     ElMessage({
@@ -229,9 +250,13 @@ const deleteTrademark = async (id: number) => {
         message: '删除成功',
       })
       // 重新渲染数据
-      getTradeMarkList(
-        tradeMarkList.value!.length >= 1 ? pageData.page : pageData.page - 1,
-      )
+      if (pageData.value) {
+        ;(pageData.value.page =
+          tradeMarkList.value!.length >= 1
+            ? pageData.value.page
+            : pageData.value.page - 1),
+          getTradeMarkList()
+      }
     }
   } catch (err) {
     console.log(tradeMarkList.value!.length)
@@ -290,21 +315,22 @@ const deleteTrademark = async (id: number) => {
       </template>
     </el-table>
     <!-- 底部分页器 -->
-    <el-config-provider :locale="Chinese">
-      <el-pagination
-        v-model:current-page="pageData.page"
-        v-model:page-size="pageData.limit"
-        :page-sizes="pageData.pageSizes"
-        :small="false"
-        :disabled="false"
-        :background="true"
-        layout="prev, pager, next, jumper, -> , total, sizes"
-        :total="pageData.total"
-        prev-icon="DArrowLeft"
-        next-icon="DArrowRight"
-        @change="getTradeMarkList"
-      />
-    </el-config-provider>
+    <!--<el-config-provider :locale="Chinese">-->
+    <!--  <el-pagination-->
+    <!--    v-model:current-page="pageData.page"-->
+    <!--    v-model:page-size="pageData.limit"-->
+    <!--    :page-sizes="pageData.pageSizes"-->
+    <!--    :small="false"-->
+    <!--    :disabled="false"-->
+    <!--    :background="true"-->
+    <!--    layout="prev, pager, next, jumper, -> , total, sizes"-->
+    <!--    :total="pageData.total"-->
+    <!--    prev-icon="DArrowLeft"-->
+    <!--    next-icon="DArrowRight"-->
+    <!--    @change="getTradeMarkList"-->
+    <!--  />-->
+    <!--</el-config-provider>-->
+    <Pagination :getList="getTradeMarkList" ref="paginationRef" />
   </el-card>
 
   <!-- 添加品牌弹框 -->

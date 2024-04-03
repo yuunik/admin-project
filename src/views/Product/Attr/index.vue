@@ -1,7 +1,6 @@
 <script setup lang="ts" name="Attr">
 import { ref, watch, reactive, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
-import type { InputInstance } from 'element-plus'
 import { useCategoryStore } from '@/store'
 import type { AttrInfo, AttrValue } from '@/types/product/attr'
 import { addOrUpdateAttrInfoAPI, getAttrInfoListAPI } from '@/apis/product/attr'
@@ -36,6 +35,7 @@ const isShowAddPage = ref<boolean>(false)
 const addAttr = () => {
   // 添加表单重置
   Object.assign(attrFormData, {
+    id: undefined,
     attrName: '',
     attrValueList: [],
     categoryId: selectedThirdCategoryId.value,
@@ -46,7 +46,7 @@ const addAttr = () => {
 }
 
 // 属性对象数据
-const attrFormData = reactive<AttrInfo>({
+let attrFormData = reactive<AttrInfo>({
   attrName: '',
   attrValueList: [],
   categoryId: undefined,
@@ -137,6 +137,37 @@ const editTag = (attrValue: AttrValue, index: number) => {
     attrValueInputRef.value[index].focus()
   })
 }
+
+// 删除属性值
+const deleteAttrValue = async (index: number) => {
+  // 根据索引值删除属性值
+  await attrFormData.attrValueList.splice(index, 1)
+  // 提示成功信息
+  ElMessage({
+    type: 'success',
+    message: '属性值删除成功',
+  })
+}
+
+// 编辑属性
+const editAttr = (attr: AttrInfo) => {
+  // 重置表单
+  Object.assign(attrFormData, {
+    attrName: '',
+    attrValueList: [],
+    categoryId: undefined,
+    categoryLevel: 3,
+  })
+  // 打开编辑
+  isShowAddPage.value = true
+  // 显示所编辑的属性对象信息
+  // 解决浅拷贝带来的问题
+  Object.assign(attrFormData, JSON.parse(JSON.stringify(attr)))
+  // 属性对象中所有属性值为阅读模式
+  attrFormData.attrValueList.forEach(
+    (attrValue) => (attrValue.isShowAttrValue = true),
+  )
+}
 </script>
 
 <template>
@@ -176,8 +207,13 @@ const editTag = (attrValue: AttrValue, index: number) => {
             </template>
           </el-table-column>
           <el-table-column label="操作" width="250" align="center">
-            <template #default>
-              <el-button type="primary" size="default" icon="Edit" />
+            <template #default="{ row }: { row: AttrInfo }">
+              <el-button
+                type="primary"
+                size="default"
+                icon="Edit"
+                @click="editAttr(row)"
+              />
               <el-button type="danger" size="default" icon="Delete" />
             </template>
           </el-table-column>
@@ -248,7 +284,7 @@ const editTag = (attrValue: AttrValue, index: number) => {
                 cancel-button-text="取消"
                 icon="Delete"
                 width="220"
-                @confirm="attrFormData.attrValueList.splice($index, 1)"
+                @confirm="deleteAttrValue($index)"
               >
                 <template #reference>
                   <el-button type="danger" size="default" icon="Delete" />

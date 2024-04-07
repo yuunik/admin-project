@@ -2,8 +2,15 @@
 
 // SPU 数据类型
 export type SPU = {
-  /* SPU 编号 */
   id: number
-  /* SPU 名称 */
-  name: string
+  /* spu 名称 */
+  spuName: string
+  /* spu 介绍 */
+  description: string
+  /* 所属的三级分类 */
+  category3Id: number
+  tmId: number
+  spuSaleAttrList?: string[]
+  spuImageList?: string[]
+  spuPosterList?: string[]
 }

@@ -10,5 +10,9 @@ enum API {
 }
 
 // 获取 SPU 列表的接口
-export const getSPUListAPI = () =>
-  http<ResType<SPU[]>>({ url: API.GETLIST_API, method: 'GET' })
+export const getSPUListAPI = (thirdCategoryId: number) =>
+  http<ResType<SPU[]>>({
+    url: API.GETLIST_API,
+    method: 'GET',
+    data: { category3Id: thirdCategoryId },
+  })

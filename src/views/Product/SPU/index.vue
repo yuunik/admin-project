@@ -1,5 +1,5 @@
 <script setup lang="ts" name="SPU">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import type { PageData } from '@/types/common'
 import { getSPUListAPI } from '@/apis/product/spu'
 import type { SPU } from '@/types/product/spu'
@@ -30,35 +30,29 @@ onMounted(() => {
 
 // SPU 列表
 const spuList = ref<SPU[]>()
+// 获取三级分类的id
+const categoryStore = useCategoryStore()
+const { selectedThirdCategoryId } = storeToRefs(categoryStore)
 const getSPUList = async () => {
   const {
     data: { code, data },
-  } = await getSPUListAPI()
+  } = await getSPUListAPI(selectedThirdCategoryId.value as number)
   if (code === 200) {
     // 保存列表
     spuList.value = data
   }
 }
 
-// 获取分类模块的状态管理库
-const categoryStore = useCategoryStore()
-// 解构属性
-const { selectedCategoryId, selectedSubCategoryId, selectedThirdCategoryId } =
-  storeToRefs(categoryStore)
-// 解构方法
-const { getCategoryList, getSubCategoryList, getThirdCategoryList } =
-  categoryStore
-
-// 组件卸载前执行
-onBeforeUnmount(() => {
-  // 重置分类模块的状态管理库的所有数据
-  categoryStore.$reset()
+// 监听三级分类的变化
+watch(selectedThirdCategoryId, () => {
+  // 调用接口, 获取所属三级分类的 spu 信息列表
+  getSPUList()
 })
 </script>
 
 <template>
   <!-- 分类选择 -->
-  <Category />
+  <Category :isShowAddPage="false" />
   <el-card style="margin-top: 10px">
     <el-button type="primary" size="default" icon="Plus" plain>
       添加SPU

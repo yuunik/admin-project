@@ -5,6 +5,8 @@ import type { PageData } from '@/types/common'
 import { getSPUListAPI } from '@/apis/product/spu'
 import type { SPU } from '@/types/product/spu'
 import { useCategoryStore } from '@/store'
+import SPUForm from './components/SPUForm/index.vue'
+import SKUForm from './components/SKUForm/index.vue'
 
 // 分页器模板对象
 const paginationRef = ref<{
@@ -56,6 +58,14 @@ watch(selectedThirdCategoryId, () => {
   // 调用接口, 获取所属三级分类的 spu 信息列表
   getSPUList()
 })
+
+// 展示不同显示模式的变量
+const scene = ref<number>(1)
+
+// 修改显示模式
+const changeScene = (value: number) => {
+  scene.value = value
+}
 </script>
 
 <template>
@@ -63,39 +73,54 @@ watch(selectedThirdCategoryId, () => {
   <Category :isShowAddPage="false" />
   <!-- spu 展示区 -->
   <el-card style="margin-top: 10px">
-    <!-- 添加 spu 按键 -->
-    <el-button
-      type="primary"
-      size="default"
-      icon="Plus"
-      plain
-      :disabled="!selectedThirdCategoryId"
-    >
-      添加SPU
-    </el-button>
-    <!-- spu 表格展示区 -->
-    <el-table border style="margin: 20px 0" :data="spuList">
-      <el-table-column label="序号" align="center" width="100" type="index" />
-      <el-table-column label="SPU名称" prop="spuName" />
-      <el-table-column label="SPU描述" prop="description" />
-      <el-table-column label="操作" align="center">
-        <template #default>
-          <!-- 添加 spu -->
-          <el-button type="primary" size="default" icon="Plus" plain />
-          <!-- 编辑 spu -->
-          <el-button type="warning" size="default" icon="Edit" plain />
-          <!-- 查看 spu 信息 -->
-          <el-button type="info" size="default" icon="InfoFilled" plain />
-          <!-- 删除 spu -->
-          <el-button type="danger" size="default" icon="Delete" plain />
+    <div class="info-content" v-show="scene === 0">
+      <!-- 添加 spu 按键 -->
+      <el-button
+        type="primary"
+        size="default"
+        icon="Plus"
+        plain
+        :disabled="!selectedThirdCategoryId"
+        @click="scene = 1"
+      >
+        添加SPU
+      </el-button>
+      <!-- spu 表格展示区 -->
+      <el-table border style="margin: 20px 0" :data="spuList">
+        <el-table-column label="序号" align="center" width="100" type="index" />
+        <el-table-column label="SPU名称" prop="spuName" />
+        <el-table-column label="SPU描述" prop="description" />
+        <el-table-column label="操作" align="center">
+          <template #default>
+            <!-- 添加 spu -->
+            <el-button type="primary" size="default" icon="Plus" plain />
+            <!-- 编辑 spu -->
+            <el-button
+              type="warning"
+              size="default"
+              icon="Edit"
+              plain
+              @click="scene = 1"
+            />
+            <!-- 查看 spu 信息 -->
+            <el-button type="info" size="default" icon="InfoFilled" plain />
+            <!-- 删除 spu -->
+            <el-button type="danger" size="default" icon="Delete" plain />
+          </template>
+        </el-table-column>
+        <template #empty>
+          <el-empty description="无数据" />
         </template>
-      </el-table-column>
-      <template #empty>
-        <el-empty description="无数据" />
-      </template>
-    </el-table>
-    <!-- 分页器 -->
-    <Pagination :getList="getSPUList" ref="paginationRef" />
+      </el-table>
+      <!-- 分页器 -->
+      <Pagination :getList="getSPUList" ref="paginationRef" />
+    </div>
+    <SPUForm
+      class="spu-content"
+      v-show="scene === 1"
+      @changeScene="changeScene"
+    />
+    <SKUForm class="sku-content" v-show="scene === 2" />
   </el-card>
 </template>
 

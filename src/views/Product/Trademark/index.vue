@@ -315,21 +315,6 @@ const deleteTrademark = async (id: number) => {
       </template>
     </el-table>
     <!-- 底部分页器 -->
-    <!--<el-config-provider :locale="Chinese">-->
-    <!--  <el-pagination-->
-    <!--    v-model:current-page="pageData.page"-->
-    <!--    v-model:page-size="pageData.limit"-->
-    <!--    :page-sizes="pageData.pageSizes"-->
-    <!--    :small="false"-->
-    <!--    :disabled="false"-->
-    <!--    :background="true"-->
-    <!--    layout="prev, pager, next, jumper, -> , total, sizes"-->
-    <!--    :total="pageData.total"-->
-    <!--    prev-icon="DArrowLeft"-->
-    <!--    next-icon="DArrowRight"-->
-    <!--    @change="getTradeMarkList"-->
-    <!--  />-->
-    <!--</el-config-provider>-->
     <Pagination :getList="getTradeMarkList" ref="paginationRef" />
   </el-card>
 
@@ -355,7 +340,7 @@ const deleteTrademark = async (id: number) => {
       <el-form-item label="品牌LOGO" prop="logoUrl">
         <!-- 上传图片 -->
         <el-upload
-          class="avatar-uploader"
+          class="logo-uploader"
           action="/api/admin/product/fileUpload"
           :show-file-list="false"
           :on-success="uploadLogo"
@@ -368,7 +353,7 @@ const deleteTrademark = async (id: number) => {
             alt="品牌图标"
             class="avatar"
           />
-          <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
+          <el-icon v-else class="logo-uploader-icon"><Upload /></el-icon>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -403,7 +388,7 @@ const deleteTrademark = async (id: number) => {
     cursor: not-allowed;
   }
 }
-.avatar-uploader {
+.logo-uploader {
   .el-upload.el-upload--text {
     cursor: pointer;
     position: relative;
@@ -424,7 +409,7 @@ const deleteTrademark = async (id: number) => {
     }
 
     .el-icon {
-      &.avatar-uploader-icon {
+      &.logo-uploader-icon {
         font-size: 28px;
         color: #8c939d;
         width: 178px;

@@ -39,7 +39,7 @@ const handleSubCategoryListChanged = () => {
   getThirdCategoryList()
 }
 
-// 传入参数的类型约束
+// 对传入参数进行类型声明
 interface Props {
   isShowAddPage: boolean
 }

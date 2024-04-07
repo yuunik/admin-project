@@ -1,11 +1,105 @@
-<script setup lang="ts">
+<script setup lang="ts" name="SPUForm">
 // 对传入的自定义函数进行类型声明
+import { ref } from 'vue'
+import {
+  getImgListAPI,
+  getSalesPropertyListAPI,
+  getSalesPropertyListByIdAPI,
+  getTrademarkListAPI,
+} from '@/apis/product/spu'
+import type { TradeMark } from '@/types/product/trademark'
+import type { SPU, SPUImage } from '@/types/product/spu'
+import type { SalesProperty } from '@/types/product/spu'
+import { ResSalesAttr } from '@/types/product/spu'
+import { Logger } from 'sass'
+
 interface Emits {
   // 修改显示模式
   (e: 'changeScene', scene: number): void
 }
 
 const emit = defineEmits<Emits>()
+
+// 品牌列表
+const trademarkList = ref<TradeMark[]>()
+// 获取品牌列表
+const getTrademarkList = async () => {
+  const {
+    data: { code, data },
+  } = await getTrademarkListAPI()
+  if (code === 200) {
+    // 保存品牌列表
+    trademarkList.value = data
+  }
+}
+
+// 图片列表
+const imgList = ref<SPUImage[]>()
+// 获取所属 spu 下的图片列表
+const getImgList = async (spuId: number) => {
+  const {
+    data: { code, data },
+  } = await getImgListAPI(spuId)
+  if (code === 200) {
+    // 保存图片列表
+    imgList.value = data
+  }
+}
+
+// 销售属性列表
+const salesPropertyList = ref<SalesProperty[]>()
+// 获取销售属性列表
+const getSalesPropertyList = async () => {
+  const {
+    data: { code, data },
+  } = await getSalesPropertyListAPI()
+  if (code === 200) {
+    // 保存销售属性列表
+    salesPropertyList.value = data
+  }
+}
+
+// 已有的销售属性列表
+const ownSalesPropertyList = ref<ResSalesAttr[]>()
+// 获取已有的销售属性列表
+const getOwnSalesPropertyList = async (spuId: number) => {
+  const {
+    data: { code, data },
+  } = await getSalesPropertyListByIdAPI(spuId)
+  if (code === 200) {
+    // 保存已有的销售属性列表
+    ownSalesPropertyList.value = data
+  }
+}
+
+// spu 数据对象
+const spuData = ref<SPU>()
+// 数据初始化
+const initData = async (spu: SPU) => {
+  await Promise.all([
+    getTrademarkList(),
+    getImgList(spu.id as number),
+    getSalesPropertyList(),
+    getOwnSalesPropertyList(spu.id as number),
+  ])
+  // 重置 spu 数据
+  Object.assign(spu, {
+    spuImageList: imgList.value,
+    spuSaleAttrList: ownSalesPropertyList.value,
+  })
+  spuData.value = spu
+}
+
+// 对向外暴露的属性与方法进行类型申明
+interface Expose {
+  // 数据方法
+  initData: (spu: SPU) => void
+}
+
+// 对外暴露属性与方法
+defineExpose<Expose>({
+  initData,
+})
 </script>
 
 <template>
@@ -15,11 +109,12 @@ const emit = defineEmits<Emits>()
     </el-form-item>
     <el-form-item label="SPU 品牌" style="width: 250px">
       <el-select placeholder="请选择品牌">
-        <el-option value="huawei" label="华为" />
-        <el-option value="xiaomi" label="小米" />
-        <el-option value="oneplus" label="一加" />
-        <el-option value="vivo" label="vivo" />
-        <el-option value="oppo" label="oppo" />
+        <el-option
+          v-for="trademark in trademarkList"
+          :key="trademark.id"
+          :value="trademark.id"
+          :label="trademark.tmName"
+        />
       </el-select>
     </el-form-item>
     <el-form-item label="SPU 描述">

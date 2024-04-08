@@ -8,6 +8,9 @@ import { useCategoryStore } from '@/store'
 import SPUForm from './components/SPUForm/index.vue'
 import SKUForm from './components/SKUForm/index.vue'
 
+// 是否展示其他页面的标记
+const isShowOtherPage = ref<boolean>(false)
+
 // 分页器模板对象
 const paginationRef = ref<{
   // 分页器组件暴露的分页数据
@@ -68,16 +71,29 @@ const scene = ref<number>(0)
 
 // 修改显示模式
 const changeScene = (value: number) => {
+  // 修改显示模式
   scene.value = value
+  // 分类组件可选择
+  isShowOtherPage.value = false
 }
 
 // SPUForm 模板对象
 const spuFormRef = ref<InstanceType<typeof SPUForm>>()
 
+// 添加 spu
+const addSpu = () => {
+  // 禁用分类组件
+  isShowOtherPage.value = true
+  // 跳转表单
+  scene.value = 1
+}
+
 // 编辑 spu
 const editSpu = (spu: SPU) => {
   // 修改显示模式
   scene.value = 1
+  // 分类组件不可选择
+  isShowOtherPage.value = true
   // 调用 spuform 对外暴露的接口, 回显数据
   spuFormRef.value?.initData(spu)
 }
@@ -85,7 +101,7 @@ const editSpu = (spu: SPU) => {
 
 <template>
   <!-- 分类选择区 -->
-  <Category :isShowAddPage="false" />
+  <Category :isDisabled="isShowOtherPage" />
   <!-- spu 展示区 -->
   <el-card style="margin-top: 10px">
     <div class="info-content" v-show="scene === 0">
@@ -96,7 +112,7 @@ const editSpu = (spu: SPU) => {
         icon="Plus"
         plain
         :disabled="!selectedThirdCategoryId"
-        @click="scene = 1"
+        @click="addSpu"
       >
         添加SPU
       </el-button>

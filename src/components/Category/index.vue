@@ -41,7 +41,7 @@ const handleSubCategoryListChanged = () => {
 
 // 对传入参数进行类型声明
 interface Props {
-  isShowAddPage: boolean
+  isDisabled: boolean
 }
 
 // 接收参数
@@ -57,7 +57,7 @@ defineProps<Props>()
           placeholder="请选择一级分类"
           style="width: 240px"
           v-model="selectedCategoryId"
-          :disabled="isShowAddPage"
+          :disabled="isDisabled"
         >
           <el-option
             v-for="category in categoryList"
@@ -74,7 +74,7 @@ defineProps<Props>()
           style="width: 240px"
           v-model="selectedSubCategoryId"
           @change="handleSubCategoryListChanged"
-          :disabled="isShowAddPage"
+          :disabled="isDisabled"
         >
           <el-option
             v-for="subCategory in subCategoryList"
@@ -90,7 +90,7 @@ defineProps<Props>()
           placeholder="请选择三级分类"
           style="width: 240px"
           v-model="selectedThirdCategoryId"
-          :disabled="isShowAddPage"
+          :disabled="isDisabled"
         >
           <el-option
             v-for="thirdCategory in thirdCategoryList"

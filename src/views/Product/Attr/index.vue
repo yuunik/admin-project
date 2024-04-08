@@ -33,7 +33,7 @@ watch(selectedThirdCategoryId, () => {
 })
 
 // 是否展示添加属性页面的标记
-const isShowAddPage = ref<boolean>(false)
+const isShowOtherPage = ref<boolean>(false)
 
 // 添加属性按键的回调
 const addAttr = () => {
@@ -46,7 +46,7 @@ const addAttr = () => {
     categoryLevel: 3,
   })
   // 修改是否展示添加属性页面的标记
-  isShowAddPage.value = true
+  isShowOtherPage.value = true
 }
 
 // 属性对象数据
@@ -85,7 +85,7 @@ const saveAttrValue = async () => {
       message: attrFormData.id ? '属性编辑成功' : '属性添加成功',
     })
     // 关闭添加页面
-    isShowAddPage.value = false
+    isShowOtherPage.value = false
     // 重新渲染数据
     getAttrInfoList()
   } else {
@@ -163,7 +163,7 @@ const editAttrInfo = (attrInfo: AttrInfo) => {
     categoryLevel: 3,
   })
   // 打开编辑
-  isShowAddPage.value = true
+  isShowOtherPage.value = true
   // 显示所编辑的属性对象信息
   // 解决浅拷贝带来的问题
   Object.assign(attrFormData, JSON.parse(JSON.stringify(attrInfo)))
@@ -205,9 +205,9 @@ onBeforeUnmount(() => {
 <template>
   <div class="attr">
     <!-- 分类组件 -->
-    <Category :isShowAddPage="isShowAddPage" />
+    <Category :isDisabled="isShowOtherPage" />
     <el-card class="attr-content">
-      <div class="main-content" v-show="!isShowAddPage">
+      <div class="main-content" v-show="!isShowOtherPage">
         <!-- 添加属性按键 -->
         <el-button
           type="primary"
@@ -262,7 +262,7 @@ onBeforeUnmount(() => {
           <template #empty><el-empty description="无数据" /></template>
         </el-table>
       </div>
-      <div class="add-attr-card" v-show="isShowAddPage">
+      <div class="add-attr-card" v-show="isShowOtherPage">
         <el-form inline :model="attrFormData">
           <el-form-item label="属性名称" prop="attrName">
             <el-input
@@ -280,7 +280,7 @@ onBeforeUnmount(() => {
         >
           添加属性值
         </el-button>
-        <el-button icon="CloseBold" @click="isShowAddPage = false">
+        <el-button icon="CloseBold" @click="isShowOtherPage = false">
           取消
         </el-button>
         <el-table
@@ -348,7 +348,7 @@ onBeforeUnmount(() => {
         >
           保存
         </el-button>
-        <el-button icon="CloseBold" @click="isShowAddPage = false">
+        <el-button icon="CloseBold" @click="isShowOtherPage = false">
           取消
         </el-button>
       </div>

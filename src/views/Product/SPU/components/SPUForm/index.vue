@@ -10,8 +10,7 @@ import {
 import type { TradeMark } from '@/types/product/trademark'
 import type { SPU, SPUImage } from '@/types/product/spu'
 import type { SalesProperty } from '@/types/product/spu'
-import { ResSalesAttr } from '@/types/product/spu'
-import { Logger } from 'sass'
+import { SalesAttr } from '@/types/product/spu'
 
 interface Emits {
   // 修改显示模式
@@ -60,7 +59,7 @@ const getSalesPropertyList = async () => {
 }
 
 // 已有的销售属性列表
-const ownSalesPropertyList = ref<ResSalesAttr[]>()
+const ownSalesPropertyList = ref<SalesAttr[]>()
 // 获取已有的销售属性列表
 const getOwnSalesPropertyList = async (spuId: number) => {
   const {
@@ -73,9 +72,10 @@ const getOwnSalesPropertyList = async (spuId: number) => {
 }
 
 // spu 数据对象
-const spuData = ref<SPU>()
+let spuData = ref<SPU>()
 // 数据初始化
 const initData = async (spu: SPU) => {
+  // 调用接口, 初始化数据
   await Promise.all([
     getTrademarkList(),
     getImgList(spu.id as number),
@@ -87,6 +87,7 @@ const initData = async (spu: SPU) => {
     spuImageList: imgList.value,
     spuSaleAttrList: ownSalesPropertyList.value,
   })
+  // 保存 spu 表单数据
   spuData.value = spu
 }
 

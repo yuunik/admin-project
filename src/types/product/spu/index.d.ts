@@ -32,19 +32,19 @@ export type SPU = {
   /* 所属的品牌id */
   tmId: number
   /* 销售属性列表 */
-  spuSaleAttrList: string[]
+  spuSaleAttrList?: SalesAttr[]
   /* 图片列表 */
   spuImageList?: SPUImage[]
   /* 宣传海报列表 */
-  spuPosterList: string[]
+  spuPosterList?: string[]
 }
 
 // SPU 商品图片类型
 export type SPUImage = {
   /* 图片 id*/
-  id: number
+  id?: number
   /* 所属 spu 的 id*/
-  spuId: number
+  spuId?: number
   /* 图片名称 */
   imgName: string
   /* 图片地址 */
@@ -52,10 +52,10 @@ export type SPUImage = {
 }
 
 // SPU 已有销售属性的响应信息类型
-export type ResSalesAttr = {
-  id: number
+export type SalesAttr = {
+  id?: number
   /* spu 的 id*/
-  spuId: number
+  spuId?: number
   /* 基础销售属性 id */
   baseSaleAttrId: number
   /* 销售属性名称 */
@@ -69,13 +69,13 @@ export type SalesValue = {
   /* 销售属性值 id */
   id?: number
   /* 属性spu 的 id */
-  spuId: number
+  spuId?: number
   /* 所属销售属性的 id */
   baseSaleAttrId: number
   /* 销售属性值 */
   saleAttrValueName: string
-  /* 销售值名 */
-  saleAttrName: string
+  /* 所属的销售属性名 */
+  saleAttrName?: string
   isChecked?: boolean
 }
 

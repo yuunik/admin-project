@@ -1,9 +1,9 @@
 // SPU 模块相关的接口
 import { http } from '@/utils'
 import type { ResType } from '@/types/common'
-import type { ResSPUList, SPUImage } from '@/types/product/spu'
+import type { ResSPUList, SPU, SPUImage } from '@/types/product/spu'
 import type { TradeMark } from '@/types/product/trademark'
-import type { ResSalesAttr, SalesProperty } from '@/types/product/spu'
+import type { SalesAttr, SalesProperty } from '@/types/product/spu'
 
 // 接口地址枚举
 enum API {
@@ -17,6 +17,10 @@ enum API {
   GETSALESPROPERTYLIST_API = '/admin/product/baseSaleAttrList',
   // 获取所属 spu 下的销售属性列表信息
   GETOWNSALESPROPERTYLIST_API = '/admin/product/spuSaleAttrList/',
+  // 新增 spu
+  ADDSPU_API = '/admin/product/saveSpuInfo',
+  // 更新 spu
+  UPDATESPU_API = '/admin/product/updateSpuInfo',
 }
 
 /**
@@ -53,7 +57,18 @@ export const getSalesPropertyListAPI = () =>
 
 // 获取所属 spu 下的销售属性列表信息
 export const getSalesPropertyListByIdAPI = (spuId: number) =>
-  http<ResType<ResSalesAttr[]>>({
+  http<ResType<SalesAttr[]>>({
     url: API.GETOWNSALESPROPERTYLIST_API + spuId,
     method: 'GET',
   })
+
+// 新增或更新 spu
+export const addOrUpdateSPUAPI = (data: SPU) => {
+  if (data.id) {
+    // 更新 spu
+    return http<ResType<any>>({ url: API.UPDATESPU_API, method: 'POST' })
+  } else {
+    // 新增 spu
+    return http<ResType<any>>({ url: API.ADDSPU_API, method: 'POST' })
+  }
+}

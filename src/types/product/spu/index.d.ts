@@ -28,9 +28,9 @@ export type SPU = {
   /* spu 描述 */
   description: string
   /* 所属的三级分类 */
-  category3Id: number
+  category3Id: number | undefined
   /* 所属的品牌id */
-  tmId: number
+  tmId: number | undefined
   /* 销售属性列表 */
   spuSaleAttrList?: SalesAttr[]
   /* 图片列表 */

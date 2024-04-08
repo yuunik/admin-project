@@ -109,9 +109,11 @@ defineProps<Props>()
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 
   .category-item {
-    margin: auto 0;
+    margin: 5px;
+    flex: auto;
   }
 }
 </style>

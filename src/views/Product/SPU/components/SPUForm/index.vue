@@ -47,7 +47,7 @@ const getImgList = async (spuId: number) => {
 }
 
 // 销售属性列表
-const salesPropertyList = ref<SalesProperty[]>()
+const salesPropertyList = ref<SalesProperty[]>([])
 // 获取销售属性列表
 const getSalesPropertyList = async () => {
   const {
@@ -60,7 +60,7 @@ const getSalesPropertyList = async () => {
 }
 
 // 已有的销售属性列表
-const ownSalesPropertyList = ref<SalesAttr[]>()
+const ownSalesPropertyList = ref<SalesAttr[]>([])
 // 获取已有的销售属性列表
 const getOwnSalesPropertyList = async (spuId: number) => {
   const {
@@ -142,9 +142,9 @@ const handleRemove = (uploadFile: UploadFile) => {
 // 上传图片前的回调
 const handleBeforeUpload = (img: UploadRawFile) => {
   if (
-    img.type === 'img/jpeg' ||
-    img.type === 'img/png' ||
-    img.type === 'img/gif'
+    img.type === 'image/jpeg' ||
+    img.type === 'image/png' ||
+    img.type === 'image/gif'
   ) {
     if (img.size / 1024 / 1024 < 4) {
       return true
@@ -164,6 +164,31 @@ const handleBeforeUpload = (img: UploadRawFile) => {
     })
     return false
   }
+}
+
+// 未选择的属性列表
+let unselectedSalesPropertyList = computed(() =>
+  salesPropertyList.value.filter((saleProperty) =>
+    ownSalesPropertyList.value.every(
+      (ownSaleProperty) => ownSaleProperty.saleAttrName !== saleProperty.name,
+    ),
+  ),
+)
+
+// 新增的属性
+const selectedSalesProperty = ref<string>('')
+
+// 新增销售属性
+const addSaleProperty = () => {
+  const [id, saleAttrName] = selectedSalesProperty.value.split(',')
+  // 为已有属性列表添加新的销售属性
+  ownSalesPropertyList.value.push({
+    baseSaleAttrId: parseFloat(id),
+    saleAttrName,
+    spuSaleAttrValueList: [],
+  })
+  // 未选择的属性列表重置
+  selectedSalesProperty.value = ''
 }
 </script>
 
@@ -201,22 +226,36 @@ const handleBeforeUpload = (img: UploadRawFile) => {
       >
         <el-icon><Plus /></el-icon>
       </el-upload>
-
       <el-dialog v-model="dialogVisible" class="preview-container">
         <img :src="dialogImageUrl" alt="预览图片" class="preview-img" />
       </el-dialog>
     </el-form-item>
     <el-form-item label="SPU 销售属性">
       <!-- 展示销售属性的下拉菜单 -->
-      <el-select placeholder="请选择销售属性" class="sales-attributes">
+      <el-select
+        v-model="selectedSalesProperty"
+        :placeholder="
+          unselectedSalesPropertyList.length
+            ? `尚有 ${unselectedSalesPropertyList.length} 个属性为选择`
+            : '无'
+        "
+        class="sales-attributes"
+      >
         <el-option
-          v-for="salesProperty in salesPropertyList"
-          :key="salesProperty.id"
-          :value="salesProperty.id"
-          :label="salesProperty.name"
+          v-for="saleProperty in unselectedSalesPropertyList"
+          :key="saleProperty.id"
+          :value="`${saleProperty.id},${saleProperty.name}`"
+          :label="saleProperty.name"
         />
       </el-select>
-      <el-button type="primary" size="default" plain icon="Plus">
+      <el-button
+        type="primary"
+        size="default"
+        plain
+        icon="Plus"
+        @click="addSaleProperty"
+        :disabled="!selectedSalesProperty"
+      >
         添加销售属性
       </el-button>
       <el-table style="margin: 20px 0" border :data="spuData.spuSaleAttrList">
@@ -224,24 +263,33 @@ const handleBeforeUpload = (img: UploadRawFile) => {
         <el-table-column label="属性名" prop="saleAttrName" />
         <el-table-column label="属性值">
           <template
-            v-for="saleAttr in spuData.spuSaleAttrList"
-            :key="saleAttr.id"
+            #default="{ row: { spuSaleAttrValueList } }: { row: SalesAttr }"
           >
+            <!-- 属性值 -->
+            <el-input v-if="true" />
             <el-tag
+              v-for="salesValue in spuSaleAttrValueList"
+              :key="salesValue.id"
               closable
-              v-for="saleAttrValue in saleAttr.spuSaleAttrValueList"
-              :key="saleAttrValue.id"
-              style="margin-right: 20px"
+              class="sales-value"
+              @change="console.log(1)"
+              v-else
             >
-              {{ saleAttrValue.saleAttrValueName }}
+              {{ salesValue.saleAttrValueName }}
             </el-tag>
+            <!-- 添加属性值的按键 -->
+            <el-button type="success" size="default" plain icon="Plus" />
           </template>
-          <!-- 添加属性值的按键 -->
-          <el-button type="success" size="default" plain icon="Plus" />
         </el-table-column>
         <el-table-column label="操作" align="center" width="100">
-          <template #default>
-            <el-button type="danger" size="default" plain icon="Delete" />
+          <template #default="{ $index }: { $index: number }">
+            <el-button
+              type="danger"
+              size="default"
+              plain
+              icon="Delete"
+              @click="spuData.spuSaleAttrList!.splice($index, 1)"
+            />
           </template>
         </el-table-column>
         <!-- 空数据展示区 -->
@@ -273,6 +321,11 @@ const handleBeforeUpload = (img: UploadRawFile) => {
     display: inline;
     margin-right: 20px;
     width: 250px;
+  }
+
+  .sales-value {
+    margin-right: 20px;
+    cursor: pointer;
   }
 }
 </style>

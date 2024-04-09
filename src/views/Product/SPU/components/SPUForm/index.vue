@@ -1,6 +1,11 @@
 <script setup lang="ts" name="SPUForm">
-import { computed, ref } from 'vue'
-import type { UploadFile, UploadRawFile, UploadUserFile } from 'element-plus'
+import { computed, nextTick, ref } from 'vue'
+import type {
+  UploadFile,
+  UploadFiles,
+  UploadRawFile,
+  UploadUserFile,
+} from 'element-plus'
 import {
   getImgListAPI,
   getSalesPropertyListAPI,
@@ -8,9 +13,10 @@ import {
   getTrademarkListAPI,
 } from '@/apis/product/spu'
 import type { TradeMark } from '@/types/product/trademark'
-import type { SPU, SPUImage } from '@/types/product/spu'
+import type { SalesValue, SPU, SPUImage } from '@/types/product/spu'
 import type { SalesProperty } from '@/types/product/spu'
 import { SalesAttr } from '@/types/product/spu'
+import { ElMessage } from 'element-plus'
 
 // 对传入的自定义函数进行类型声明
 interface Emits {
@@ -167,7 +173,7 @@ const handleBeforeUpload = (img: UploadRawFile) => {
 }
 
 // 未选择的属性列表
-let unselectedSalesPropertyList = computed(() =>
+const unselectedSalesPropertyList = computed(() =>
   salesPropertyList.value.filter((saleProperty) =>
     ownSalesPropertyList.value.every(
       (ownSaleProperty) => ownSaleProperty.saleAttrName !== saleProperty.name,
@@ -180,6 +186,22 @@ const selectedSalesProperty = ref<string>('')
 
 // 新增销售属性
 const addSaleProperty = () => {
+  // 属性值非空判断（order: 在为属性值列表为空的属性添加上属性值前, 不可添加下一个属性）
+  if (spuData.value.spuSaleAttrList?.length !== 0) {
+    // 查找属性值列表为空的属性
+    const result = spuData.value.spuSaleAttrList!.filter(
+      (saleProperty) => saleProperty.spuSaleAttrValueList.length === 0,
+    )
+    console.log(result)
+    // 若存在属性值列表为空的属性
+    if (result.length > 0) {
+      // 返回错误信息
+      return ElMessage({
+        type: 'warning',
+        message: `${result[0].saleAttrName}的属性值值不能为空`,
+      })
+    }
+  }
   const [id, saleAttrName] = selectedSalesProperty.value.split(',')
   // 为已有属性列表添加新的销售属性
   ownSalesPropertyList.value.push({
@@ -189,6 +211,86 @@ const addSaleProperty = () => {
   })
   // 未选择的属性列表重置
   selectedSalesProperty.value = ''
+}
+
+// 属性值新增模式的标记
+const isAdd = ref<boolean>(false)
+
+// 输入框模板
+const inpRef = ref<HTMLInputElement | null>(null)
+// 跳转新增属性值模式的回调
+const toAddSalePropertyValueMode = (saleAttr: SalesAttr) => {
+  // 重置数据
+  saleAttr.salePropertyValue = ''
+  // 修改标记
+  saleAttr.isAdd = true
+  // 输入框获取焦点
+  nextTick(() => {
+    inpRef.value!.focus()
+  })
+}
+
+/**
+ * 新增属性值
+ * @param saleAttr 属性对象
+ */
+const addSalePropertyValue = (saleAttr: SalesAttr) => {
+  // 非空判断
+  if (saleAttr.salePropertyValue!.trim() === '') {
+    return ElMessage({
+      type: 'error',
+      message: '属性值不为能空',
+    })
+  }
+  // 新增属性值
+  saleAttr.spuSaleAttrValueList.push({
+    baseSaleAttrId: saleAttr.baseSaleAttrId,
+    saleAttrValueName: saleAttr.salePropertyValue as string,
+  })
+  // 修改新增模式
+  saleAttr.isAdd = false
+}
+
+// spu 照片上传成功时的回调
+const handleSuccess = (
+  { data: imgUrl }: { data: string },
+  { name: imgName }: UploadFile,
+) => {
+  // 为上传的图片列表新增图片
+  imgList.value.push({
+    imgName,
+    imgUrl,
+  })
+}
+
+// 新增或编辑 SPU
+const addOrUpdateSPU = () => {
+  // 属性值非空判断（order: 在为属性值列表为空的属性添加上属性值前, 不可添加下一个属性）
+  if (spuData.value.spuSaleAttrList?.length !== 0) {
+    // 查找属性值列表为空的属性
+    const result = spuData.value.spuSaleAttrList!.filter(
+      (saleProperty) => saleProperty.spuSaleAttrValueList.length === 0,
+    )
+    // 若存在属性值列表为空的属性
+    if (result) {
+      // 返回错误信息
+      return ElMessage({
+        type: 'warning',
+        message: `${result[0].saleAttrName}的属性值值不能为空`,
+      })
+    }
+  }
+}
+
+// 处理失焦
+const handleBlur = ({ target }: FocusEvent, saleAttr: SalesAttr) => {
+  if (!target?.value) {
+    saleAttr.isAdd = false
+    return ElMessage({
+      type: 'warning',
+      message: '属性值不能为空',
+    })
+  }
 }
 </script>
 
@@ -223,6 +325,7 @@ const addSaleProperty = () => {
         :on-preview="handlePictureCardPreview"
         :on-remove="handleRemove"
         :before-upload="handleBeforeUpload"
+        :on-success="handleSuccess"
       >
         <el-icon><Plus /></el-icon>
       </el-upload>
@@ -236,8 +339,8 @@ const addSaleProperty = () => {
         v-model="selectedSalesProperty"
         :placeholder="
           unselectedSalesPropertyList.length
-            ? `尚有 ${unselectedSalesPropertyList.length} 个属性为选择`
-            : '无'
+            ? `尚有 ${unselectedSalesPropertyList.length} 个属性未选择`
+            : '暂无数据可选择'
         "
         class="sales-attributes"
       >
@@ -262,23 +365,34 @@ const addSaleProperty = () => {
         <el-table-column label="序号" type="index" align="center" width="80" />
         <el-table-column label="属性名" prop="saleAttrName" />
         <el-table-column label="属性值">
-          <template
-            #default="{ row: { spuSaleAttrValueList } }: { row: SalesAttr }"
-          >
+          <template #default="{ row: saleAttr }: { row: SalesAttr }">
             <!-- 属性值 -->
-            <el-input v-if="true" />
             <el-tag
-              v-for="salesValue in spuSaleAttrValueList"
+              v-for="salesValue in saleAttr.spuSaleAttrValueList"
               :key="salesValue.id"
               closable
               class="sales-value"
-              @change="console.log(1)"
-              v-else
             >
               {{ salesValue.saleAttrValueName }}
             </el-tag>
             <!-- 添加属性值的按键 -->
-            <el-button type="success" size="default" plain icon="Plus" />
+            <el-input
+              v-show="saleAttr.isAdd"
+              style="width: 150px; margin-right: 20px"
+              ref="inpRef"
+              @change="addSalePropertyValue(saleAttr)"
+              @blur="(event: FocusEvent) => handleBlur(event, saleAttr)"
+              v-model="saleAttr.salePropertyValue"
+              placeholder="请输入属性值"
+            />
+            <el-button
+              type="success"
+              size="default"
+              plain
+              icon="Plus"
+              v-show="!saleAttr.isAdd"
+              @click="toAddSalePropertyValueMode(saleAttr)"
+            />
           </template>
         </el-table-column>
         <el-table-column label="操作" align="center" width="100">
@@ -299,7 +413,13 @@ const addSaleProperty = () => {
       </el-table>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" size="default" plain icon="Select">
+      <el-button
+        type="primary"
+        size="default"
+        plain
+        icon="Select"
+        @click="addOrUpdateSPU"
+      >
         保存
       </el-button>
       <el-button

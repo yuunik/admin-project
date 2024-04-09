@@ -62,6 +62,10 @@ export type SalesAttr = {
   saleAttrName: string
   /* 销售属性值列表 */
   spuSaleAttrValueList: SalesValue[]
+  /* 是否新增 */
+  isAdd?: boolean
+  /* 新增属性值的名称 */
+  salePropertyValue?: string
 }
 
 // 销售属性值类型

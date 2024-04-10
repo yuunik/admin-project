@@ -1,19 +1,15 @@
 <script setup lang="ts" name="SPUForm">
 import { computed, nextTick, ref } from 'vue'
-import type {
-  UploadFile,
-  UploadFiles,
-  UploadRawFile,
-  UploadUserFile,
-} from 'element-plus'
+import type { UploadFile, UploadRawFile, UploadUserFile } from 'element-plus'
 import {
+  addOrUpdateSPUAPI,
   getImgListAPI,
   getSalesPropertyListAPI,
   getSalesPropertyListByIdAPI,
   getTrademarkListAPI,
 } from '@/apis/product/spu'
 import type { TradeMark } from '@/types/product/trademark'
-import type { SalesValue, SPU, SPUImage } from '@/types/product/spu'
+import type { SPU, SPUImage } from '@/types/product/spu'
 import type { SalesProperty } from '@/types/product/spu'
 import { SalesAttr } from '@/types/product/spu'
 import { ElMessage } from 'element-plus'
@@ -95,6 +91,21 @@ let spuData = ref<SPU>({
 })
 // 数据初始化(对外暴露)
 const initData = async (spu: SPU) => {
+  // 重置表单
+  spuData.value = {
+    /* spu 名称 */
+    spuName: '',
+    /* spu 描述 */
+    description: '',
+    /* 所属的三级分类 */
+    category3Id: undefined,
+    /* 所属的品牌id */
+    tmId: undefined,
+    /* 销售属性列表 */
+    spuSaleAttrList: [],
+    /* 图片列表 */
+    spuImageList: [],
+  }
   // 调用接口, 初始化数据
   await Promise.all([
     getTrademarkList(),
@@ -186,22 +197,6 @@ const selectedSalesProperty = ref<string>('')
 
 // 新增销售属性
 const addSaleProperty = () => {
-  // 属性值非空判断（order: 在为属性值列表为空的属性添加上属性值前, 不可添加下一个属性）
-  if (spuData.value.spuSaleAttrList?.length !== 0) {
-    // 查找属性值列表为空的属性
-    const result = spuData.value.spuSaleAttrList!.filter(
-      (saleProperty) => saleProperty.spuSaleAttrValueList.length === 0,
-    )
-    console.log(result)
-    // 若存在属性值列表为空的属性
-    if (result.length > 0) {
-      // 返回错误信息
-      return ElMessage({
-        type: 'warning',
-        message: `${result[0].saleAttrName}的属性值值不能为空`,
-      })
-    }
-  }
   const [id, saleAttrName] = selectedSalesProperty.value.split(',')
   // 为已有属性列表添加新的销售属性
   ownSalesPropertyList.value.push({
@@ -213,20 +208,17 @@ const addSaleProperty = () => {
   selectedSalesProperty.value = ''
 }
 
-// 属性值新增模式的标记
-const isAdd = ref<boolean>(false)
-
 // 输入框模板
-const inpRef = ref<HTMLInputElement | null>(null)
+const inpRef = ref<HTMLInputElement[]>([])
 // 跳转新增属性值模式的回调
-const toAddSalePropertyValueMode = (saleAttr: SalesAttr) => {
+const toAddSalePropertyValueMode = (saleAttr: SalesAttr, index: number) => {
   // 重置数据
   saleAttr.salePropertyValue = ''
   // 修改标记
   saleAttr.isAdd = true
   // 输入框获取焦点
   nextTick(() => {
-    inpRef.value!.focus()
+    inpRef.value[index].focus()
   })
 }
 
@@ -263,25 +255,6 @@ const handleSuccess = (
   })
 }
 
-// 新增或编辑 SPU
-const addOrUpdateSPU = () => {
-  // 属性值非空判断（order: 在为属性值列表为空的属性添加上属性值前, 不可添加下一个属性）
-  if (spuData.value.spuSaleAttrList?.length !== 0) {
-    // 查找属性值列表为空的属性
-    const result = spuData.value.spuSaleAttrList!.filter(
-      (saleProperty) => saleProperty.spuSaleAttrValueList.length === 0,
-    )
-    // 若存在属性值列表为空的属性
-    if (result) {
-      // 返回错误信息
-      return ElMessage({
-        type: 'warning',
-        message: `${result[0].saleAttrName}的属性值值不能为空`,
-      })
-    }
-  }
-}
-
 // 处理失焦
 const handleBlur = ({ target }: FocusEvent, saleAttr: SalesAttr) => {
   if (!target?.value) {
@@ -289,6 +262,58 @@ const handleBlur = ({ target }: FocusEvent, saleAttr: SalesAttr) => {
     return ElMessage({
       type: 'warning',
       message: '属性值不能为空',
+    })
+  }
+}
+
+/**
+ * 删除属性值
+ * @param id 属性值 id
+ * @param saleAttr  所属的属性对象
+ * @param index 所属的属性对象的序号
+ */
+const deleteSaleAttrValue = (
+  id: number,
+  saleAttr: SalesAttr,
+  index: number,
+) => {
+  const newList = saleAttr.spuSaleAttrValueList.filter(
+    (saleAttrValue) => saleAttrValue.id !== id,
+  )
+  if (newList.length === 0) {
+    ElMessage({
+      type: 'info',
+      message: '当前无属性值, 默认删除该属性',
+    })
+    // 属性值列表为空, 默认删除这个属性
+    spuData.value.spuSaleAttrList!.splice(index, 1)
+  } else {
+    // 属性值列表不为空, 则删除单个属性值
+    saleAttr.spuSaleAttrValueList = saleAttr.spuSaleAttrValueList.filter(
+      (saleAttrValue) => saleAttrValue.id !== id,
+    )
+  }
+}
+
+// 新增或编辑 SPU
+const addOrUpdateSPU = async () => {
+  const { id } = spuData.value
+  const {
+    data: { code },
+  } = await addOrUpdateSPUAPI(spuData.value)
+  if (code === 200) {
+    // 提示成功信息
+    ElMessage({
+      type: 'success',
+      message: id ? '编辑 SPU 成功' : '新增 SPU 成功',
+    })
+    // 跳转回 SPU 显示页
+    emit('changeScene', 0)
+  } else {
+    // 提示错误信息
+    ElMessage({
+      type: 'error',
+      message: id ? '编辑 SPU 失败' : '新增 SPU 失败',
     })
   }
 }
@@ -365,21 +390,32 @@ const handleBlur = ({ target }: FocusEvent, saleAttr: SalesAttr) => {
         <el-table-column label="序号" type="index" align="center" width="80" />
         <el-table-column label="属性名" prop="saleAttrName" />
         <el-table-column label="属性值">
-          <template #default="{ row: saleAttr }: { row: SalesAttr }">
+          <template
+            #default="{
+              row: saleAttr,
+              $index,
+            }: {
+              row: SalesAttr
+              $index: number
+            }"
+          >
             <!-- 属性值 -->
             <el-tag
-              v-for="salesValue in saleAttr.spuSaleAttrValueList"
-              :key="salesValue.id"
+              v-for="saleValue in saleAttr.spuSaleAttrValueList"
+              :key="saleValue.id"
               closable
               class="sales-value"
+              @close="
+                deleteSaleAttrValue(saleValue.id as number, saleAttr, $index)
+              "
             >
-              {{ salesValue.saleAttrValueName }}
+              {{ saleValue.saleAttrValueName }}
             </el-tag>
             <!-- 添加属性值的按键 -->
             <el-input
               v-show="saleAttr.isAdd"
               style="width: 150px; margin-right: 20px"
-              ref="inpRef"
+              :ref="(element: HTMLInputElement) => (inpRef[$index] = element)"
               @change="addSalePropertyValue(saleAttr)"
               @blur="(event: FocusEvent) => handleBlur(event, saleAttr)"
               v-model="saleAttr.salePropertyValue"
@@ -391,7 +427,7 @@ const handleBlur = ({ target }: FocusEvent, saleAttr: SalesAttr) => {
               plain
               icon="Plus"
               v-show="!saleAttr.isAdd"
-              @click="toAddSalePropertyValueMode(saleAttr)"
+              @click="toAddSalePropertyValueMode(saleAttr, $index)"
             />
           </template>
         </el-table-column>

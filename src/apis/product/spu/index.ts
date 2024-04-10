@@ -66,9 +66,9 @@ export const getSalesPropertyListByIdAPI = (spuId: number) =>
 export const addOrUpdateSPUAPI = (data: SPU) => {
   if (data.id) {
     // 更新 spu
-    return http<ResType<any>>({ url: API.UPDATESPU_API, method: 'POST' })
+    return http<ResType<any>>({ url: API.UPDATESPU_API, method: 'POST', data })
   } else {
     // 新增 spu
-    return http<ResType<any>>({ url: API.ADDSPU_API, method: 'POST' })
+    return http<ResType<any>>({ url: API.ADDSPU_API, method: 'POST', data })
   }
 }

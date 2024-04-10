@@ -1,6 +1,6 @@
 <script setup lang="ts" name="SPUForm">
 import { computed, nextTick, ref } from 'vue'
-import type { UploadFile, UploadRawFile, UploadUserFile } from 'element-plus'
+import { UploadFile, UploadRawFile, UploadUserFile } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import {
   addOrUpdateSPUAPI,
@@ -18,9 +18,12 @@ import type { ResType } from '@/types/common'
 // 对传入的自定义函数进行类型声明
 interface Emits {
   // 修改显示模式
-  (e: 'changeScene', scene: number): void
+  (
+    e: 'changeScene',
+    { sceneValue, mode }: { sceneValue: number; mode: string },
+  ): void
 }
-
+// 自定义触发函数
 const emit = defineEmits<Emits>()
 
 // 品牌列表
@@ -75,6 +78,14 @@ const getOwnSalesPropertyList = async (spuId: number) => {
   }
 }
 
+// 对传入的参数进行类型申明
+interface Props {
+  // 三级分类的 id
+  category3Id: number
+}
+// 获取传入的参数
+const props = defineProps<Props>()
+
 // spu 数据对象
 let spuData = ref<SPU>({
   /* spu 名称 */
@@ -82,7 +93,7 @@ let spuData = ref<SPU>({
   /* spu 描述 */
   description: '',
   /* 所属的三级分类 */
-  category3Id: undefined,
+  category3Id: props.category3Id,
   /* 所属的品牌id */
   tmId: undefined,
   /* 销售属性列表 */
@@ -90,6 +101,10 @@ let spuData = ref<SPU>({
   /* 图片列表 */
   spuImageList: [],
 })
+
+// 新增的属性
+const selectedSalesProperty = ref<string>('')
+
 // 数据初始化(对外暴露)
 const initData = async (spu?: SPU) => {
   // 重置表单
@@ -101,7 +116,7 @@ const initData = async (spu?: SPU) => {
     /* spu 描述 */
     description: '',
     /* 所属的三级分类 */
-    category3Id: undefined,
+    category3Id: props.category3Id,
     /* 所属的品牌id */
     tmId: undefined,
     /* 销售属性列表 */
@@ -109,11 +124,14 @@ const initData = async (spu?: SPU) => {
     /* 图片列表 */
     spuImageList: [],
   }
+  // 图片列表重置
   imgList.value = []
+  // 已有的属性列表重置
   ownSalesPropertyList.value = []
+  // 选择的属性值重置
+  selectedSalesProperty.value = ''
   // 模式判断
   if (spu?.id) {
-    console.log('edit')
     // 编辑模式的数据初始化
     // 调用接口, 初始化数据
     await Promise.all([
@@ -125,7 +143,6 @@ const initData = async (spu?: SPU) => {
     // 保存 spu 表单数据
     spuData.value = spu
   } else {
-    console.log('add')
     // 新增模式的数据初始化
     // 调用接口, 初始化数据
     await Promise.all([getTrademarkList(), getSalesPropertyList()])
@@ -135,7 +152,7 @@ const initData = async (spu?: SPU) => {
 // 对向外暴露的属性与方法进行类型申明
 interface Expose {
   // 数据方法
-  initData: (spu: SPU) => void
+  initData: (spu?: SPU) => void
 }
 
 // 对外暴露属性与方法
@@ -214,9 +231,6 @@ const unselectedSalesPropertyList = computed(() =>
   ),
 )
 
-// 新增的属性
-const selectedSalesProperty = ref<string>('')
-
 // 新增销售属性
 const addSaleProperty = () => {
   const [id, saleAttrName] = selectedSalesProperty.value.split(',')
@@ -231,7 +245,7 @@ const addSaleProperty = () => {
 }
 
 // 输入框模板
-const inpRef = ref<HTMLInputElement[]>([])
+const inpRef = ref<InstanceType<typeof ElInput>[]>([])
 // 跳转新增属性值模式的回调
 const toAddSalePropertyValueMode = (saleAttr: SalesAttr, index: number) => {
   // 重置数据
@@ -281,8 +295,9 @@ const addSalePropertyValue = (saleAttr: SalesAttr) => {
 }
 
 // 处理失焦
-const handleBlur = ({ target }: FocusEvent, saleAttr: SalesAttr) => {
-  if (!target?.value) {
+const handleBlur = (event: Event, saleAttr: SalesAttr) => {
+  if (!(event.target as HTMLInputElement).value) {
+    console.log(1)
     saleAttr.isAdd = false
     return ElMessage({
       type: 'warning',
@@ -339,7 +354,7 @@ const addOrUpdateSPU = async () => {
       message: id ? '编辑 SPU 成功' : '新增 SPU 成功',
     })
     // 跳转回 SPU 显示页
-    emit('changeScene', 0)
+    emit('changeScene', { sceneValue: 0, mode: id ? 'edit' : 'add' })
   } else {
     // 提示错误信息
     ElMessage({
@@ -446,9 +461,9 @@ const addOrUpdateSPU = async () => {
             <el-input
               v-show="saleAttr.isAdd"
               style="width: 150px; margin-right: 20px"
-              :ref="(element: HTMLInputElement) => (inpRef[$index] = element)"
+              :ref="(element) => (inpRef[$index] = element)"
               @change="addSalePropertyValue(saleAttr)"
-              @blur="(event: FocusEvent) => handleBlur(event, saleAttr)"
+              @blur="(event: Event) => handleBlur(event, saleAttr)"
               v-model="saleAttr.salePropertyValue"
               placeholder="请输入属性值"
             />
@@ -494,7 +509,7 @@ const addOrUpdateSPU = async () => {
         size="default"
         plain
         icon="CloseBold"
-        @click="emit('changeScene', 0)"
+        @click="emit('changeScene', { sceneValue: 0, mode: '' })"
       >
         取消
       </el-button>

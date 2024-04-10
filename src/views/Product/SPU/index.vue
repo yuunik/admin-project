@@ -33,11 +33,13 @@ const spuList = ref<SPU[]>()
 // 获取三级分类的id
 const categoryStore = useCategoryStore()
 const { selectedThirdCategoryId } = storeToRefs(categoryStore)
-const getSPUList = async () => {
+const getSPUList = async (page = 1) => {
   // 没有分页数据, 则不发送请求
   if (!pageData.value) {
     return
   }
+  // 默认当前页为 第一页
+  pageData.value.page = page
   const {
     data: {
       code,
@@ -70,13 +72,19 @@ watch(selectedThirdCategoryId, () => {
 const scene = ref<number>(0)
 
 // 修改显示模式
-const changeScene = (value: number) => {
+const changeScene = ({
+  sceneValue,
+  mode,
+}: {
+  sceneValue: number
+  mode: string
+}) => {
   // 修改显示模式
-  scene.value = value
+  scene.value = sceneValue
   // 分类组件可选择
   isShowOtherPage.value = false
-  // 重新渲染数据
-  getSPUList()
+  // 新增则跳转第一页, 编辑则留在当前页
+  mode === 'add' ? getSPUList() : getSPUList(pageData.value!.page)
 }
 
 // SPUForm 模板对象
@@ -88,7 +96,7 @@ const addSpu = () => {
   isShowOtherPage.value = true
   // 跳转表单
   scene.value = 1
-  // 调用 spuform 对外暴露的接口, 回显数据
+  // 调用 spuForm 对外暴露的接口, 回显数据
   spuFormRef.value?.initData()
 }
 
@@ -98,7 +106,7 @@ const editSpu = (spu: SPU) => {
   scene.value = 1
   // 分类组件不可选择
   isShowOtherPage.value = true
-  // 调用 spuform 对外暴露的接口, 回显数据
+  // 调用 spuForm 对外暴露的接口, 回显数据
   spuFormRef.value?.initData(spu)
 }
 </script>
@@ -155,6 +163,7 @@ const editSpu = (spu: SPU) => {
       v-show="scene === 1"
       @changeScene="changeScene"
       ref="spuFormRef"
+      :category3-id="selectedThirdCategoryId as number"
     />
     <SKUForm class="sku-content" v-show="scene === 2" />
   </el-card>

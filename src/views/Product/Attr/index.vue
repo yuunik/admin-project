@@ -130,7 +130,7 @@ const showAttr = (attrValue: AttrValue, index: number) => {
 }
 
 // 添加属性值的表单实例
-const attrValueInputRef = ref<HTMLInputElement[]>([])
+const attrValueInputRef = ref<InstanceType<typeof ElInput>[]>([])
 
 // 编辑 属性值
 const editTag = (attrValue: AttrValue, index: number) => {
@@ -303,10 +303,7 @@ onBeforeUnmount(() => {
                 v-model="row.valueName"
                 v-show="!row.isShowAttrValue"
                 @blur="showAttr(row, $index)"
-                :ref="
-                  (element: HTMLInputElement) =>
-                    (attrValueInputRef[$index] = element)
-                "
+                :ref="(element) => (attrValueInputRef[$index] = element)"
               />
               <el-tag
                 v-show="row.isShowAttrValue"

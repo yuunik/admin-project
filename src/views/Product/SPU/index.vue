@@ -75,6 +75,8 @@ const changeScene = (value: number) => {
   scene.value = value
   // 分类组件可选择
   isShowOtherPage.value = false
+  // 重新渲染数据
+  getSPUList()
 }
 
 // SPUForm 模板对象
@@ -87,7 +89,7 @@ const addSpu = () => {
   // 跳转表单
   scene.value = 1
   // 调用 spuform 对外暴露的接口, 回显数据
-  spuFormRef.value?.initData(spu)
+  spuFormRef.value?.initData()
 }
 
 // 编辑 spu

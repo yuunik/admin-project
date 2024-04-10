@@ -1,6 +1,7 @@
 <script setup lang="ts" name="SPUForm">
 import { computed, nextTick, ref } from 'vue'
 import type { UploadFile, UploadRawFile, UploadUserFile } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import {
   addOrUpdateSPUAPI,
   getImgListAPI,
@@ -12,7 +13,7 @@ import type { TradeMark } from '@/types/product/trademark'
 import type { SPU, SPUImage } from '@/types/product/spu'
 import type { SalesProperty } from '@/types/product/spu'
 import { SalesAttr } from '@/types/product/spu'
-import { ElMessage } from 'element-plus'
+import type { ResType } from '@/types/common'
 
 // 对传入的自定义函数进行类型声明
 interface Emits {
@@ -90,9 +91,11 @@ let spuData = ref<SPU>({
   spuImageList: [],
 })
 // 数据初始化(对外暴露)
-const initData = async (spu: SPU) => {
+const initData = async (spu?: SPU) => {
   // 重置表单
   spuData.value = {
+    /* spu 的 id */
+    id: undefined,
     /* spu 名称 */
     spuName: '',
     /* spu 描述 */
@@ -106,20 +109,27 @@ const initData = async (spu: SPU) => {
     /* 图片列表 */
     spuImageList: [],
   }
-  // 调用接口, 初始化数据
-  await Promise.all([
-    getTrademarkList(),
-    getImgList(spu.id as number),
-    getSalesPropertyList(),
-    getOwnSalesPropertyList(spu.id as number),
-  ])
-  // 重置 spu 数据
-  Object.assign(spu, {
-    spuImageList: imgList.value,
-    spuSaleAttrList: ownSalesPropertyList.value,
-  })
-  // 保存 spu 表单数据
-  spuData.value = spu
+  imgList.value = []
+  ownSalesPropertyList.value = []
+  // 模式判断
+  if (spu?.id) {
+    console.log('edit')
+    // 编辑模式的数据初始化
+    // 调用接口, 初始化数据
+    await Promise.all([
+      getTrademarkList(),
+      getImgList(spu.id as number),
+      getSalesPropertyList(),
+      getOwnSalesPropertyList(spu.id as number),
+    ])
+    // 保存 spu 表单数据
+    spuData.value = spu
+  } else {
+    console.log('add')
+    // 新增模式的数据初始化
+    // 调用接口, 初始化数据
+    await Promise.all([getTrademarkList(), getSalesPropertyList()])
+  }
 }
 
 // 对向外暴露的属性与方法进行类型申明
@@ -181,6 +191,18 @@ const handleBeforeUpload = (img: UploadRawFile) => {
     })
     return false
   }
+}
+
+// spu 照片上传成功时的回调
+const handleUploadSuccess = (
+  { data: imgUrl }: { data: string },
+  { name: imgName }: UploadFile,
+) => {
+  // 为上传的图片列表新增图片
+  imgList.value.push({
+    imgName,
+    imgUrl,
+  })
 }
 
 // 未选择的属性列表
@@ -258,18 +280,6 @@ const addSalePropertyValue = (saleAttr: SalesAttr) => {
   saleAttr.isAdd = false
 }
 
-// spu 照片上传成功时的回调
-const handleSuccess = (
-  { data: imgUrl }: { data: string },
-  { name: imgName }: UploadFile,
-) => {
-  // 为上传的图片列表新增图片
-  imgList.value.push({
-    imgName,
-    imgUrl,
-  })
-}
-
 // 处理失焦
 const handleBlur = ({ target }: FocusEvent, saleAttr: SalesAttr) => {
   if (!target?.value) {
@@ -312,10 +322,16 @@ const deleteSaleAttrValue = (
 
 // 新增或编辑 SPU
 const addOrUpdateSPU = async () => {
+  // 获取 SPU 的 id
   const { id } = spuData.value
+  // 合并 spuData
+  Object.assign(spuData.value, {
+    spuImageList: imgList.value,
+    spuSaleAttrList: ownSalesPropertyList.value,
+  })
   const {
     data: { code, data },
-  } = await addOrUpdateSPUAPI(spuData.value)
+  }: { data: ResType<any> } = await addOrUpdateSPUAPI(spuData.value)
   if (code === 200) {
     // 提示成功信息
     ElMessage({
@@ -344,7 +360,7 @@ const addOrUpdateSPU = async () => {
         <el-option
           v-for="trademark in trademarkList"
           :key="trademark.id"
-          :value="trademark.id"
+          :value="trademark.id as number"
           :label="trademark.tmName"
         />
       </el-select>
@@ -365,7 +381,7 @@ const addOrUpdateSPU = async () => {
         :on-preview="handlePictureCardPreview"
         :on-remove="handleRemove"
         :before-upload="handleBeforeUpload"
-        :on-success="handleSuccess"
+        :on-success="handleUploadSuccess"
       >
         <el-icon><Plus /></el-icon>
       </el-upload>
@@ -401,7 +417,7 @@ const addOrUpdateSPU = async () => {
       >
         添加销售属性
       </el-button>
-      <el-table style="margin: 20px 0" border :data="spuData.spuSaleAttrList">
+      <el-table style="margin: 20px 0" border :data="ownSalesPropertyList">
         <el-table-column label="序号" type="index" align="center" width="80" />
         <el-table-column label="属性名" prop="saleAttrName" />
         <el-table-column label="属性值">
@@ -470,6 +486,7 @@ const addOrUpdateSPU = async () => {
         plain
         icon="Select"
         @click="addOrUpdateSPU"
+        :disabled="ownSalesPropertyList.length === 0"
       >
         保存
       </el-button>

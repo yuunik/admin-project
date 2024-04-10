@@ -3,6 +3,11 @@ import { createApp } from 'vue'
 import 'virtual:svg-icons-register'
 // 引入 pinia
 import pinia from './store'
+// elementPlus
+import ElementPlus from 'element-plus'
+// elementPluS 中文包
+//@ts-expect-error 无相关类型声明文件
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 // 引入路由器
 import router from '@/router'
 import App from './App.vue'
@@ -15,6 +20,10 @@ import '@/styles/index.scss'
 const app = createApp(App)
 
 // 使用中间件
+// elementPlus 使用中文包
+app.use(ElementPlus, {
+  locale: zhCn,
+})
 // 注册全局组件
 app.use(GlobalComponentsPlugin)
 // 注册状态管理库 pinia

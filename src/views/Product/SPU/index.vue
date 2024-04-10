@@ -9,7 +9,7 @@ import SPUForm from './components/SPUForm/index.vue'
 import SKUForm from './components/SKUForm/index.vue'
 
 // 是否展示其他页面的标记
-const isShowOtherPage = ref<boolean>(false)
+const isCategoryDisabled = ref<boolean>(false)
 
 // 分页器模板对象
 const paginationRef = ref<{
@@ -58,18 +58,14 @@ const getSPUList = async (page = 1) => {
   }
 }
 
-// 分类下拉框禁用的标记
-const isShowAddPage = ref<boolean>(false)
 // 若获取了三级分类, 则发送请求获取 spu 列表
 watch(selectedThirdCategoryId, () => {
-  // 分类下拉框禁用
-  isShowAddPage.value = true
   // 调用接口, 获取所属三级分类的 spu 信息列表
   getSPUList()
 })
 
 // 展示不同显示模式的变量
-const scene = ref<number>(0)
+const scene = ref<number>(2)
 
 // 修改显示模式
 const changeScene = ({
@@ -82,7 +78,7 @@ const changeScene = ({
   // 修改显示模式
   scene.value = sceneValue
   // 分类组件可选择
-  isShowOtherPage.value = false
+  isCategoryDisabled.value = false
   // 新增则跳转第一页, 编辑则留在当前页
   mode === 'add' ? getSPUList() : getSPUList(pageData.value!.page)
 }
@@ -93,7 +89,7 @@ const spuFormRef = ref<InstanceType<typeof SPUForm>>()
 // 添加 spu
 const addSpu = () => {
   // 禁用分类组件
-  isShowOtherPage.value = true
+  isCategoryDisabled.value = true
   // 跳转表单
   scene.value = 1
   // 调用 spuForm 对外暴露的接口, 回显数据
@@ -105,15 +101,23 @@ const editSpu = (spu: SPU) => {
   // 修改显示模式
   scene.value = 1
   // 分类组件不可选择
-  isShowOtherPage.value = true
+  isCategoryDisabled.value = true
   // 调用 spuForm 对外暴露的接口, 回显数据
   spuFormRef.value?.initData(spu)
+}
+
+// 添加 sku
+const addSku = () => {
+  // 修改显示模式
+  scene.value = 2
+  // 分类组件不可用
+  isCategoryDisabled.value = true
 }
 </script>
 
 <template>
   <!-- 分类选择区 -->
-  <Category :isDisabled="isShowOtherPage" />
+  <Category :isDisabled="isCategoryDisabled" />
   <!-- spu 展示区 -->
   <el-card style="margin-top: 10px">
     <div class="info-content" v-show="scene === 0">
@@ -136,7 +140,13 @@ const editSpu = (spu: SPU) => {
         <el-table-column label="操作" align="center">
           <template #default="{ row: spu }: { row: SPU }">
             <!-- 添加 spu -->
-            <el-button type="primary" size="default" icon="Plus" plain />
+            <el-button
+              type="primary"
+              size="default"
+              icon="Plus"
+              plain
+              @click="addSku"
+            />
             <!-- 编辑 spu -->
             <el-button
               type="warning"

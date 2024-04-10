@@ -1,6 +1,5 @@
 <script setup lang="ts" name="trademark">
 import { ref, watch, reactive, onMounted, nextTick, markRaw } from 'vue'
-import type { Ref } from 'vue'
 //@ts-expect-error '无组件声明文件类型'
 import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
 import type {
@@ -19,30 +18,16 @@ import {
   deleteTrademarkAPI,
 } from '@/apis/product/trademark'
 
-// 分页相关数据
-// const pageData = reactive({
-//   // 当前页
-//   page: 1,
-//   // 每页展示条数
-//   limit: 4,
-//   // 每页展示条数选项
-//   pageSizes: [2, 4, 6, 8, 10],
-//   // 数据总条数
-//   total: 0,
-// })
-
 // 分页器模板对象
 const paginationRef = ref<{
   pageData: PageData
 }>()
-let pageData = ref<PageData>()
+const pageData = ref<PageData>()
 // 组件挂载后调用
 
 onMounted(async () => {
   // 获取分页数据
-  await (() => {
-    pageData.value = paginationRef.value!.pageData
-  })()
+  pageData.value = paginationRef.value!.pageData
   // 获取品牌列表
   getTradeMarkList()
 })

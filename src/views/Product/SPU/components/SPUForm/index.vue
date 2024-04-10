@@ -234,6 +234,21 @@ const addSalePropertyValue = (saleAttr: SalesAttr) => {
       message: '属性值不为能空',
     })
   }
+  // 重复值判断
+  const saleAttrValue = saleAttr.spuSaleAttrValueList.find(
+    (saleAttrValue) =>
+      saleAttrValue.saleAttrValueName === saleAttr.salePropertyValue,
+  )
+  if (saleAttrValue) {
+    // 属性值重复, 不允许添加
+    // 修改为显示模式
+    saleAttr.isAdd = false
+    // 提示错误信息
+    return ElMessage({
+      type: 'info',
+      message: '属性值不能重复',
+    })
+  }
   // 新增属性值
   saleAttr.spuSaleAttrValueList.push({
     baseSaleAttrId: saleAttr.baseSaleAttrId,
@@ -299,7 +314,7 @@ const deleteSaleAttrValue = (
 const addOrUpdateSPU = async () => {
   const { id } = spuData.value
   const {
-    data: { code },
+    data: { code, data },
   } = await addOrUpdateSPUAPI(spuData.value)
   if (code === 200) {
     // 提示成功信息
@@ -313,7 +328,7 @@ const addOrUpdateSPU = async () => {
     // 提示错误信息
     ElMessage({
       type: 'error',
-      message: id ? '编辑 SPU 失败' : '新增 SPU 失败',
+      message: data,
     })
   }
 }

@@ -86,6 +86,8 @@ const addSpu = () => {
   isShowOtherPage.value = true
   // 跳转表单
   scene.value = 1
+  // 调用 spuform 对外暴露的接口, 回显数据
+  spuFormRef.value?.initData(spu)
 }
 
 // 编辑 spu

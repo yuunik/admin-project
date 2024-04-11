@@ -106,12 +106,16 @@ const editSpu = (spu: SPU) => {
   spuFormRef.value?.initData(spu)
 }
 
+// SKUForm 模板引用
+const skuFormRef = ref<InstanceType<typeof SKUForm>>()
 // 添加 sku
-const addSku = () => {
+const addSku = (spuId: number) => {
   // 修改显示模式
   scene.value = 2
   // 分类组件不可用
   isCategoryDisabled.value = true
+  // 调用 SKUForm 组件暴露的方法, 进行数据初始化
+  skuFormRef.value?.initSKUData(spuId)
 }
 </script>
 
@@ -139,13 +143,13 @@ const addSku = () => {
         <el-table-column label="SPU描述" prop="description" />
         <el-table-column label="操作" align="center">
           <template #default="{ row: spu }: { row: SPU }">
-            <!-- 添加 spu -->
+            <!-- 添加 sku -->
             <el-button
               type="primary"
               size="default"
               icon="Plus"
               plain
-              @click="addSku"
+              @click="addSku(spu.id as number)"
             />
             <!-- 编辑 spu -->
             <el-button
@@ -175,7 +179,12 @@ const addSku = () => {
       ref="spuFormRef"
       :category3-id="selectedThirdCategoryId as number"
     />
-    <SKUForm class="sku-content" v-show="scene === 2" />
+    <SKUForm
+      class="sku-content"
+      v-show="scene === 2"
+      ref="skuFormRef"
+      @changeScene="changeScene"
+    />
   </el-card>
 </template>
 

@@ -1,11 +1,90 @@
 <script setup lang="ts" name="SKUForm">
-// 属性选择器
-import PropertySelector from './components/PropertySelector/index.vue'
+import { storeToRefs } from 'pinia'
+import { ref } from 'vue'
+// 平台属性组件
+import PlatformAttr from './components/PlatformAttr/index.vue'
+// 销售属性组件
+import SaleAttr from './components/SaleAttr/index.vue'
+import { useCategoryStore } from '@/store'
+import type { AttrInfo } from '@/types/product/attr'
+import type { SalesAttr, SPUImage } from '@/types/product/spu'
+import { getAttrInfoListAPI } from '@/apis/product/attr'
+import { getImgListAPI, getSalesPropertyListByIdAPI } from '@/apis/product/spu'
 
 // 由组件触发的自定义事件
 defineEmits<{
+  // 改变显示模式事件
   changeScene: [{ sceneValue: number; mode: string }]
 }>()
+
+// 获取分类的状态管理库
+const categoryStore = useCategoryStore()
+const { selectedCategoryId, selectedSubCategoryId, selectedThirdCategoryId } =
+  storeToRefs(categoryStore)
+
+// 平台属性列表
+const attrInfoList = ref<AttrInfo[]>([])
+// 销售属性列表
+const saleAttrList = ref<SalesAttr[]>([])
+// 图片列表
+const imgList = ref<SPUImage[]>([])
+
+// 获取平台平台属性
+const getAttrInfoList = async () => {
+  const {
+    data: { code, data },
+  } = await getAttrInfoListAPI(
+    selectedCategoryId.value!,
+    selectedSubCategoryId.value!,
+    selectedThirdCategoryId.value!,
+  )
+  if (code === 200) {
+    attrInfoList.value = data
+  }
+}
+
+// 获取销售属性列表
+const getSaleAttrList = async (spuId: number) => {
+  const {
+    data: { code, data },
+  } = await getSalesPropertyListByIdAPI(spuId)
+  if (code === 200) {
+    saleAttrList.value = data
+  }
+}
+
+// 获取图片列表
+const getImgList = async (spuId: number) => {
+  const {
+    data: { code, data },
+  } = await getImgListAPI(spuId)
+  if (code === 200) {
+    imgList.value = data
+  }
+}
+
+/**
+ * SKU 表单数据初始化 (对外暴露)
+ * @param spuId 所属的 SPU 的id
+ */
+const initSKUData = async (spuId: number) => {
+  await Promise.all([
+    getAttrInfoList(),
+    getSaleAttrList(spuId),
+    getImgList(spuId),
+  ])
+}
+
+// 对向外暴露的属性与方法进行类型申明
+interface Expose {
+  initSKUData: (spuId: number) => void
+}
+
+// 对外暴露
+defineExpose<Expose>({
+  // 数据初始化的回调
+  initSKUData,
+})
 </script>
 
 <template>
@@ -24,43 +103,41 @@ defineEmits<{
     </el-form-item>
     <el-form-item label="平台属性">
       <el-form inline>
-        <el-form-item>
-          <PropertySelector name="手机一级" :property-list="[]" />
-        </el-form-item>
-        <el-form-item>
-          <PropertySelector name="电池容量" :property-list="[]" />
-        </el-form-item>
-        <el-form-item>
-          <PropertySelector name="运行内存" :property-list="[]" />
-        </el-form-item>
-        <br />
-        <el-form-item>
-          <PropertySelector name="机身内存" :property-list="[]" />
-        </el-form-item>
-        <el-form-item>
-          <PropertySelector name="CPU型号" :property-list="[]" />
-        </el-form-item>
-        <el-form-item>
-          <PropertySelector name="屏幕尺寸" :property-list="[]" />
-        </el-form-item>
+        <PlatformAttr
+          v-for="attrInfo in attrInfoList"
+          :key="attrInfo.id"
+          :name="attrInfo.attrName"
+          :property-list="attrInfo.attrValueList"
+        />
       </el-form>
     </el-form-item>
     <el-form-item label="销售属性">
-      <el-form-item>
-        <PropertySelector name="颜色" :property-list="[]" />
-      </el-form-item>
-      <el-form-item>
-        <PropertySelector name="版本" :property-list="[]" />
-      </el-form-item>
+      <el-form>
+        <SaleAttr
+          v-for="saleAttr in saleAttrList"
+          :key="saleAttr.id"
+          :name="saleAttr.saleAttrName"
+          :property-list="saleAttr.spuSaleAttrValueList"
+        />
+      </el-form>
     </el-form-item>
     <el-form-item label="图片名称">
-      <el-table border>
+      <el-table border :data="imgList">
         <el-table-column type="selection" width="80" />
-        <el-table-column label="图片" />
-        <el-table-column label="名称" />
+        <el-table-column label="图片">
+          <template #default="{ row: img }: { row: SPUImage }">
+            <el-image
+              fit="cover"
+              style="width: 100px; height: 100px"
+              :src="img.imgUrl"
+              :alt="img.imgName"
+            ></el-image>
+          </template>
+        </el-table-column>
+        <el-table-column label="名称" prop="imgName" />
         <el-table-column label="操作">
           <template #default>
-            <el-button type="info" plain size="default">
+            <el-button type="warning" plain size="default">
               设置为默认图片
             </el-button>
           </template>

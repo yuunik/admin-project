@@ -1,7 +1,7 @@
 import { createPinia } from 'pinia'
 import useUserStore from './modules/user'
-import useLayoutSettingStore from '@/store/modules/setting'
-import useCategoryStore from '@/store/modules/Category'
+import useLayoutSettingStore from './modules/setting'
+import useCategoryStore from './modules/category'
 
 // 创建 pinia 实例对象
 const pinia = createPinia()

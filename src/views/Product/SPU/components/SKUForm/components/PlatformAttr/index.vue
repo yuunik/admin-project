@@ -14,7 +14,7 @@ defineProps<Props>()
 </script>
 
 <template>
-  <el-form-item class="property-container" :label="name">
+  <el-form-item class="property-container" :label="name" label-width="110px">
     <el-select
       style="width: 200px; margin: 0 10px"
       :placeholder="`请选择${name}`"

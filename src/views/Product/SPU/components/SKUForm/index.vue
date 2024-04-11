@@ -7,7 +7,7 @@ import PlatformAttr from './components/PlatformAttr/index.vue'
 import SaleAttr from './components/SaleAttr/index.vue'
 import { useCategoryStore } from '@/store'
 import type { AttrInfo } from '@/types/product/attr'
-import type { SalesAttr, SPUImage } from '@/types/product/spu'
+import type { SalesAttr, SalesValue, SPUImage } from '@/types/product/spu'
 import { getAttrInfoListAPI } from '@/apis/product/attr'
 import { getImgListAPI, getSalesPropertyListByIdAPI } from '@/apis/product/spu'
 
@@ -67,7 +67,14 @@ const getImgList = async (spuId: number) => {
  * SKU 表单数据初始化 (对外暴露)
  * @param spuId 所属的 SPU 的id
  */
-const initSKUData = async (spuId: number) => {
+const initSKUData = async (spuId: number, tmId: number) => {
+  // 获取 spuId
+  skuFormData.value.spuId = spuId
+  // 获取品牌id
+  skuFormData.value.tmId = tmId
+  // 获取三级分类 id
+  skuFormData.value.category3Id = selectedThirdCategoryId.value as number
+  // 调用接口, 初始化数据
   await Promise.all([
     getAttrInfoList(),
     getSaleAttrList(spuId),
@@ -77,7 +84,7 @@ const initSKUData = async (spuId: number) => {
 
 // 对向外暴露的属性与方法进行类型申明
 interface Expose {
-  initSKUData: (spuId: number) => void
+  initSKUData: (spuId: number, tmId: number) => void
 }
 
 // 对外暴露
@@ -85,21 +92,85 @@ defineExpose<Expose>({
   // 数据初始化的回调
   initSKUData,
 })
+
+// sku 表单数据类型声明
+interface SkuFormData {
+  /* 所属的三级分类 id */
+  category3Id: number
+  /* 价格 */
+  price: number | undefined
+  /* 平台属性 */
+  skuAttrValueList: AttrInfo[]
+  /* 默认图片 */
+  skuDefaultImg: string
+  /* sku 描述 */
+  skuDesc: string
+  /* 图片列表 */
+  skuImageList: SPUImage[]
+  /* sku 名称 */
+  skuName: string
+  /* 销售属性列表 */
+  skuSaleAttrValueList: SalesValue[]
+  /* 所属的 spu 的 id */
+  spuId: number | undefined
+  /* 所属的品牌 id */
+  tmId: number | undefined
+  /* 重量 */
+  weight: number | undefined
+}
+
+// sku 表单数据
+const skuFormData = ref<SkuFormData>({
+  /* 所属的三级分类 id */
+  category3Id: undefined,
+  /* 价格 */
+  price: undefined,
+  /* 平台属性 */
+  skuAttrValueList: [],
+  /* 默认图片 */
+  skuDefaultImg: '',
+  /* sku 描述 */
+  skuDesc: '',
+  /* 图片列表 */
+  skuImageList: [],
+  /* sku 名称 */
+  skuName: '',
+  /* 销售属性列表 */
+  skuSaleAttrValueList: [],
+  /* 所属的 spu 的 id */
+  spuId: undefined,
+  /* 所属的品牌 id */
+  tmId: undefined,
+  /* sku 重量 */
+  weight: undefined,
+})
 </script>
 
 <template>
   <el-form label-position="left" label-width="80">
     <el-form-item label="sku 名称">
-      <el-input placeholder="请输入 SKU 名称" />
+      <el-input placeholder="请输入 SKU 名称" v-model="skuFormData.skuName" />
     </el-form-item>
     <el-form-item label="价格(元)">
-      <el-input placeholder="请输入价格" type="number" />
+      <el-input
+        placeholder="请输入价格"
+        type="number"
+        v-model="skuFormData.price"
+      />
     </el-form-item>
     <el-form-item label="重量(克)">
-      <el-input placeholder="请输入重量" type="number" />
+      <el-input
+        placeholder="请输入重量"
+        type="number"
+        v-model="skuFormData.weight"
+      />
     </el-form-item>
     <el-form-item label="sku 描述">
-      <el-input placeholder="请输入 SKU 相关描述" type="textarea" />
+      <el-input
+        placeholder="请输入 SKU 相关描述"
+        type="textarea"
+        v-model="skuFormData.skuDesc"
+      />
     </el-form-item>
     <el-form-item label="平台属性">
       <el-form inline>
@@ -112,7 +183,7 @@ defineExpose<Expose>({
       </el-form>
     </el-form-item>
     <el-form-item label="销售属性">
-      <el-form>
+      <el-form inline>
         <SaleAttr
           v-for="saleAttr in saleAttrList"
           :key="saleAttr.id"

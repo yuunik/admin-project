@@ -18,6 +18,7 @@ defineProps<Props>()
     class="property-container"
     :label="name"
     style="margin-bottom: 10px"
+    label-width="110px"
   >
     <el-select
       style="width: 200px; margin: 0 10px"

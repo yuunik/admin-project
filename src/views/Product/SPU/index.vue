@@ -109,13 +109,13 @@ const editSpu = (spu: SPU) => {
 // SKUForm 模板引用
 const skuFormRef = ref<InstanceType<typeof SKUForm>>()
 // 添加 sku
-const addSku = (spuId: number) => {
+const addSku = (spuId: number, tmId: number) => {
   // 修改显示模式
   scene.value = 2
   // 分类组件不可用
   isCategoryDisabled.value = true
   // 调用 SKUForm 组件暴露的方法, 进行数据初始化
-  skuFormRef.value?.initSKUData(spuId)
+  skuFormRef.value?.initSKUData(spuId, tmId)
 }
 </script>
 
@@ -149,7 +149,7 @@ const addSku = (spuId: number) => {
               size="default"
               icon="Plus"
               plain
-              @click="addSku(spu.id as number)"
+              @click="addSku(spu.id as number, spu.tmId as number)"
             />
             <!-- 编辑 spu -->
             <el-button

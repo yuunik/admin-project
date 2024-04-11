@@ -12,15 +12,21 @@ defineProps<Props>()
 </script>
 
 <template>
-  <el-text>{{ name }}</el-text>
-  <el-select style="width: 200px; margin: 0 10px">
-    <el-option
-      v-for="(property, index) in propertyList"
-      :key="index"
-      :value="index"
-      :label="property"
-    />
-  </el-select>
+  <div class="property-container">
+    <el-text>{{ name }}</el-text>
+    <el-select style="width: 200px; margin: 0 10px">
+      <el-option
+        v-for="(property, index) in propertyList"
+        :key="index"
+        :value="index"
+        :label="property"
+      />
+    </el-select>
+  </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.property-container {
+  margin-bottom: 10px;
+}
+</style>

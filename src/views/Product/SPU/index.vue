@@ -65,7 +65,7 @@ watch(selectedThirdCategoryId, () => {
 })
 
 // 展示不同显示模式的变量
-const scene = ref<number>(2)
+const scene = ref<number>(0)
 
 // 修改显示模式
 const changeScene = ({

@@ -1,6 +1,11 @@
 <script setup lang="ts" name="SKUForm">
 // 属性选择器
 import PropertySelector from './components/PropertySelector/index.vue'
+
+// 由组件触发的自定义事件
+defineEmits<{
+  changeScene: [{ sceneValue: number; mode: string }]
+}>()
 </script>
 
 <template>
@@ -66,7 +71,14 @@ import PropertySelector from './components/PropertySelector/index.vue'
       <el-button type="primary" size="default" plain icon="Plus">
         保存
       </el-button>
-      <el-button size="default" plain icon="CloseBold">取消</el-button>
+      <el-button
+        size="default"
+        plain
+        icon="CloseBold"
+        @click="$emit('changeScene', { sceneValue: 0, mode: '' })"
+      >
+        取消
+      </el-button>
     </el-form-item>
   </el-form>
 </template>

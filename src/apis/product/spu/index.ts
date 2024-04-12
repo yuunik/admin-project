@@ -21,6 +21,8 @@ enum API {
   ADDSPU_API = '/admin/product/saveSpuInfo',
   // 更新 spu
   UPDATESPU_API = '/admin/product/updateSpuInfo',
+  // 删除 spu
+  DELETESPU_API = '/admin/product/deleteSpu/',
 }
 
 /**
@@ -72,3 +74,7 @@ export const addOrUpdateSPUAPI = (data: SPU) => {
     return http<ResType<any>>({ url: API.ADDSPU_API, method: 'POST', data })
   }
 }
+
+// 删除 spu
+export const deleteSPUAPI = (spuId: number) =>
+  http<ResType<any>>({ url: API.DELETESPU_API + spuId, method: 'DELETE' })

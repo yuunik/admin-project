@@ -9,6 +9,8 @@ enum SkuAPI {
   ADD_SKU = '/admin/product/saveSkuInfo',
   // 修改 sku
   UPDATE_SKU = '/admin/product/updateSkuInfo',
+  // 通过 skuId 查看 sku 信息
+  GET_SKULIST_BY_SPUID = '/admin/product/findBySpuId/',
 }
 
 /**
@@ -30,4 +32,12 @@ export const addOrUpdateSkuAPI = (skuInfo: Sku) => {
       data: skuInfo,
     })
   }
+}
+
+// 通过 spuId 查看 sku 信息
+export const getSkuListBySpuIdAPI = (spuId: number) => {
+  return http<ResType<Sku[]>>({
+    url: SkuAPI.GET_SKULIST_BY_SPUID + spuId,
+    method: 'GET',
+  })
 }

@@ -1,7 +1,7 @@
 // SPU 模块相关的接口
 import { http } from '@/utils'
-import type { ResType } from '@/types/common'
-import type { ResSPUList, SPU, SPUImage } from '@/types/product/spu'
+import type { ResList, ResType } from '@/types/common'
+import type { SPU, SPUImage } from '@/types/product/spu'
 import type { TradeMark } from '@/types/product/trademark'
 import type { SalesAttr, SalesProperty } from '@/types/product/spu'
 
@@ -36,7 +36,7 @@ export const getSPUListAPI = (
   page: number,
   limit: number,
 ) =>
-  http<ResType<ResSPUList>>({
+  http<ResType<ResList>>({
     url: API.GETLIST_API + `${page}/${limit}`,
     method: 'GET',
     params: { category3Id: thirdCategoryId },

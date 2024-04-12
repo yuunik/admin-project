@@ -1,24 +1,5 @@
 // SPU 相关的数据类型
 
-// 获取 spu 列表的响应类型
-export type ResSPUList = {
-  /* spu 列表 */
-  records: SPU[]
-  /* spu 总数据的数量 */
-  total: number
-  /* 每页条数 */
-  size: number
-  /* 当前页 */
-  current: number
-  orders?: []
-  optimizeCountSql: boolean
-  hitCount: boolean
-  countId?: number
-  maxLimit?: number
-  searchCount: boolean
-  pages: number
-}
-
 // SPU 数据类型
 export type SPU = {
   /* spu id */

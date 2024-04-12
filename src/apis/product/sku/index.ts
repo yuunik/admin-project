@@ -1,7 +1,7 @@
 // sku 相关的接口
 import { http } from '@/utils'
 import type { Sku } from '@/types/product/sku'
-import type { ResType } from '@/types/common'
+import type { ResList, ResType } from '@/types/common'
 
 // 接口地址枚举值
 enum SkuAPI {
@@ -11,6 +11,8 @@ enum SkuAPI {
   UPDATE_SKU = '/admin/product/updateSkuInfo',
   // 通过 skuId 查看 sku 信息
   GET_SKULIST_BY_SPUID = '/admin/product/findBySpuId/',
+  // 获取 sku 列表
+  GET_SKU_LIST = '/admin/product/list/',
 }
 
 /**
@@ -41,3 +43,14 @@ export const getSkuListBySpuIdAPI = (spuId: number) => {
     method: 'GET',
   })
 }
+
+/**
+ * 获取 sku 列表
+ * @param page 当前页 （默认第一页）
+ * @param limit 每页条数 （默认显示 10 条）
+ */
+export const getSkuListAPI = (page: number, limit: number) =>
+  http<ResType<ResList<Sku>>>({
+    url: SkuAPI.GET_SKU_LIST + page + '/' + limit,
+    method: 'GET',
+  })

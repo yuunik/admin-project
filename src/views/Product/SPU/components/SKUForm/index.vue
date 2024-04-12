@@ -7,9 +7,12 @@ import PlatformAttr from './components/PlatformAttr/index.vue'
 import SaleAttr from './components/SaleAttr/index.vue'
 import { useCategoryStore } from '@/store'
 import type { AttrInfo } from '@/types/product/attr'
-import type { SalesAttr, SalesValue, SPUImage } from '@/types/product/spu'
+import type { SalesAttr, SPUImage } from '@/types/product/spu'
 import { getAttrInfoListAPI } from '@/apis/product/attr'
 import { getImgListAPI, getSalesPropertyListByIdAPI } from '@/apis/product/spu'
+import { ElTable } from 'element-plus'
+import { Sku } from '@/types/product/sku'
+import { addOrUpdateSkuAPI } from '@/apis/product/sku'
 
 // 由组件触发的自定义事件
 defineEmits<{
@@ -60,6 +63,7 @@ const getImgList = async (spuId: number) => {
   } = await getImgListAPI(spuId)
   if (code === 200) {
     imgList.value = data
+    imgList.value.forEach((img) => (img.isDefault = false))
   }
 }
 
@@ -93,34 +97,8 @@ defineExpose<Expose>({
   initSKUData,
 })
 
-// sku 表单数据类型声明
-interface SkuFormData {
-  /* 所属的三级分类 id */
-  category3Id: number
-  /* 价格 */
-  price: number | undefined
-  /* 平台属性 */
-  skuAttrValueList: AttrInfo[]
-  /* 默认图片 */
-  skuDefaultImg: string
-  /* sku 描述 */
-  skuDesc: string
-  /* 图片列表 */
-  skuImageList: SPUImage[]
-  /* sku 名称 */
-  skuName: string
-  /* 销售属性列表 */
-  skuSaleAttrValueList: SalesValue[]
-  /* 所属的 spu 的 id */
-  spuId: number | undefined
-  /* 所属的品牌 id */
-  tmId: number | undefined
-  /* 重量 */
-  weight: number | undefined
-}
-
 // sku 表单数据
-const skuFormData = ref<SkuFormData>({
+const skuFormData = ref<Sku>({
   /* 所属的三级分类 id */
   category3Id: undefined,
   /* 价格 */
@@ -131,8 +109,6 @@ const skuFormData = ref<SkuFormData>({
   skuDefaultImg: '',
   /* sku 描述 */
   skuDesc: '',
-  /* 图片列表 */
-  skuImageList: [],
   /* sku 名称 */
   skuName: '',
   /* 销售属性列表 */
@@ -144,6 +120,64 @@ const skuFormData = ref<SkuFormData>({
   /* sku 重量 */
   weight: undefined,
 })
+
+// 表格模板
+const tableRef = ref<InstanceType<typeof ElTable>>()
+// 设置默认图片
+const setDefaultImg = (img: SPUImage) => {
+  // 其他图片的默认值、勾选重置
+  imgList.value.forEach((img) => {
+    img.isDefault = false
+    tableRef.value!.toggleRowSelection(img, false)
+  })
+  // 当前图片设置为默认图片
+  img.isDefault = true
+  // 当前图片的选项勾选
+  tableRef.value!.toggleRowSelection(img, true)
+  // 保存默认图片
+  skuFormData.value.skuDefaultImg = img.imgUrl
+}
+
+// 选择平台属性
+const handleChangeAttrList = (attrIdAndAttrValueId: string) => {
+  const [attrId, attrValueId] = attrIdAndAttrValueId.split(':')
+  // 查找当前属性是否已经存在
+  const index = skuFormData.value.skuAttrValueList.findIndex(
+    (attr) => attr.attrId === attrId,
+  )
+  // 不存在则添加
+  if (index === -1) {
+    skuFormData.value.skuAttrValueList.push({
+      attrId: attrId,
+      valueId: attrValueId,
+    })
+  }
+}
+
+// 选择销售属性
+const handleChangeSaleAttrValueList = (
+  saleAttrIdAndSaleAttrValueId: string,
+) => {
+  // 销售属性 id 和销售属性值 id
+  const [saleAttrId, saleAttrValueId] = saleAttrIdAndSaleAttrValueId.split(':')
+  // 查找当前销售属性是否已经存在
+  const saleAttrValue = skuFormData.value.skuSaleAttrValueList.find(
+    (saleAttrValue) => saleAttrValue.saleAttrValeId === Number(saleAttrValueId),
+  )
+  // 不存在则添加
+  if (!saleAttrValue) {
+    skuFormData.value.skuSaleAttrValueList.push({
+      saleAttrId: saleAttrId,
+      saleAttrValeId: saleAttrValueId,
+    })
+  }
+}
+
+// 新增或修改 sku
+const addOrUpdateSku = async () => {
+  const result = await addOrUpdateSkuAPI(skuFormData.value)
+  console.log(result)
+}
 </script>
 
 <template>
@@ -163,6 +197,7 @@ const skuFormData = ref<SkuFormData>({
         placeholder="请输入重量"
         type="number"
         v-model="skuFormData.weight"
+        class="sku-weight"
       />
     </el-form-item>
     <el-form-item label="sku 描述">
@@ -179,6 +214,7 @@ const skuFormData = ref<SkuFormData>({
           :key="attrInfo.id"
           :name="attrInfo.attrName"
           :property-list="attrInfo.attrValueList"
+          @changeAttrList="handleChangeAttrList"
         />
       </el-form>
     </el-form-item>
@@ -187,13 +223,15 @@ const skuFormData = ref<SkuFormData>({
         <SaleAttr
           v-for="saleAttr in saleAttrList"
           :key="saleAttr.id"
+          :saleAttrId="saleAttr.id as number"
           :name="saleAttr.saleAttrName"
           :property-list="saleAttr.spuSaleAttrValueList"
+          @changeSaleAttrValueList="handleChangeSaleAttrValueList"
         />
       </el-form>
     </el-form-item>
     <el-form-item label="图片名称">
-      <el-table border :data="imgList">
+      <el-table border :data="imgList" ref="tableRef">
         <el-table-column type="selection" width="80" />
         <el-table-column label="图片">
           <template #default="{ row: img }: { row: SPUImage }">
@@ -205,18 +243,35 @@ const skuFormData = ref<SkuFormData>({
             ></el-image>
           </template>
         </el-table-column>
-        <el-table-column label="名称" prop="imgName" />
+        <el-table-column label="名称">
+          <template #default="{ row: img }: { row: SPUImage }">
+            <el-text :type="img.isDefault ? 'success' : 'info'">
+              {{ img.imgName.substring(0, img.imgName.lastIndexOf('.')) }}
+            </el-text>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
-          <template #default>
-            <el-button type="warning" plain size="default">
-              设置为默认图片
+          <template #default="{ row: img }: { row: SPUImage }">
+            <el-button
+              :type="img.isDefault ? 'success' : 'warning'"
+              plain
+              size="default"
+              @click="setDefaultImg(img)"
+            >
+              {{ img.isDefault ? '设置成功' : '设置为默认图片' }}
             </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" size="default" plain icon="Plus">
+      <el-button
+        type="primary"
+        size="default"
+        plain
+        icon="Plus"
+        @click="addOrUpdateSku"
+      >
         保存
       </el-button>
       <el-button
@@ -231,4 +286,9 @@ const skuFormData = ref<SkuFormData>({
   </el-form>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+// 默认图片的名称加粗
+.el-text--success {
+  font-weight: bold;
+}
+</style>

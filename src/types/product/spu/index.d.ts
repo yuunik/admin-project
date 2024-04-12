@@ -49,6 +49,8 @@ export type SPUImage = {
   imgName: string
   /* 图片地址 */
   imgUrl: string
+  /* 是否为默认图片 */
+  isDefault?: boolean
 }
 
 // SPU 已有销售属性的响应信息类型

@@ -35,7 +35,7 @@ declare module 'vue' {
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
-    ElText: (typeof import('element-plus/es'))['ElText']
+    ElText: typeof import('element-plus/es')['ElText']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Pagination: typeof import('./src/components/Pagination/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

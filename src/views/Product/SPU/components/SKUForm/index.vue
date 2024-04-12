@@ -1,4 +1,4 @@
-<script setup lang="ts" name="SKUForm">
+<script setup lang="ts" name="SkuForm">
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 // 平台属性组件
@@ -68,7 +68,7 @@ const getImgList = async (spuId: number) => {
 }
 
 /**
- * SKU 表单数据初始化 (对外暴露)
+ * Sku 表单数据初始化 (对外暴露)
  * @param spuId 所属的 SPU 的id
  */
 const initSKUData = async (spuId: number, tmId: number) => {

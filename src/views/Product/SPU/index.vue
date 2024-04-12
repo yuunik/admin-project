@@ -1,12 +1,12 @@
-<script setup lang="ts" name="SPU">
+<script setup lang="ts" name="Spu">
 import { onMounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import type { PageData } from '@/types/common'
 import { deleteSPUAPI, getSPUListAPI } from '@/apis/product/spu'
 import type { SPU } from '@/types/product/spu'
 import { useCategoryStore } from '@/store'
-import SPUForm from './components/SPUForm/index.vue'
-import SKUForm from './components/SKUForm/index.vue'
+import SPUForm from '@/views/Product/Spu/components/SpuForm/index.vue'
+import SKUForm from '@/views/Product/Spu/components/SkuForm/index.vue'
 import { getSkuListBySpuIdAPI } from '@/apis/product/sku'
 import { Sku } from '@/types/product/sku'
 
@@ -85,7 +85,7 @@ const changeScene = ({
   mode === 'add' ? getSPUList() : getSPUList(pageData.value!.page)
 }
 
-// SPUForm 模板对象
+// SpuForm 模板对象
 const spuFormRef = ref<InstanceType<typeof SPUForm>>()
 
 // 添加 spu
@@ -108,7 +108,7 @@ const editSpu = (spu: SPU) => {
   spuFormRef.value?.initData(spu)
 }
 
-// SKUForm 模板引用
+// SkuForm 模板引用
 const skuFormRef = ref<InstanceType<typeof SKUForm>>()
 // 添加 sku
 const addSku = (spuId: number, tmId: number) => {
@@ -116,7 +116,7 @@ const addSku = (spuId: number, tmId: number) => {
   scene.value = 2
   // 分类组件不可用
   isCategoryDisabled.value = true
-  // 调用 SKUForm 组件暴露的方法, 进行数据初始化
+  // 调用 SkuForm 组件暴露的方法, 进行数据初始化
   skuFormRef.value?.initSKUData(spuId, tmId)
 }
 

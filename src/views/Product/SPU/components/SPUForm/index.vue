@@ -1,4 +1,4 @@
-<script setup lang="ts" name="SPUForm">
+<script setup lang="ts" name="SpuForm">
 import { computed, nextTick, ref } from 'vue'
 import { UploadFile, UploadRawFile, UploadUserFile } from 'element-plus'
 import { ElMessage } from 'element-plus'

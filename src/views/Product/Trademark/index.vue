@@ -1,4 +1,4 @@
-<script setup lang="ts" name="trademark">
+<script setup lang="ts" name="Trademark">
 import { ref, watch, reactive, onMounted, nextTick, markRaw } from 'vue'
 //@ts-expect-error '无组件声明文件类型'
 import Chinese from 'element-plus/dist/locale/zh-cn.mjs'

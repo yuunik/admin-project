@@ -1,4 +1,4 @@
-<script setup lang="ts" name="SKU">
+<script setup lang="ts" name="Sku">
 import { onMounted, ref } from 'vue'
 import Pagination from '@/components/Pagination/index.vue'
 import { getSkuListAPI } from '@/apis/product/sku'

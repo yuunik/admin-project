@@ -132,7 +132,7 @@ const routes = [
       {
         name: 'Spu',
         path: '/product/spu',
-        component: () => import('@/views/Product/SPU/index.vue'),
+        component: () => import('@/views/Product/Spu/index.vue'),
         meta: {
           icon: 'Calendar',
           isShow: true,
@@ -142,7 +142,7 @@ const routes = [
       {
         name: 'Sku',
         path: '/product/sku',
-        component: () => import('@/views/Product/SKU/index.vue'),
+        component: () => import('@/views/Product/Sku/index.vue'),
         meta: {
           icon: 'Orange',
           isShow: true,

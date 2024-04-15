@@ -1,7 +1,11 @@
 <script setup lang="ts" name="Sku">
 import { onMounted, ref } from 'vue'
 import Pagination from '@/components/Pagination/index.vue'
-import { getSkuListAPI } from '@/apis/product/sku'
+import {
+  cancelSaleSkuAPI,
+  getSkuListAPI,
+  onSaleSkuAPI,
+} from '@/apis/product/sku'
 import type { Sku } from '@/types/product/sku'
 import type { PageData } from '@/types/common'
 
@@ -9,9 +13,13 @@ import type { PageData } from '@/types/common'
 const paginationRef = ref<InstanceType<typeof Pagination>>()
 // 分页器数据
 const pageData = ref<PageData>({
+  // 当前页
   page: 0,
+  // 每页条数选项
   pageSizes: [],
+  // 每页条数
   limit: 0,
+  // 总条数
   total: 0,
 })
 
@@ -39,8 +47,59 @@ onMounted(() => {
   pageData.value = paginationRef.value!.pageData
   // 分页数据的每页条数默认为 10 条
   pageData.value.limit = 10
+  // 获取 sku 列表
   getSkuList()
 })
+
+// 上架与下架 sku
+const handleSaleSku = async (sku: Sku) => {
+  if (sku.isSale) {
+    // 下架 sku
+    const {
+      data: { code },
+    } = await cancelSaleSkuAPI(sku.id as number)
+    if (code === 200) {
+      // 提示成功
+      ElMessage.success('上架成功')
+      // 更新列表
+      await getSkuList()
+    } else {
+      // 提示失败
+      ElMessage.error('上架失败')
+    }
+  } else {
+    // 下架 sku
+    const {
+      data: { code },
+    } = await onSaleSkuAPI(sku.id as number)
+    if (code === 200) {
+      // 提示成功
+      ElMessage.success('下架成功')
+      // 更新列表
+      getSkuList()
+    } else {
+      // 提示失败
+      ElMessage.error('下架失败')
+    }
+  }
+}
+
+// 编辑 sku
+const editSku = () => {
+  // 提示信息
+  ElMessage({ type: 'info', message: '编辑功能正在绝赞开发中...' })
+}
+
+// 是否展示 sku 详情容器
+const isShowSkuDetail = ref(true)
+
+// 查看 sku 详情
+const showSkuInfo = () => {
+  // 显示 sku 详情容器
+  isShowSkuDetail.value = true
+}
+
+// 删除 sku
 </script>
 
 <template>
@@ -62,15 +121,33 @@ onMounted(() => {
       <el-table-column label="重量" prop="weight" align="center" />
       <el-table-column label="价格" prop="price" align="center" />
       <el-table-column label="操作" align="center">
-        <template #default>
-          <el-tooltip content="上架 sku ">
-            <el-button type="primary" size="default" circle icon="Upload" />
+        <template #default="{ row }">
+          <el-tooltip :content="row.isSale ? '下架 sku ' : '上架 sku '">
+            <el-button
+              :type="row.isSale ? 'warning' : 'success'"
+              size="default"
+              circle
+              :icon="row.isSale ? 'Download' : 'Upload'"
+              @click="handleSaleSku(row)"
+            />
           </el-tooltip>
           <el-tooltip content="编辑 sku ">
-            <el-button type="warning" size="default" circle icon="Edit" />
+            <el-button
+              type="primary"
+              size="default"
+              circle
+              icon="Edit"
+              @click="editSku"
+            />
           </el-tooltip>
           <el-tooltip content="查看 sku 详情">
-            <el-button type="info" size="default" circle icon="InfoFilled" />
+            <el-button
+              type="info"
+              size="default"
+              circle
+              icon="InfoFilled"
+              @click="showSkuInfo"
+            />
           </el-tooltip>
           <el-tooltip content="删除 sku ">
             <el-button type="danger" size="default" circle icon="Delete" />

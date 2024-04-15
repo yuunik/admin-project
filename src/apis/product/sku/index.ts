@@ -13,6 +13,12 @@ enum SkuAPI {
   GET_SKULIST_BY_SPUID = '/admin/product/findBySpuId/',
   // 获取 sku 列表
   GET_SKU_LIST = '/admin/product/list/',
+  // 上架 sku
+  ON_SALE_SKU = '/admin/product/onSale/',
+  // 下架 sku
+  CANCEL_SALE_SKU = '/admin/product/cancelSale/',
+  // 根据 sku 的 id 获取 sku 的信息
+  GET_SKU_BY_ID = '/admin/product/getSkuInfo/',
 }
 
 /**
@@ -52,5 +58,35 @@ export const getSkuListBySpuIdAPI = (spuId: number) => {
 export const getSkuListAPI = (page: number, limit: number) =>
   http<ResType<ResList<Sku>>>({
     url: SkuAPI.GET_SKU_LIST + page + '/' + limit,
+    method: 'GET',
+  })
+
+/**
+ * 上架 sku
+ * @param skuId skuId
+ */
+export const onSaleSkuAPI = (skuId: number) =>
+  http<ResType<any>>({
+    url: SkuAPI.ON_SALE_SKU + skuId,
+    method: 'GET',
+  })
+
+/**
+ * 下架 sku
+ * @param skuId skuId
+ */
+export const cancelSaleSkuAPI = (skuId: number) =>
+  http<ResType<any>>({
+    url: SkuAPI.CANCEL_SALE_SKU + skuId,
+    method: 'GET',
+  })
+
+/**
+ * 根据 skuId 获取 sku
+ * @param skuId skuId
+ */
+export const getSkuByIdAPI = (skuId: number) =>
+  http<ResType<Sku>>({
+    url: SkuAPI.GET_SKU_BY_ID + skuId,
     method: 'GET',
   })

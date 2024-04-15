@@ -7,8 +7,9 @@ import type { SPU } from '@/types/product/spu'
 import { useCategoryStore } from '@/store'
 import SPUForm from '@/views/Product/Spu/components/SpuForm/index.vue'
 import SKUForm from '@/views/Product/Spu/components/SkuForm/index.vue'
-import { getSkuListBySpuIdAPI } from '@/apis/product/sku'
+import { getSkuByIdAPI, getSkuListBySpuIdAPI } from '@/apis/product/sku'
 import { Sku } from '@/types/product/sku'
+import { useRoute } from 'vue-router'
 
 // 是否展示其他页面的标记
 const isCategoryDisabled = ref<boolean>(false)
@@ -111,13 +112,13 @@ const editSpu = (spu: SPU) => {
 // SkuForm 模板引用
 const skuFormRef = ref<InstanceType<typeof SKUForm>>()
 // 添加 sku
-const addSku = (spuId: number, tmId: number) => {
+const addSku = (spu: SPU) => {
   // 修改显示模式
   scene.value = 2
   // 分类组件不可用
   isCategoryDisabled.value = true
   // 调用 SkuForm 组件暴露的方法, 进行数据初始化
-  skuFormRef.value?.initSKUData(spuId, tmId)
+  skuFormRef.value?.initSKUData(spu)
 }
 
 // 是否展示 sku 表格
@@ -161,6 +162,24 @@ const deleteSpu = (spuId: number) => {
     }
   })
 }
+
+// 获取路由对象
+const route = useRoute()
+// skuid
+const sku_id = ref<number>()
+// 组件挂载后调用
+onMounted(async () => {
+  const {
+    query: { skuId },
+  } = route
+  if (skuId) {
+    sku_id.value = Number(skuId)
+    // 修改显示模式
+    scene.value = 2
+  } else {
+    console.log('新增模式')
+  }
+})
 </script>
 
 <template>
@@ -198,7 +217,7 @@ const deleteSpu = (spuId: number) => {
                 size="default"
                 icon="Plus"
                 plain
-                @click="addSku(spu.id as number, spu.tmId as number)"
+                @click="addSku(spu)"
               />
             </el-tooltip>
 
@@ -233,7 +252,7 @@ const deleteSpu = (spuId: number) => {
                 size="default"
                 icon="Delete"
                 plain
-                @click="deleteSpu(spu.id)"
+                @click="deleteSpu(spu.id as number)"
               />
             </el-tooltip>
           </template>
@@ -257,6 +276,7 @@ const deleteSpu = (spuId: number) => {
       v-show="scene === 2"
       ref="skuFormRef"
       @changeScene="changeScene"
+      :skuId="sku_id && sku_id"
     />
   </el-card>
   <!-- sku 列表表格 -->

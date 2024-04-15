@@ -24,6 +24,8 @@ export type Sku = {
   tmId: number | undefined
   /* 重量 */
   weight: number | undefined
+  /* 是否售卖 */
+  isSale?: number
 }
 
 // 平台数据属性类型申请

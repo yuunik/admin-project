@@ -1,18 +1,18 @@
 <script setup lang="ts" name="SkuForm">
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { ElTable } from 'element-plus'
 // 平台属性组件
 import PlatformAttr from './components/PlatformAttr/index.vue'
 // 销售属性组件
 import SaleAttr from './components/SaleAttr/index.vue'
 import { useCategoryStore } from '@/store'
 import type { AttrInfo } from '@/types/product/attr'
-import type { SalesAttr, SPUImage } from '@/types/product/spu'
+import type { SalesAttr, SPU, SPUImage } from '@/types/product/spu'
 import { getAttrInfoListAPI } from '@/apis/product/attr'
 import { getImgListAPI, getSalesPropertyListByIdAPI } from '@/apis/product/spu'
-import { ElTable } from 'element-plus'
 import { Sku } from '@/types/product/sku'
-import { addOrUpdateSkuAPI } from '@/apis/product/sku'
+import { addOrUpdateSkuAPI, getSkuByIdAPI } from '@/apis/product/sku'
 
 // 由组件触发的自定义事件
 defineEmits<{
@@ -22,6 +22,7 @@ defineEmits<{
 
 // 获取分类的状态管理库
 const categoryStore = useCategoryStore()
+// 获取一级分类id 、二级分类id、三级分类id
 const { selectedCategoryId, selectedSubCategoryId, selectedThirdCategoryId } =
   storeToRefs(categoryStore)
 
@@ -71,24 +72,24 @@ const getImgList = async (spuId: number) => {
  * Sku 表单数据初始化 (对外暴露)
  * @param spuId 所属的 SPU 的id
  */
-const initSKUData = async (spuId: number, tmId: number) => {
+const initSKUData = async (spu: SPU) => {
   // 获取 spuId
-  skuFormData.value.spuId = spuId
+  skuFormData.value.spuId = spu.id
   // 获取品牌id
-  skuFormData.value.tmId = tmId
+  skuFormData.value.tmId = spu.tmId
   // 获取三级分类 id
   skuFormData.value.category3Id = selectedThirdCategoryId.value as number
   // 调用接口, 初始化数据
   await Promise.all([
     getAttrInfoList(),
-    getSaleAttrList(spuId),
-    getImgList(spuId),
+    getSaleAttrList(spu.id as number),
+    getImgList(spu.id as number),
   ])
 }
 
 // 对向外暴露的属性与方法进行类型申明
 interface Expose {
-  initSKUData: (spuId: number, tmId: number) => void
+  initSKUData: (spu: SPU) => void
 }
 
 // 对外暴露
@@ -173,10 +174,46 @@ const handleChangeSaleAttrValueList = (
   }
 }
 
+// 定义接收的参数的类型
+interface Props {
+  // skuId
+  skuId?: number
+}
+
+// 接收参数
+const props = defineProps<Props>()
+
+// 监听是否存在 skuId
+watch(
+  () => props.skuId,
+  async (newValue) => {
+    // 编辑模式, 回显数据
+    if (newValue) {
+      // 回显数据
+      const {
+        data: { code, data },
+      } = await getSkuByIdAPI(newValue)
+      if (code === 200) {
+        skuFormData.value = data
+        // 显示图片
+        // 调用接口, 初始化数据
+        await Promise.all([
+          getAttrInfoList(),
+          getSaleAttrList(skuFormData.value.spuId as number),
+          getImgList(skuFormData.value.spuId as number),
+        ])
+      }
+    }
+  },
+  {
+    immediate: true,
+  },
+)
+
 // 新增或修改 sku
 const addOrUpdateSku = async () => {
   const result = await addOrUpdateSkuAPI(skuFormData.value)
-  console.log(result)
+  // 提示信息
 }
 </script>
 

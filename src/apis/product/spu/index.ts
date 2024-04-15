@@ -36,7 +36,7 @@ export const getSPUListAPI = (
   page: number,
   limit: number,
 ) =>
-  http<ResType<ResList>>({
+  http<ResType<ResList<SPU>>>({
     url: API.GETLIST_API + `${page}/${limit}`,
     method: 'GET',
     params: { category3Id: thirdCategoryId },

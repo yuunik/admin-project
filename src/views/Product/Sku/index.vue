@@ -93,8 +93,11 @@ const editSku = () => {
 // 是否展示 sku 详情容器
 const isShowSkuDetail = ref(true)
 
+// sku 信息
+const skuData = ref<Sku>()
 // 查看 sku 详情
-const showSkuInfo = () => {
+const showSkuInfo = (sku: Sku) => {
+  skuData.value = sku
   // 显示 sku 详情容器
   isShowSkuDetail.value = true
 }
@@ -121,7 +124,7 @@ const showSkuInfo = () => {
       <el-table-column label="重量" prop="weight" align="center" />
       <el-table-column label="价格" prop="price" align="center" />
       <el-table-column label="操作" align="center">
-        <template #default="{ row }">
+        <template #default="{ row }: { row: Sku }">
           <el-tooltip :content="row.isSale ? '下架 sku ' : '上架 sku '">
             <el-button
               :type="row.isSale ? 'warning' : 'success'"
@@ -146,7 +149,7 @@ const showSkuInfo = () => {
               size="default"
               circle
               icon="InfoFilled"
-              @click="showSkuInfo"
+              @click="showSkuInfo(row)"
             />
           </el-tooltip>
           <el-tooltip content="删除 sku ">
@@ -161,7 +164,80 @@ const showSkuInfo = () => {
     </el-table>
     <!-- 分页器 -->
     <Pagination :getList="getSkuList" ref="paginationRef" />
+    <!-- sku 详情展示区 -->
+    <el-drawer v-model="isShowSkuDetail">
+      <template #header>
+        <h3 style="text-align: center">查看 sku 详情</h3>
+      </template>
+      <template #default>
+        <el-row style="margin-bottom: 20px">
+          <el-col :span="8">名称</el-col>
+          <el-col :span="16">{{ skuData?.skuName }}</el-col>
+        </el-row>
+        <el-row style="margin-bottom: 20px">
+          <el-col :span="8">描述</el-col>
+          <el-col :span="16">{{ skuData?.skuDesc }}</el-col>
+        </el-row>
+        <el-row style="margin-bottom: 20px">
+          <el-col :span="8">价格</el-col>
+          <el-col :span="16">{{ skuData?.price }}</el-col>
+        </el-row>
+        <el-row style="margin-bottom: 20px">
+          <el-col :span="8">平台属性</el-col>
+          <el-col :span="16">
+            <el-tag
+              v-for="attrValue in skuData?.skuAttrValueList"
+              :key="attrValue.attrId"
+            >
+              {{ attrValue.valueId }}
+            </el-tag>
+          </el-col>
+        </el-row>
+        <el-row style="margin-bottom: 20px">
+          <el-col :span="8">销售属性</el-col>
+          <el-col :span="16">
+            <el-tag
+              type="danger"
+              v-for="saleAttrValue in skuData?.skuSaleAttrValueList"
+              :key="saleAttrValue.saleAttrValeId"
+            >
+              {{ saleAttrValue.saleAttrValeId }}
+            </el-tag>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">商品图片</el-col>
+          <el-col :span="16">
+            <el-carousel :interval="4000" type="card" height="200px" autoplay>
+              <el-carousel-item v-for="item in 6" :key="item">
+                <h3 text="2xl" justify="center">{{ item }}</h3>
+              </el-carousel-item>
+            </el-carousel>
+          </el-col>
+        </el-row>
+      </template>
+    </el-drawer>
   </el-card>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.el-tag:not(:last-child) {
+  margin-right: 10px;
+}
+
+.el-carousel__item h3 {
+  color: #475669;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+  text-align: center;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+</style>

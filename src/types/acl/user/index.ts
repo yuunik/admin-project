@@ -17,5 +17,5 @@ export type User = {
   // 用户手机号码
   phone?: string
   // 用户角色信息
-  roleName: string
+  roleName?: string
 }

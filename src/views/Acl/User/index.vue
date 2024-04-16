@@ -1,8 +1,10 @@
 <script setup lang="ts" name="User">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import type { PageData } from '@/types/common'
-import { getUserListAPI } from '@/apis/acl/user'
+import { addOrUpdateUserAPI, getUserListAPI } from '@/apis/acl/user'
 import type { User } from '@/types/acl/user'
+import { FormInstance, FormRules } from 'element-plus'
+import { addOrUpdateAttrInfoAPI } from '@/apis/product/attr'
 
 // 分页器数据对象初始化
 const pageData = ref<PageData>({
@@ -43,6 +45,94 @@ onMounted(() => {
   // 获取用户信息列表
   getUserList()
 })
+
+// 模态框是否显示
+const dialogFormVisible = ref<boolean>(false)
+
+// 用户信息对象
+const userData = ref<User>({
+  // 用户姓名
+  username: '',
+  // 用户昵称
+  name: '',
+  // 用户密码
+  password: '',
+})
+
+// 表单模板对象
+const userFormRef = ref<FormInstance>()
+// 注册用户的校验规则
+const userRegisterRules = reactive<FormRules<User>>({
+  // 用户姓名校验
+  username: [
+    // 非空校验
+    {
+      required: true,
+      message: '请输入用户姓名',
+      trigger: 'blur',
+    },
+    // 长度校验
+    {
+      min: 2,
+      max: 10,
+      message: '用户姓名应为 2 - 10 的非空字符',
+      trigger: 'blur',
+    },
+  ],
+  // 用户昵称校验
+  name: [
+    //  非空校验
+    {
+      required: true,
+      message: '请输入用户昵称',
+      trigger: 'blur',
+    },
+    // 长度校验
+    {
+      min: 2,
+      max: 10,
+      message: '用户昵称应为 2 - 10 的非空字符',
+      trigger: 'blur',
+    },
+  ],
+  // 用户密码校验
+  password: [
+    // 非空校验
+    {
+      required: true,
+      message: '请输入用户密码',
+      trigger: 'blur',
+    },
+    // 长度校验
+    {
+      min: 6,
+      max: 16,
+      message: '用户密码应为 6 - 16 的非空字符',
+      trigger: 'blur',
+    },
+  ],
+})
+
+// 添加或编辑用户
+const addOrUpdateUser = async () => {
+  // 表单预校验
+  await userFormRef.value?.validate()
+  // 调用接口, 添加或编辑用户
+  const {
+    data: { code },
+  } = await addOrUpdateUserAPI(userData.value)
+  if (code === 200) {
+    // 提示成功信息
+    ElMessage.success(`${userData.value.id ? '编辑' : '添加'}用户成功`)
+    // 关闭模态框
+    dialogFormVisible.value = false
+    // 更新用户列表
+    await getUserList()
+  } else {
+    // 提示失败信息
+    ElMessage.error(`${userData.value.id ? '编辑' : '添加'}用户失败`)
+  }
+}
 </script>
 
 <template>
@@ -58,36 +148,39 @@ onMounted(() => {
     </el-form>
   </el-card>
   <el-card style="margin-top: 20px">
-    <el-button type="primary" size="default" icon="Plus">添加</el-button>
+    <el-button
+      type="primary"
+      size="default"
+      icon="Plus"
+      @click="dialogFormVisible = true"
+    >
+      添加用户
+    </el-button>
     <el-button type="danger" size="default" icon="Delete">批量删除</el-button>
     <!-- 用户信息展示区 -->
     <el-table border style="margin: 20px 0" :data="userList">
-      <el-table-column type="selection" align="center" width="50px" />
-      <el-table-column type="index" label="序号" align="center" width="50px" />
+      <el-table-column type="selection" align="center" width="50" />
+      <el-table-column type="index" label="序号" align="center" width="50" />
       <el-table-column label="id 编号" align="center" prop="id" />
-      <el-table-column label="用户名字" align="center" prop="name" />
-      <el-table-column label="用户名称" align="center" prop="username" />
+      <el-table-column label="用户名字" align="center" prop="username" />
+      <el-table-column label="用户名称" align="center" prop="name" />
       <el-table-column label="用户角色" align="center" prop="roleName" />
       <el-table-column label="创建时间" align="center" prop="createTime" />
       <el-table-column label="更新时间" align="center" prop="updateTime" />
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作" align="center" width="500">
         <template #default>
-          <el-button type="success" size="small" icon="User">
+          <el-button type="success" size="default" icon="User">
             分配角色
           </el-button>
-          <el-button
-            type="primary"
-            size="small"
-            icon="Edit"
-            style="margin: 10px 0"
-          >
+          <el-button type="primary" size="default" icon="Edit">
             编辑用户信息
           </el-button>
-          <el-button type="danger" size="small" icon="Delete">
+          <el-button type="danger" size="default" icon="Delete">
             删除用户信息
           </el-button>
         </template>
       </el-table-column>
+      <!-- 表格空数据展示区 -->
       <template #empty>
         <!-- 无数据时的展示区 -->
         <el-empty description="暂无数据" />
@@ -96,6 +189,33 @@ onMounted(() => {
     <!-- 分页器 -->
     <Pagination :getList="getUserList" ref="paginationRef" />
   </el-card>
+  <!-- 表单展示区 -->
+  <el-dialog
+    v-model="dialogFormVisible"
+    width="500"
+    title="添加用户"
+    align-center
+  >
+    <el-form ref="userFormRef" :model="userData" :rules="userRegisterRules">
+      <el-form-item label="用户姓名" prop="username">
+        <el-input placeholder="请输入用户姓名" v-model="userData.username" />
+      </el-form-item>
+      <el-form-item label="用户昵称" prop="name">
+        <el-input placeholder="请输入用户昵称" v-model="userData.name" />
+      </el-form-item>
+      <el-form-item label="用户密码" prop="password">
+        <el-input
+          placeholder="请输入用户密码"
+          type="password"
+          v-model="userData.password"
+        />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="dialogFormVisible = false">取消</el-button>
+      <el-button type="primary" @click="addOrUpdateUser">确认</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss">

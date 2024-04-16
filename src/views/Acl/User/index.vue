@@ -1,5 +1,5 @@
 <script setup lang="ts" name="User">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, nextTick } from 'vue'
 import type { PageData } from '@/types/common'
 import { addOrUpdateUserAPI, getUserListAPI } from '@/apis/acl/user'
 import type { User } from '@/types/acl/user'
@@ -59,6 +59,20 @@ const userData = ref<User>({
   password: '',
 })
 
+// 密码的自定义校验规则
+const validatePassword = (rules: any, value: any, callback: any) => {
+  // 非空校验
+  if (value.trim() === '') {
+    return callback(new Error('请输入密码'))
+  }
+  //  长度校验
+  if (value.length < 6 || value.length > 16) {
+    return callback(new Error('密码长度应为 6 - 16 的非空字符'))
+  }
+  // 通过校验
+  callback()
+}
+
 // 表单模板对象
 const userFormRef = ref<FormInstance>()
 // 注册用户的校验规则
@@ -96,22 +110,35 @@ const userRegisterRules = reactive<FormRules<User>>({
     },
   ],
   // 用户密码校验
-  password: [
-    // 非空校验
-    {
-      required: true,
-      message: '请输入用户密码',
-      trigger: 'blur',
-    },
-    // 长度校验
-    {
-      min: 6,
-      max: 16,
-      message: '用户密码应为 6 - 16 的非空字符',
-      trigger: 'blur',
-    },
-  ],
+  password: [{ required: true, validator: validatePassword, trigger: 'blur' }],
 })
+
+// 打开 dialog
+const openDialog = async (user: User) => {
+  // 重置表单
+  userData.value = {
+    id: undefined,
+    username: '',
+    name: '',
+    password: '',
+  }
+  // 清空上一次校验出现的错误信息
+  await nextTick(() => {
+    // 清空用户名的校验信息
+    userFormRef.value?.clearValidate('name')
+    // 清空用户昵称的校验信息
+    userFormRef.value?.clearValidate('username')
+    // 清空用户密码的校验信息
+    userFormRef.value?.clearValidate('password')
+  })
+  // 判断是否为编辑模式
+  if (user.id) {
+    // 数据回显
+    Object.assign(userData.value, user)
+  }
+  // 打开模态框
+  dialogFormVisible.value = true
+}
 
 // 添加或编辑用户
 const addOrUpdateUser = async () => {
@@ -119,19 +146,19 @@ const addOrUpdateUser = async () => {
   await userFormRef.value?.validate()
   // 调用接口, 添加或编辑用户
   const {
-    data: { code },
+    data: { code, data },
   } = await addOrUpdateUserAPI(userData.value)
   if (code === 200) {
     // 提示成功信息
     ElMessage.success(`${userData.value.id ? '编辑' : '添加'}用户成功`)
-    // 关闭模态框
-    dialogFormVisible.value = false
     // 更新用户列表
-    await getUserList()
+    await getUserList(userData.value.id ? pageData.value : 1)
   } else {
     // 提示失败信息
-    ElMessage.error(`${userData.value.id ? '编辑' : '添加'}用户失败`)
+    ElMessage.error(data)
   }
+  // 关闭模态框
+  dialogFormVisible.value = false
 }
 </script>
 
@@ -148,12 +175,7 @@ const addOrUpdateUser = async () => {
     </el-form>
   </el-card>
   <el-card style="margin-top: 20px">
-    <el-button
-      type="primary"
-      size="default"
-      icon="Plus"
-      @click="dialogFormVisible = true"
-    >
+    <el-button type="primary" size="default" icon="Plus" @click="openDialog">
       添加用户
     </el-button>
     <el-button type="danger" size="default" icon="Delete">批量删除</el-button>
@@ -168,11 +190,16 @@ const addOrUpdateUser = async () => {
       <el-table-column label="创建时间" align="center" prop="createTime" />
       <el-table-column label="更新时间" align="center" prop="updateTime" />
       <el-table-column label="操作" align="center" width="500">
-        <template #default>
+        <template #default="{ row: user }: { row: User }">
           <el-button type="success" size="default" icon="User">
             分配角色
           </el-button>
-          <el-button type="primary" size="default" icon="Edit">
+          <el-button
+            type="primary"
+            size="default"
+            icon="Edit"
+            @click="openDialog(user)"
+          >
             编辑用户信息
           </el-button>
           <el-button type="danger" size="default" icon="Delete">
@@ -193,7 +220,7 @@ const addOrUpdateUser = async () => {
   <el-dialog
     v-model="dialogFormVisible"
     width="500"
-    title="添加用户"
+    :title="userData.id ? '编辑用户信息' : '添加用户信息'"
     align-center
   >
     <el-form ref="userFormRef" :model="userData" :rules="userRegisterRules">

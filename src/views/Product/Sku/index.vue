@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import Pagination from '@/components/Pagination/index.vue'
 import {
   cancelSaleSkuAPI,
+  getSkuByIdAPI,
   getSkuListAPI,
   onSaleSkuAPI,
 } from '@/apis/product/sku'
@@ -91,13 +92,27 @@ const editSku = () => {
 }
 
 // 是否展示 sku 详情容器
-const isShowSkuDetail = ref(true)
+const isShowSkuDetail = ref(false)
 
 // sku 信息
 const skuData = ref<Sku>()
+// 获取 sku 详情
+const getSkuInfoById = async (skuId: number) => {
+  // 获取 sku 详情数据
+  const {
+    data: { code, data },
+  } = await getSkuByIdAPI(skuId)
+  if (code === 200) {
+    // 保存 sku 详情数据
+    skuData.value = data
+  }
+}
+
+console.log(skuData.value)
 // 查看 sku 详情
-const showSkuInfo = (sku: Sku) => {
-  skuData.value = sku
+const showSkuInfo = (skuId: number) => {
+  // 调用接口, 获取 sku 详情
+  getSkuInfoById(skuId)
   // 显示 sku 详情容器
   isShowSkuDetail.value = true
 }
@@ -149,7 +164,7 @@ const showSkuInfo = (sku: Sku) => {
               size="default"
               circle
               icon="InfoFilled"
-              @click="showSkuInfo(row)"
+              @click="showSkuInfo(row.id as number)"
             />
           </el-tooltip>
           <el-tooltip content="删除 sku ">
@@ -187,9 +202,9 @@ const showSkuInfo = (sku: Sku) => {
           <el-col :span="16">
             <el-tag
               v-for="attrValue in skuData?.skuAttrValueList"
-              :key="attrValue.attrId"
+              :key="attrValue.valueId"
             >
-              {{ attrValue.valueId }}
+              {{ attrValue.valueName }}
             </el-tag>
           </el-col>
         </el-row>
@@ -201,16 +216,24 @@ const showSkuInfo = (sku: Sku) => {
               v-for="saleAttrValue in skuData?.skuSaleAttrValueList"
               :key="saleAttrValue.saleAttrValeId"
             >
-              {{ saleAttrValue.saleAttrValeId }}
+              {{ saleAttrValue.saleAttrValueName }}
             </el-tag>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="8">商品图片</el-col>
           <el-col :span="16">
-            <el-carousel :interval="4000" type="card" height="200px" autoplay>
-              <el-carousel-item v-for="item in 6" :key="item">
-                <h3 text="2xl" justify="center">{{ item }}</h3>
+            <el-carousel :interval="2000" type="card" height="200px" autoplay>
+              <el-carousel-item
+                v-for="img in skuData?.skuImageList"
+                :key="img.id"
+              >
+                <el-image
+                  fit="cover"
+                  :src="img.imgUrl"
+                  class="image"
+                  :alt="img.imgName"
+                />
               </el-carousel-item>
             </el-carousel>
           </el-col>
@@ -225,7 +248,7 @@ const showSkuInfo = (sku: Sku) => {
   margin-right: 10px;
 }
 
-.el-carousel__item h3 {
+.el-carousel__item .image {
   color: #475669;
   opacity: 0.75;
   line-height: 200px;

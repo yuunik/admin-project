@@ -19,6 +19,8 @@ enum SkuAPI {
   CANCEL_SALE_SKU = '/admin/product/cancelSale/',
   // 根据 sku 的 id 获取 sku 的信息
   GET_SKU_BY_ID = '/admin/product/getSkuInfo/',
+  // 删除 sku
+  DELETE_SKU = '/admin/product/deleteSku/',
 }
 
 /**
@@ -89,4 +91,14 @@ export const getSkuByIdAPI = (skuId: number) =>
   http<ResType<Sku>>({
     url: SkuAPI.GET_SKU_BY_ID + skuId,
     method: 'GET',
+  })
+
+/**
+ * 根据 skuId 删除 sku
+ * @param skuId skuId
+ */
+export const deleteSkuByIdAPI = (skuId: number) =>
+  http<ResType<any>>({
+    url: SkuAPI.DELETE_SKU + skuId,
+    method: 'DELETE',
   })

@@ -1,8 +1,9 @@
 <script setup lang="ts" name="Sku">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, Fragment } from 'vue'
 import Pagination from '@/components/Pagination/index.vue'
 import {
   cancelSaleSkuAPI,
+  deleteSkuByIdAPI,
   getSkuByIdAPI,
   getSkuListAPI,
   onSaleSkuAPI,
@@ -108,7 +109,6 @@ const getSkuInfoById = async (skuId: number) => {
   }
 }
 
-console.log(skuData.value)
 // 查看 sku 详情
 const showSkuInfo = (skuId: number) => {
   // 调用接口, 获取 sku 详情
@@ -118,6 +118,20 @@ const showSkuInfo = (skuId: number) => {
 }
 
 // 删除 sku
+const deleteSku = async (skuId: number) => {
+  const {
+    data: { code, data },
+  } = await deleteSkuByIdAPI(skuId)
+  if (code === 200) {
+    // 提示成功
+    ElMessage.success('删除成功')
+    // 更新列表
+    await getSkuList()
+  } else {
+    // 提示失败
+    ElMessage.error(data)
+  }
+}
 </script>
 
 <template>
@@ -139,14 +153,14 @@ const showSkuInfo = (skuId: number) => {
       <el-table-column label="重量" prop="weight" align="center" />
       <el-table-column label="价格" prop="price" align="center" />
       <el-table-column label="操作" align="center">
-        <template #default="{ row }: { row: Sku }">
-          <el-tooltip :content="row.isSale ? '下架 sku ' : '上架 sku '">
+        <template #default="{ row: sku }: { row: Sku }">
+          <el-tooltip :content="sku.isSale ? '下架 sku ' : '上架 sku '">
             <el-button
-              :type="row.isSale ? 'warning' : 'success'"
+              :type="sku.isSale ? 'warning' : 'success'"
               size="default"
               circle
-              :icon="row.isSale ? 'Download' : 'Upload'"
-              @click="handleSaleSku(row)"
+              :icon="sku.isSale ? 'Download' : 'Upload'"
+              @click="handleSaleSku(sku)"
             />
           </el-tooltip>
           <el-tooltip content="编辑 sku ">
@@ -164,12 +178,17 @@ const showSkuInfo = (skuId: number) => {
               size="default"
               circle
               icon="InfoFilled"
-              @click="showSkuInfo(row.id as number)"
+              @click="showSkuInfo(sku.id as number)"
             />
           </el-tooltip>
-          <el-tooltip content="删除 sku ">
-            <el-button type="danger" size="default" circle icon="Delete" />
-          </el-tooltip>
+          <el-popconfirm
+            title="是否确认删除该商品"
+            @confirm="deleteSku(sku.id as number)"
+          >
+            <template #reference>
+              <el-button type="danger" size="default" circle icon="Delete" />
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
       <!-- 空数据显示 -->

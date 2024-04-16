@@ -1,6 +1,8 @@
 <script setup lang="ts" name="User">
 import { ref, onMounted } from 'vue'
 import type { PageData } from '@/types/common'
+import { getUserListAPI } from '@/apis/acl/user'
+import type { User } from '@/types/acl/user'
 
 // 分页器数据对象初始化
 const pageData = ref<PageData>({
@@ -13,19 +15,33 @@ const pageData = ref<PageData>({
 // 分页器模板实例
 const paginationRef = ref<InstanceType<typeof Pagination>>()
 
+// 用户列表
+const userList = ref<User[]>([])
 // 获取用户信息列表
-const getUserList = () => {}
+const getUserList = async (page = 1) => {
+  // 不传入当前页参数时, 默认获取第一页数据
+  pageData.value.page = page
+  const {
+    data: { code, data },
+  } = await getUserListAPI(pageData.value.page, pageData.value.limit)
+  // 响应成功，获取用户信息列表
+  if (code === 200) {
+    // 更新用户列表数据
+    userList.value = data.records
+    //  更新分页器数据
+    pageData.value.total = data.total
+  }
+}
 
 // 组件加载后执行
 onMounted(() => {
-  // 获取分页器数据对象
-  pageData.value = paginationRef.value.pageData
-  // 设置默认初始值
+  // 为分页器数据对象设置默认初始值
   pageData.value = Object.assign(paginationRef.value.pageData, {
     pageSizes: [1, 3, 5, 7, 9],
     limit: 5,
   })
-  console.log(pageData.value)
+  // 获取用户信息列表
+  getUserList()
 })
 </script>
 
@@ -45,24 +61,29 @@ onMounted(() => {
     <el-button type="primary" size="default" icon="Plus">添加</el-button>
     <el-button type="danger" size="default" icon="Delete">批量删除</el-button>
     <!-- 用户信息展示区 -->
-    <el-table border style="margin: 20px 0">
+    <el-table border style="margin: 20px 0" :data="userList">
       <el-table-column type="selection" align="center" width="50px" />
       <el-table-column type="index" label="序号" align="center" width="50px" />
-      <el-table-column label="id 编号" align="center" />
-      <el-table-column label="用户名字" align="center" />
-      <el-table-column label="用户名称" align="center" />
-      <el-table-column label="用户角色" align="center" />
-      <el-table-column label="创建时间" align="center" />
-      <el-table-column label="更新时间" align="center" />
+      <el-table-column label="id 编号" align="center" prop="id" />
+      <el-table-column label="用户名字" align="center" prop="name" />
+      <el-table-column label="用户名称" align="center" prop="username" />
+      <el-table-column label="用户角色" align="center" prop="roleName" />
+      <el-table-column label="创建时间" align="center" prop="createTime" />
+      <el-table-column label="更新时间" align="center" prop="updateTime" />
       <el-table-column label="操作" align="center">
         <template #default>
-          <el-button type="success" size="default" icon="User">
+          <el-button type="success" size="small" icon="User">
             分配角色
           </el-button>
-          <el-button type="primary" size="default" icon="Edit">
+          <el-button
+            type="primary"
+            size="small"
+            icon="Edit"
+            style="margin: 10px 0"
+          >
             编辑用户信息
           </el-button>
-          <el-button type="danger" size="default" icon="Delete">
+          <el-button type="danger" size="small" icon="Delete">
             删除用户信息
           </el-button>
         </template>

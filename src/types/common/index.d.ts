@@ -1,6 +1,6 @@
-// 基础响应数据类型
-import { SPU } from '@/types/product/spu'
+// 公共数据相关类型定义
 
+// 基础响应数据类型
 export type ResType<T> = {
   /* 响应状态码 */
   code: number

@@ -10,6 +10,7 @@ import 'nprogress/nprogress.css'
 import routes from './routes'
 import { useUserStore } from '@/store'
 import { GET_TOKEN } from '@/utils'
+// 引入基础设置
 import basicSetting from '@/setting.ts'
 
 // 路由器
@@ -27,11 +28,13 @@ const router = createRouter({
 
 // 全局路由前置守卫
 router.beforeEach(async (to, _, next) => {
+  // 关闭加载圆圈
+  nprogress.configure({ showSpinner: false })
   // 进度条开始加载
   nprogress.start()
-  nprogress.configure({ showSpinner: false })
   // 修改网站标题
   document.title = `${basicSetting.websiteName} ~ ${to.meta.title}`
+  // 获取用户状态库
   const userStore = useUserStore()
   // 判断有无 token
   if (GET_TOKEN()) {

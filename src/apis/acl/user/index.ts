@@ -1,7 +1,7 @@
 // 用户管理相关的接口
 import { http } from '@/utils'
 import type { ResType, ResList } from '@/types/common'
-import type { User } from '@/types/acl/user'
+import type { User, UserRoleInfo } from '@/types/acl/user'
 
 // 地址枚举值
 enum AclAPI {
@@ -11,6 +11,8 @@ enum AclAPI {
   ADD_USER = '/admin/acl/user/save',
   // 更新用户
   UPDATE_USER = '/admin/acl/user/update',
+  // 根据用户获取角色数据
+  GET_ROLE_LIST = '/admin/acl/user/toAssign/',
 }
 
 /**
@@ -37,3 +39,13 @@ export const addOrUpdateUserAPI = (data: User) => {
     return http<ResType<any>>({ url: AclAPI.ADD_USER, method: 'POST', data })
   }
 }
+
+/**
+ * 根据用户 id 获取角色数据
+ * @param adminId 用户id
+ */
+export const getUserRoleListAPI = (adminId: number) =>
+  http<ResType<UserRoleInfo>>({
+    url: AclAPI.GET_ROLE_LIST + adminId,
+    method: 'GET',
+  })

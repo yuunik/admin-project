@@ -11,7 +11,7 @@ export type User = {
   // 用户名
   name: string
   // 用户密码
-  password: string
+  password?: string
   // 用户昵称
   username: string
   // 用户手机号码

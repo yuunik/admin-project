@@ -25,19 +25,40 @@ const paginationRef = ref<InstanceType<typeof Pagination>>()
 
 // 用户列表
 const userList = ref<User[]>([])
-// 获取用户信息列表
+
+// 查询数据对象
+let paramData = reactive({
+  username: '',
+  name: '',
+})
+
+/**
+ * 获取用户信息列表
+ * @param page 当前页(可选值, 默认值为 1)
+ * @param username  用户名(可选值)
+ * @param name  用户昵称(可选值)
+ */
 const getUserList = async (page = 1) => {
   // 不传入当前页参数时, 默认获取第一页数据
   pageData.value.page = page
   const {
     data: { code, data },
-  } = await getUserListAPI(pageData.value.page, pageData.value.limit)
+  } = await getUserListAPI(
+    pageData.value.page,
+    pageData.value.limit,
+    paramData.username,
+    paramData.name,
+  )
   // 响应成功，获取用户信息列表
   if (code === 200) {
     // 更新用户列表数据
     userList.value = data.records
     //  更新分页器数据
     pageData.value.total = data.total
+    // 条件查询无结果时, 提示用户
+    if (data.total === 0) {
+      ElMessage.warning('无查询结果')
+    }
   }
 }
 
@@ -262,7 +283,9 @@ const deleteUser = async (userId: number) => {
     // 提示成功消息
     ElMessage.success('删除成功')
     // 重新渲染页面
-    getUserList()
+    getUserList(
+      userList.value.length > 1 ? pageData.value.page : pageData.value.page - 1,
+    )
   } else {
     // 提示删除消息
     ElMessage.error(data)
@@ -285,11 +308,16 @@ const batchDeleteUser = async () => {
   }
 }
 
-// 搜索数据对象
-const paramData = reactive({
-  username: '',
-  name: '',
-})
+// 条件查询
+const searchUser = () => {
+  // 根据用户名、用户昵称来查找用户
+  getUserList()
+  // 重置查询参数
+  Object.assign(paramData, {
+    username: '',
+    name: '',
+  })
+}
 </script>
 
 <template>
@@ -302,7 +330,14 @@ const paramData = reactive({
         <el-input placeholder="请输入用户昵称" v-model="paramData.name" />
       </el-form-item>
       <el-form-item class="button">
-        <el-button type="primary" size="default" icon="Search">搜索</el-button>
+        <el-button
+          type="primary"
+          size="default"
+          icon="Search"
+          @click="searchUser"
+        >
+          搜索
+        </el-button>
         <el-button icon="RefreshRight">重置</el-button>
       </el-form-item>
     </el-form>

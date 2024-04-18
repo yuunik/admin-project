@@ -4,7 +4,7 @@ import type { ResType, ResList } from '@/types/common'
 import type { User, UserRoleInfo } from '@/types/acl/user'
 
 // 地址枚举值
-enum AclAPI {
+enum UserAPI {
   // 获取管理用户分页列表
   GET_USER_LIST = '/admin/acl/user/',
   // 新增用户
@@ -13,6 +13,8 @@ enum AclAPI {
   UPDATE_USER = '/admin/acl/user/update',
   // 根据用户获取角色数据
   GET_ROLE_LIST = '/admin/acl/user/toAssign/',
+  // 为用户分配角色
+  ASSIGN_ROLE = '/admin/acl/user/doAssignRole',
 }
 
 /**
@@ -22,7 +24,7 @@ enum AclAPI {
  */
 export const getUserListAPI = (page: number, limit: number) =>
   http<ResType<ResList<User>>>({
-    url: AclAPI.GET_USER_LIST + `${page}/${limit}`,
+    url: UserAPI.GET_USER_LIST + `${page}/${limit}`,
     method: 'GET',
   })
 
@@ -33,10 +35,10 @@ export const getUserListAPI = (page: number, limit: number) =>
 export const addOrUpdateUserAPI = (data: User) => {
   if (data.id) {
     // 更新用户信息
-    return http<ResType<any>>({ url: AclAPI.UPDATE_USER, method: 'PUT', data })
+    return http<ResType<any>>({ url: UserAPI.UPDATE_USER, method: 'PUT', data })
   } else {
     // 新增用户
-    return http<ResType<any>>({ url: AclAPI.ADD_USER, method: 'POST', data })
+    return http<ResType<any>>({ url: UserAPI.ADD_USER, method: 'POST', data })
   }
 }
 
@@ -46,6 +48,18 @@ export const addOrUpdateUserAPI = (data: User) => {
  */
 export const getUserRoleListAPI = (adminId: number) =>
   http<ResType<UserRoleInfo>>({
-    url: AclAPI.GET_ROLE_LIST + adminId,
+    url: UserAPI.GET_ROLE_LIST + adminId,
     method: 'GET',
+  })
+
+/**
+ * 为用户分配角色
+ * @param roleIdList 所分配角色的id列表
+ * @param userId 用户id
+ */
+export const assignRoleAPI = (roleIdList: number[], userId: number) =>
+  http<ResType<any>>({
+    url: UserAPI.ASSIGN_ROLE,
+    method: 'POST',
+    data: { roleIdList, userId },
   })

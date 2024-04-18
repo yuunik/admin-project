@@ -4,6 +4,7 @@ import { FormInstance, FormRules } from 'element-plus'
 import type { PageData } from '@/types/common'
 import {
   addOrUpdateUserAPI,
+  assignRoleAPI,
   getUserListAPI,
   getUserRoleListAPI,
 } from '@/apis/acl/user'
@@ -168,30 +169,25 @@ const addOrUpdateUser = async () => {
 const roleDrawerVisible = ref<boolean>(false)
 
 // 是否全选
-const isAllSelected = ref<boolean>(false)
+const isAllSelected = computed(
+  () => selectedRoleList.value.length === roleList.value.length,
+)
 
 // 角色列表
 const roleList = ref<UserRole[]>([])
 // 已选择的角色列表
-const selectedRoles = ref<UserRole[]>([])
-
-// 单选的回调
-const handleSelected = (value: any) => {
-  console.log(value)
-  // 若已选择的角色列表长度等于角色列表长度, 则全选框选中
-  isAllSelected.value = selectedRoles.value.length === roleList.value.length
-}
+const selectedRoleList = ref<UserRole[]>([])
 
 // 控制全选框的中间状态的标记（计算属性）
 const isIndeterminate = computed(
-  () => selectedRoles.value.length > 0 && !isAllSelected.value,
+  () => selectedRoleList.value.length > 0 && !isAllSelected.value,
 )
 
 // 全选的回调
 const handleAllSelected = (value: string | number | boolean) => {
   // 若全选框被选中, 则勾选所有的单选框
   // 若全选框未被选中, 则取消所有的单选框
-  selectedRoles.value = value ? roleList.value : []
+  selectedRoleList.value = value ? roleList.value : []
 }
 
 // 获取角色列表
@@ -203,14 +199,10 @@ const getUserRoleList = async (adminId: number) => {
     },
   } = await getUserRoleListAPI(adminId)
   if (code === 200) {
-    console.log(assignRoles)
-    console.log(allRolesList)
     // 保存已有角色列表
-    selectedRoles.value = assignRoles
+    selectedRoleList.value = assignRoles
     // 保存角色列表
     roleList.value = allRolesList
-    console.log(selectedRoles.value)
-    console.log(roleList.value)
   }
 }
 // 分配角色按键的回调
@@ -231,8 +223,31 @@ const handleSelectionChange = (userList: User[]) => {
   isBatchDelete.value = userList.length > 0
 }
 
+// 所分配角色的id列表
+const roleIdList = ref<number[]>([])
 // 分配角色
-const allocateRoles = () => {}
+const allocateRoles = async () => {
+  // 获取所选角色的id列表
+  roleIdList.value = selectedRoleList.value.map((role) => role.id) as number[]
+  // 调用接口, 分配角色
+  const {
+    data: { code, data },
+  } = await assignRoleAPI(roleIdList.value, userData.value.id as number)
+  // 判断是否分配成功
+  if (code === 200) {
+    // 提示成功信息
+    ElMessage.success('分配角色成功')
+    // 更新列表
+    getUserList()
+  } else {
+    // 提示失败信息
+    ElMessage.error(data)
+  }
+  // 关闭抽屉
+  roleDrawerVisible.value = false
+  // 全选状态重置
+  isAllSelected.value = false
+}
 </script>
 
 <template>
@@ -357,7 +372,10 @@ const allocateRoles = () => {}
           >
             全选
           </el-checkbox>
-          <el-checkbox-group @change="handleSelected" v-model="selectedRoles">
+          <el-checkbox-group
+            @change="handleSelected"
+            v-model="selectedRoleList"
+          >
             <el-checkbox
               v-for="role in roleList"
               :key="role.id"
@@ -369,7 +387,7 @@ const allocateRoles = () => {}
       </el-form>
     </template>
     <template #footer>
-      <el-button>取消</el-button>
+      <el-button @click="roleDrawerVisible = false">取消</el-button>
       <el-button type="primary" @click="allocateRoles">确定</el-button>
     </template>
   </el-drawer>

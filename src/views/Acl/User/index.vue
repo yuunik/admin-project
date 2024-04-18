@@ -332,9 +332,9 @@ const searchUser = () => {
 }
 
 // 获取设置的状态管理库
-const layoutSettingStroe = useLayoutSettingStore()
+const layoutSettingStore = useLayoutSettingStore()
 // 获取方法
-const { changeIsRefresh } = layoutSettingStroe
+const { changeIsRefresh } = layoutSettingStore
 </script>
 
 <template>

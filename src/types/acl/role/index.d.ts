@@ -10,5 +10,5 @@ export type UserRole = {
   // 用户角色名称
   roleName: string
   // 用户角色备注信息
-  remark: null
+  remark?: string
 }

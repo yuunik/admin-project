@@ -7,6 +7,10 @@ import { UserRole } from '@/types/acl/role'
 enum RoleAPI {
   // 获取角色列表
   GET_ROLE_LIST = '/admin/acl/role/',
+  // 添加角色
+  ADD_ROLE = '/admin/acl/role/save',
+  // 编辑角色
+  EDIT_ROLE = '/admin/acl/role/update',
 }
 
 // 获取角色列表
@@ -22,3 +26,22 @@ export const getRoleListAPI = (
       roleName,
     },
   })
+
+// 添加或编辑角色
+export const addOrEditRoleAPI = (role: UserRole) => {
+  if (role.id) {
+    // 编辑角色
+    return http<ResType<any>>({
+      url: RoleAPI.EDIT_ROLE,
+      method: 'PUT',
+      data: role,
+    })
+  } else {
+    // 添加角色
+    return http<ResType<any>>({
+      url: RoleAPI.ADD_ROLE,
+      method: 'POST',
+      data: role,
+    })
+  }
+}

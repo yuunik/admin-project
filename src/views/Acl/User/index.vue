@@ -5,6 +5,7 @@ import type { PageData } from '@/types/common'
 import {
   addOrUpdateUserAPI,
   assignRoleAPI,
+  batchDeleteUserAPI,
   deleteUserByIdAPI,
   getUserListAPI,
   getUserRoleListAPI,
@@ -151,16 +152,16 @@ const addOrUpdateUser = async () => {
   await userFormRef.value?.validate()
   // 调用接口, 添加或编辑用户
   const {
-    data: { code, data },
+    data: { code },
   } = await addOrUpdateUserAPI(userData.value)
   if (code === 200) {
     // 提示成功信息
-    ElMessage.success(`${userData.value.id ? '编辑' : '添加'}用户成功`)
+    ElMessage.success(`${userData.value.id ? '编辑' : '添加'}成功`)
     // 刷新浏览器
     window.location.reload()
   } else {
     // 提示失败信息
-    ElMessage.error(data)
+    ElMessage.error('删除失败')
   }
   // 关闭模态框
   dialogFormVisible.value = false
@@ -218,10 +219,14 @@ const openRoleForm = async (user: User) => {
 
 // 批量删除按键是否可点击
 const isBatchDelete = ref<boolean>(false)
+// 删除的用户id列表
+const deleteUserIdList = ref<number[]>([])
 // 用户信息表格选项变化时的回调
 const handleSelectionChange = (userList: User[]) => {
   // 判断是否有选中的用户
   isBatchDelete.value = userList.length > 0
+  // 获取想要删除的用户的id列表
+  deleteUserIdList.value = userList.map((user) => user.id) as number[]
 }
 
 // 所分配角色的id列表
@@ -263,13 +268,38 @@ const deleteUser = async (userId: number) => {
     ElMessage.error(data)
   }
 }
+
+// 批量删除用户
+const batchDeleteUser = async () => {
+  const {
+    data: { code, data },
+  } = await batchDeleteUserAPI(deleteUserIdList.value)
+  if (code === 200) {
+    // 提示成功消息
+    ElMessage.success('批量删除成功')
+    // 重新渲染页面
+    getUserList()
+  } else {
+    // 提示删除消息
+    ElMessage.error(data)
+  }
+}
+
+// 搜索数据对象
+const paramData = reactive({
+  username: '',
+  name: '',
+})
 </script>
 
 <template>
   <el-card class="search-container">
     <el-form class="search">
       <el-form-item label="用户名:" class="username">
-        <el-input placeholder="请输入用户名" />
+        <el-input placeholder="请输入用户名" v-model="paramData.username" />
+      </el-form-item>
+      <el-form-item label="用户昵称:" class="name">
+        <el-input placeholder="请输入用户昵称" v-model="paramData.name" />
       </el-form-item>
       <el-form-item class="button">
         <el-button type="primary" size="default" icon="Search">搜索</el-button>
@@ -291,6 +321,7 @@ const deleteUser = async (userId: number) => {
       size="default"
       icon="Delete"
       :disabled="!isBatchDelete"
+      @click="batchDeleteUser"
     >
       批量删除
     </el-button>

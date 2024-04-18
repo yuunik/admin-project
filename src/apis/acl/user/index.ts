@@ -17,17 +17,27 @@ enum UserAPI {
   ASSIGN_ROLE = '/admin/acl/user/doAssignRole',
   // 删除用户
   DELETE_USER = '/admin/acl/user/remove/',
+  // 批量删除用户
+  BATCH_DELETE_USER = '/admin/acl/user/batchRemove/',
 }
 
 /**
  * 获取用户列表
  * @param page  当前页
  * @param limit 每页显示的条数
+ * @param username 用户名
+ * @param name 昵称
  */
-export const getUserListAPI = (page: number, limit: number) =>
+export const getUserListAPI = (
+  page: number,
+  limit: number,
+  username?: string,
+  name?: string,
+) =>
   http<ResType<ResList<User>>>({
     url: UserAPI.GET_USER_LIST + `${page}/${limit}`,
     method: 'GET',
+    params: { username, name },
   })
 
 /**
@@ -72,3 +82,14 @@ export const assignRoleAPI = (roleIdList: number[], userId: number) =>
  */
 export const deleteUserByIdAPI = (userId: number) =>
   http<ResType<any>>({ url: UserAPI.DELETE_USER + userId, method: 'DELETE' })
+
+/**
+ * 批量删除用户
+ * @param userIdList 用户id列表
+ */
+export const batchDeleteUserAPI = (userIdList: number[]) =>
+  http<ResType<any>>({
+    url: UserAPI.BATCH_DELETE_USER,
+    method: 'DELETE',
+    data: userIdList,
+  })

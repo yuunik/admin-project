@@ -1,8 +1,7 @@
 // 角色管理相关的接口
 import { http } from '@/utils'
-import { ResList, ResType } from '@/types/common'
-import { UserRole } from '@/types/acl/role'
-
+import type { ResList, ResType } from '@/types/common'
+import type { UserRole } from '@/types/acl/role'
 // 接口地址枚举
 enum RoleAPI {
   // 获取角色列表
@@ -11,6 +10,8 @@ enum RoleAPI {
   ADD_ROLE = '/admin/acl/role/save',
   // 编辑角色
   EDIT_ROLE = '/admin/acl/role/update',
+  // 获取角色详情
+  GET_ROLE = '/admin/acl/role/get/',
 }
 
 // 获取角色列表
@@ -45,3 +46,7 @@ export const addOrEditRoleAPI = (role: UserRole) => {
     })
   }
 }
+
+// 获取角色详情
+export const getRoleInfoByIdAPI = (roleId: number) =>
+  http<ResType<UserRole>>({ url: RoleAPI.GET_ROLE + roleId, method: 'GET' })

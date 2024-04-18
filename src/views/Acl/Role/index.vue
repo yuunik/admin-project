@@ -1,6 +1,6 @@
 <script setup lang="ts" name="Role">
 import { ref, onMounted, reactive } from 'vue'
-import { getRoleListAPI } from '@/apis/acl/role'
+import { getRoleInfoByIdAPI, getRoleListAPI } from '@/apis/acl/role'
 import type { PageData } from '@/types/common'
 import { UserRole } from '@/types/acl/role'
 import { FormRules } from 'element-plus'
@@ -70,11 +70,19 @@ const addRole = () => {
 }
 
 // 编辑角色
-const editRole = () => {
+const editRole = async (roleId: number) => {
   // 关闭添加模式
   isAdd.value = false
-  // 显示表单
-  dialogVisible.value = true
+  // 调用接口, 回显数据
+  const {
+    data: { code, data },
+  } = await getRoleInfoByIdAPI(roleId)
+  if (code === 200) {
+    // 回显数据
+    Object.assign(roleFormData, data)
+    // 显示表单
+    dialogVisible.value = true
+  }
 }
 
 // 角色表单数据
@@ -131,7 +139,7 @@ const addOrEditRole = async () => {
       <el-table-column label="创建时间" align="center" prop="createTime" />
       <el-table-column label="更新时间" align="center" prop="updateTime" />
       <el-table-column label="操作" align="center" width="350">
-        <template #default>
+        <template #default="{ row: role }: { row: UserRole }">
           <el-button type="success" size="default" icon="Plus" round>
             分配权限
           </el-button>
@@ -140,7 +148,7 @@ const addOrEditRole = async () => {
             size="default"
             icon="Edit"
             round
-            @click="editRole"
+            @click="editRole(role.id as number)"
           >
             编辑
           </el-button>

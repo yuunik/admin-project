@@ -1,6 +1,8 @@
 // 用户管理相关的数据类型
 
 // 用户信息
+import { UserRole } from '@/types/acl/role'
+
 export type User = {
   // 用户 id
   id?: number
@@ -18,20 +20,6 @@ export type User = {
   phone?: string
   // 用户角色信息
   roleName?: string
-}
-
-// 用户角色
-export type UserRole = {
-  // 用户角色 id
-  id?: number
-  // 用户角色的创建时间
-  createTime?: string
-  // 用户角色的更新时间
-  updateTime?: string
-  // 用户角色名称
-  roleName: string
-  // 用户角色备注信息
-  remark: null
 }
 
 // 用户关联角色列表

@@ -10,8 +10,9 @@ import {
   getUserListAPI,
   getUserRoleListAPI,
 } from '@/apis/acl/user'
-import type { User, UserRole } from '@/types/acl/user'
+import type { User } from '@/types/acl/user'
 import { useLayoutSettingStore } from '@/store'
+import { UserRole } from '@/types/acl/role'
 
 // 分页器数据对象初始化
 const pageData = ref<PageData>({

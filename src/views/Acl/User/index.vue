@@ -5,6 +5,7 @@ import type { PageData } from '@/types/common'
 import {
   addOrUpdateUserAPI,
   assignRoleAPI,
+  deleteUserByIdAPI,
   getUserListAPI,
   getUserRoleListAPI,
 } from '@/apis/acl/user'
@@ -245,8 +246,22 @@ const allocateRoles = async () => {
   }
   // 关闭抽屉
   roleDrawerVisible.value = false
-  // 全选状态重置
-  isAllSelected.value = false
+}
+
+// 删除用户
+const deleteUser = async (userId: number) => {
+  const {
+    data: { code, data },
+  } = await deleteUserByIdAPI(userId)
+  if (code === 200) {
+    // 提示成功消息
+    ElMessage.success('删除成功')
+    // 重新渲染页面
+    getUserList()
+  } else {
+    // 提示删除消息
+    ElMessage.error(data)
+  }
 }
 </script>
 
@@ -294,7 +309,12 @@ const allocateRoles = async () => {
       <el-table-column label="用户角色" align="center" prop="roleName" />
       <el-table-column label="创建时间" align="center" prop="createTime" />
       <el-table-column label="更新时间" align="center" prop="updateTime" />
-      <el-table-column label="操作" align="center" width="500">
+      <el-table-column
+        label="操作"
+        align="center"
+        width="500"
+        style="display: flex; flex-wrap: wrap"
+      >
         <template #default="{ row: user }: { row: User }">
           <el-button
             type="success"
@@ -312,9 +332,16 @@ const allocateRoles = async () => {
           >
             编辑用户信息
           </el-button>
-          <el-button type="danger" size="default" icon="Delete">
-            删除用户信息
-          </el-button>
+          <el-popconfirm
+            title="是否确认删除该用户"
+            @confirm="deleteUser(user.id as number)"
+          >
+            <template #reference>
+              <el-button type="danger" size="default" icon="Delete">
+                删除用户信息
+              </el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
       <!-- 表格空数据展示区 -->
@@ -372,10 +399,7 @@ const allocateRoles = async () => {
           >
             全选
           </el-checkbox>
-          <el-checkbox-group
-            @change="handleSelected"
-            v-model="selectedRoleList"
-          >
+          <el-checkbox-group v-model="selectedRoleList">
             <el-checkbox
               v-for="role in roleList"
               :key="role.id"

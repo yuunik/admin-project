@@ -15,6 +15,8 @@ enum UserAPI {
   GET_ROLE_LIST = '/admin/acl/user/toAssign/',
   // 为用户分配角色
   ASSIGN_ROLE = '/admin/acl/user/doAssignRole',
+  // 删除用户
+  DELETE_USER = '/admin/acl/user/remove/',
 }
 
 /**
@@ -63,3 +65,10 @@ export const assignRoleAPI = (roleIdList: number[], userId: number) =>
     method: 'POST',
     data: { roleIdList, userId },
   })
+
+/**
+ * 删除用户
+ * @param userId 用户id
+ */
+export const deleteUserByIdAPI = (userId: number) =>
+  http<ResType<any>>({ url: UserAPI.DELETE_USER + userId, method: 'DELETE' })

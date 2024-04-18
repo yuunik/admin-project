@@ -11,6 +11,7 @@ import {
   getUserRoleListAPI,
 } from '@/apis/acl/user'
 import type { User, UserRole } from '@/types/acl/user'
+import { useLayoutSettingStore } from '@/store'
 
 // 分页器数据对象初始化
 const pageData = ref<PageData>({
@@ -39,8 +40,14 @@ let paramData = reactive({
  * @param name  用户昵称(可选值)
  */
 const getUserList = async (page = 1) => {
-  // 不传入当前页参数时, 默认获取第一页数据
-  pageData.value.page = page
+  // 页码小于 1 时, 默认获取第一页数据
+  if (page < 1) {
+    pageData.value.page = 1
+  } else {
+    // 不传入当前页参数时, 默认获取第一页数据
+    pageData.value.page = page
+  }
+  // 调用接口, 获取用户信息列表
   const {
     data: { code, data },
   } = await getUserListAPI(
@@ -182,7 +189,7 @@ const addOrUpdateUser = async () => {
     window.location.reload()
   } else {
     // 提示失败信息
-    ElMessage.error('删除失败')
+    ElMessage.error(`${userData.value.id ? '编辑' : '添加'}成功`)
   }
   // 关闭模态框
   dialogFormVisible.value = false
@@ -300,8 +307,12 @@ const batchDeleteUser = async () => {
   if (code === 200) {
     // 提示成功消息
     ElMessage.success('批量删除成功')
-    // 重新渲染页面
-    getUserList()
+    // 重新渲染页面, 若删除的用户数大于当前页的用户数, 则返回上一页
+    getUserList(
+      deleteUserIdList.value.length >= userList.value.length
+        ? pageData.value.page
+        : pageData.value.page - 1,
+    )
   } else {
     // 提示删除消息
     ElMessage.error(data)
@@ -318,6 +329,11 @@ const searchUser = () => {
     name: '',
   })
 }
+
+// 获取设置的状态管理库
+const layoutSettingStroe = useLayoutSettingStore()
+// 获取方法
+const { changeIsRefresh } = layoutSettingStroe
 </script>
 
 <template>
@@ -338,7 +354,9 @@ const searchUser = () => {
         >
           搜索
         </el-button>
-        <el-button icon="RefreshRight">重置</el-button>
+        <el-button icon="RefreshRight" @click="() => changeIsRefresh()">
+          重置
+        </el-button>
       </el-form-item>
     </el-form>
   </el-card>

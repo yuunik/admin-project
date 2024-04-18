@@ -12,11 +12,13 @@ const layoutSettingStore = useLayoutSettingStore()
 // 监听 isRefresh 的变化
 watch(
   () => layoutSettingStore.isRefresh,
-  () => {
-    // 销毁内容组件
-    isNotRefresh.value = false
-    // 当组件更新后的回调, 重新加载内容组件
-    nextTick(() => (isNotRefresh.value = true))
+  (newValue) => {
+    if (newValue) {
+      // 销毁内容组件
+      isNotRefresh.value = false
+      // 当组件更新后的回调, 重新加载内容组件
+      nextTick(() => (isNotRefresh.value = true))
+    }
   },
 )
 </script>

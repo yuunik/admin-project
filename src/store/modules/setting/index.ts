@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { nextTick, ref } from 'vue'
 
 const useLayoutSettingStore = defineStore('layoutSetting', () => {
   // 控制 layout 左侧菜单是否折叠的标记
@@ -11,7 +11,12 @@ const useLayoutSettingStore = defineStore('layoutSetting', () => {
   const changeIsFold = () => (isFold.value = !isFold.value)
 
   // 修改是否刷新
-  const changeIsRefresh = () => (isRefresh.value = !isRefresh.value)
+  const changeIsRefresh = async () => {
+    // 开始刷新
+    isRefresh.value = true
+    // 等待下一次刷新
+    nextTick(() => (isRefresh.value = false))
+  }
 
   return {
     isFold,

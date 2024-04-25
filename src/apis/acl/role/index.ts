@@ -12,6 +12,8 @@ enum RoleAPI {
   EDIT_ROLE = '/admin/acl/role/update',
   // 获取角色详情
   GET_ROLE = '/admin/acl/role/get/',
+  // 删除角色
+  DELETE_ROLE = '/admin/acl/role/remove/',
 }
 
 // 获取角色列表
@@ -50,3 +52,10 @@ export const addOrEditRoleAPI = (role: UserRole) => {
 // 获取角色详情
 export const getRoleInfoByIdAPI = (roleId: number) =>
   http<ResType<UserRole>>({ url: RoleAPI.GET_ROLE + roleId, method: 'GET' })
+
+// 删除角色
+export const deleteRoleByIdAPI = (roleId: number) =>
+  http<ResType<any>>({
+    url: RoleAPI.DELETE_ROLE + roleId,
+    method: 'DELETE',
+  })

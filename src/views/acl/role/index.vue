@@ -1,7 +1,7 @@
 <script setup lang="ts" name="Role">
-import { ref, onMounted, reactive, computed } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { FormRules } from 'element-plus'
-import { getRoleInfoByIdAPI, getRoleListAPI } from '@/apis/acl/role'
+import { deleteRoleByIdAPI, getRoleInfoByIdAPI, getRoleListAPI } from '@/apis/acl/role'
 import type { PageData } from '@/types/common'
 import type { UserRole } from '@/types/acl/role'
 import { addOrEditRoleAPI } from '@/apis/acl/role'
@@ -9,9 +9,7 @@ import type { Permission } from '@/types/acl/permission'
 import {
   getPermissionListByRoleIdAPI,
   assignPermissionToRoleAPI,
-  deletePermissionByRoleIdAPI,
 } from '@/apis/acl/permission'
-import { get } from 'node_modules/axios/index.d.cts'
 
 // 分页数据初始化
 let pageData = reactive<PageData>({
@@ -217,7 +215,7 @@ const deletePermissionByRoleId = async (roleId: number) => {
   // 调用接口, 删除角色的权限
   const {
     data: { code },
-  } = await deletePermissionByRoleIdAPI(roleId)
+  } = await deleteRoleByIdAPI(roleId)
   if (code === 200) {
     // 提示成功信息
     ElMessage.success('删除角色权限成功')

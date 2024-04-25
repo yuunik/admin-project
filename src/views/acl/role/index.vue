@@ -1,12 +1,15 @@
 <script setup lang="ts" name="Role">
-import { ref, onMounted, reactive, watch } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
+import { FormRules } from 'element-plus'
 import { getRoleInfoByIdAPI, getRoleListAPI } from '@/apis/acl/role'
 import type { PageData } from '@/types/common'
 import type { UserRole } from '@/types/acl/role'
-import { FormRules } from 'element-plus'
 import { addOrEditRoleAPI } from '@/apis/acl/role'
 import type { Permission } from '@/types/acl/permission'
-import { getPermissionListByRoleIdAPI } from '@/apis/acl/permission'
+import {
+  getPermissionListByRoleIdAPI,
+  assignPermissionToRoleAPI,
+} from '@/apis/acl/permission'
 
 // 分页数据初始化
 let pageData = reactive<PageData>({
@@ -127,6 +130,7 @@ const permissionDataList = ref<Permission[]>([])
 
 // 选中的权限列表
 const checkedPermissionList = ref<number[]>([])
+
 // 根据角色权限列表, 获取选中的权限列表
 const getCheckedPermissionList = (permissionList: Permission[]) => {
   // 遍历权限列表
@@ -146,27 +150,23 @@ const getCheckedPermissionList = (permissionList: Permission[]) => {
   return
 }
 
-// 监听角色权限列表的变化
-watch(
-  permissionDataList,
-  () => {
-    // 获取选中的权限列表
-    getCheckedPermissionList(permissionDataList.value)
-  },
-  {
-    deep: true,
-  },
-)
-
+// 角色对象
+const role = ref<UserRole>({
+  roleName: '',
+})
 // 打开角色权限抽屉
-const openRoleDrawer = async (roleId: number) => {
+const openRoleDrawer = async (row: UserRole) => {
+  // 保存角色对象
+  Object.assign(role.value, row)
   // 调用接口, 获取角色所拥有的权限列表
   const {
     data: { code, data },
-  } = await getPermissionListByRoleIdAPI(roleId)
+  } = await getPermissionListByRoleIdAPI(role.value.id as number)
   if (code === 200) {
     // 更新权限树数据
     Object.assign(permissionDataList.value, data)
+    // 重置选中的权限列表
+    getCheckedPermissionList(permissionDataList.value)
     // 打开抽屉
     drawerVisible.value = true
   }
@@ -178,6 +178,36 @@ const defaultProps = {
   label: 'name',
   // 子节点
   children: 'children',
+}
+
+// 权限数实例
+const permissionTreeRef = ref<InstanceType<typeof ElTree>>()
+// 角色权限分配
+const assignRolePermissions = async () => {
+  const { getHalfCheckedKeys, getCheckedKeys } = permissionTreeRef.value
+  const roleId = role.value.id as number
+  const permissionId = getCheckedKeys().concat(getHalfCheckedKeys()) as number[]
+
+  // 调用接口, 保存角色权限
+  const {
+    data: { code },
+  } = await assignPermissionToRoleAPI({
+    roleId,
+    permissionId,
+  })
+  if (code === 200) {
+    // 提示成功信息
+    ElMessage.success('分配权限成功')
+    // 关闭抽屉
+    drawerVisible.value = false
+    // 刷新角色列表
+    window.location.reload()
+  } else {
+    // 提示失败信息
+    ElMessage.error('分配权限失败')
+    // 关闭抽屉
+    drawerVisible.value = false
+  }
 }
 </script>
 
@@ -202,13 +232,13 @@ const defaultProps = {
       <el-table-column label="创建时间" align="center" prop="createTime" />
       <el-table-column label="更新时间" align="center" prop="updateTime" />
       <el-table-column label="操作" align="center" width="350">
-        <template #default="{ row: role }: { row: UserRole }">
+        <template #default="{ row }: { row: UserRole }">
           <el-button
             type="success"
             size="default"
             icon="Plus"
             round
-            @click="openRoleDrawer(role.id as number)"
+            @click="openRoleDrawer(row)"
           >
             分配权限
           </el-button>
@@ -269,10 +299,11 @@ const defaultProps = {
       :default-checked-keys="checkedPermissionList"
       :props="defaultProps"
       check-on-click-node
+      ref="permissionTreeRef"
     />
     <template #footer>
       <el-button round @click="drawerVisible = false">取消</el-button>
-      <el-button type="primary" round @click="drawerVisible = false">
+      <el-button type="primary" round @click="assignRolePermissions">
         确定
       </el-button>
     </template>

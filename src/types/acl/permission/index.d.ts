@@ -21,3 +21,11 @@ export type Permission = {
   // 子菜单
   children?: Permission[]
 }
+
+// 分配权限的请求数据类型
+export type AssignPermissionParams = {
+  // 角色 id
+  roleId: number
+  // 权限菜单 id 数组
+  permissionId: number[]
+}

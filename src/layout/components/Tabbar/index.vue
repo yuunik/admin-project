@@ -1,6 +1,6 @@
 <script setup lang="ts" name="Tabbar">
-import Breadcrumb from '@/views/Layout/components/Tabbar/components/Breadcrumb/index.vue'
-import Setting from '@/views/Layout/components/Tabbar/components/Setting/index.vue'
+import Breadcrumb from '@/layout/components/Tabbar/components/Breadcrumb/index.vue'
+import Setting from '@/layout/components/Tabbar/components/Setting/index.vue'
 </script>
 
 <template>

@@ -69,7 +69,7 @@ const getImgList = async (spuId: number) => {
 }
 
 /**
- * Sku 表单数据初始化 (对外暴露)
+ * sku 表单数据初始化 (对外暴露)
  * @param spuId 所属的 SPU 的id
  */
 const initSKUData = async (spu: SPU) => {

@@ -5,8 +5,8 @@ import type { PageData } from '@/types/common'
 import { deleteSPUAPI, getSPUListAPI } from '@/apis/product/spu'
 import type { SPU } from '@/types/product/spu'
 import { useCategoryStore } from '@/store'
-import SPUForm from '@/views/Product/Spu/components/SpuForm/index.vue'
-import SKUForm from '@/views/Product/Spu/components/SkuForm/index.vue'
+import SPUForm from '@/views/product/spu/components/SpuForm/index.vue'
+import SKUForm from '@/views/product/spu/components/SkuForm/index.vue'
 import { getSkuByIdAPI, getSkuListBySpuIdAPI } from '@/apis/product/sku'
 import { Sku } from '@/types/product/sku'
 import { useRoute } from 'vue-router'
@@ -140,7 +140,7 @@ const viewSkuInfo = async (spuId: number) => {
   }
 }
 
-// 删除 Spu
+// 删除 spu
 const deleteSpu = (spuId: number) => {
   ElMessageBox.confirm('此操作将永久删除该商品, 是否继续?', '提示', {
     confirmButtonText: '确定',

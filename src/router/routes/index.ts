@@ -4,11 +4,11 @@ const routes = [
     name: 'layout',
     redirect: 'home',
     path: '/',
-    component: () => import('@/views/Layout/index.vue'),
+    component: () => import('@/layout/index.vue'),
     children: [
       {
         path: '/home',
-        component: () => import('@/views/Home/index.vue'),
+        component: () => import('@/views/home/index.vue'),
         meta: {
           title: '首页',
           isShow: true,
@@ -25,7 +25,7 @@ const routes = [
   {
     name: 'login',
     path: '/login',
-    component: () => import('@/views/Login/index.vue'),
+    component: () => import('@/views/login/index.vue'),
     meta: {
       title: '登录',
       isShow: false,
@@ -34,7 +34,7 @@ const routes = [
   {
     name: '404',
     path: '/error',
-    component: () => import('@/views/Error/index.vue'),
+    component: () => import('@/views/error/index.vue'),
     meta: {
       title: '错误页',
       isShow: false,
@@ -44,7 +44,7 @@ const routes = [
     // 任意路由
     name: 'Any',
     path: '/:patchName',
-    component: () => import('@/views/Error/index.vue'),
+    component: () => import('@/views/error/index.vue'),
     meta: {
       title: '随机匹配',
       isShow: false,
@@ -53,7 +53,7 @@ const routes = [
   {
     name: 'Screen',
     path: '/screen',
-    component: () => import('@/views/Screen/index.vue'),
+    component: () => import('@/views/screen/index.vue'),
     meta: {
       icon: 'Platform',
       isShow: true,
@@ -64,12 +64,12 @@ const routes = [
     name: 'Acl',
     path: '/acl',
     redirect: '/acl/user',
-    component: () => import('@/views/Layout/index.vue'),
+    component: () => import('@/layout/index.vue'),
     children: [
       {
         name: 'User',
         path: '/acl/user',
-        component: () => import('@/views/Acl/User/index.vue'),
+        component: () => import('@/views/acl/User/index.vue'),
         meta: {
           icon: 'User',
           isShow: true,
@@ -79,7 +79,7 @@ const routes = [
       {
         name: 'Role',
         path: '/acl/role',
-        component: () => import('@/views/Acl/Role/index.vue'),
+        component: () => import('@/views/acl/Role/index.vue'),
         meta: {
           icon: 'Avatar',
           isShow: true,
@@ -89,7 +89,7 @@ const routes = [
       {
         name: 'Permission',
         path: '/acl/permission',
-        component: () => import('@/views/Acl/Permission/index.vue'),
+        component: () => import('@/views/acl/Permission/index.vue'),
         meta: {
           icon: 'Memo',
           isShow: true,
@@ -107,12 +107,12 @@ const routes = [
     name: 'Product',
     path: '/product',
     redirect: '/product/trademark',
-    component: () => import('@/views/Layout/index.vue'),
+    component: () => import('@/layout/index.vue'),
     children: [
       {
-        name: 'Trademark',
+        name: 'trademark',
         path: '/product/trademark',
-        component: () => import('@/views/Product/Trademark/index.vue'),
+        component: () => import('@/views/product/trademark/index.vue'),
         meta: {
           icon: 'ShoppingCartFull',
           isShow: true,
@@ -122,7 +122,7 @@ const routes = [
       {
         name: 'Attr',
         path: '/product/attr',
-        component: () => import('@/views/Product/Attr/index.vue'),
+        component: () => import('@/views/product/attr/index.vue'),
         meta: {
           icon: 'ChromeFilled',
           isShow: true,
@@ -130,9 +130,9 @@ const routes = [
         },
       },
       {
-        name: 'Spu',
+        name: 'spu',
         path: '/product/spu',
-        component: () => import('@/views/Product/Spu/index.vue'),
+        component: () => import('@/views/product/spu/index.vue'),
         meta: {
           icon: 'Calendar',
           isShow: true,
@@ -142,7 +142,7 @@ const routes = [
       {
         name: 'Sku',
         path: '/product/sku',
-        component: () => import('@/views/Product/Sku/index.vue'),
+        component: () => import('@/views/product/sku/index.vue'),
         meta: {
           icon: 'Orange',
           isShow: true,

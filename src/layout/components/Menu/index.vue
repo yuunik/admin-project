@@ -1,6 +1,6 @@
 <script setup lang="ts" name="Menu">
 import { useRouter } from 'vue-router'
-import Menu from '@/views/Layout/components/Menu/index.vue'
+import Menu from '@/layout/components/Menu/index.vue'
 
 interface Props {
   menuList: any

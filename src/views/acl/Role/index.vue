@@ -133,11 +133,13 @@ const getCheckedPermissionList = (permissionList: Permission[]) => {
   permissionList.forEach((permission) => {
     // 若被勾选, 则添加到选中的权限列表中
     if (permission.select) {
-      checkedPermissionList.value.push(permission.id as number)
-    }
-    // 若有子节点, 则递归调用子节点
-    if (permission.children && permission.children.length > 0) {
-      getCheckedPermissionList(permission.children) // 递归调用子节点
+      if (permission.children && permission.children.length > 0) {
+        // 若有子节点, 则递归调用子节点
+        getCheckedPermissionList(permission.children) // 递归调用子节点
+      } else {
+        // 若无子节点, 则添加到选中的权限列表中
+        checkedPermissionList.value.push(permission.id as number)
+      }
     }
   })
   // 结束递归
@@ -145,10 +147,16 @@ const getCheckedPermissionList = (permissionList: Permission[]) => {
 }
 
 // 监听角色权限列表的变化
-watch(permissionDataList, () => {
-  // 获取选中的权限列表
-  getCheckedPermissionList(permissionDataList.value)
-})
+watch(
+  permissionDataList,
+  () => {
+    // 获取选中的权限列表
+    getCheckedPermissionList(permissionDataList.value)
+  },
+  {
+    deep: true,
+  },
+)
 
 // 打开角色权限抽屉
 const openRoleDrawer = async (roleId: number) => {
@@ -159,7 +167,6 @@ const openRoleDrawer = async (roleId: number) => {
   if (code === 200) {
     // 更新权限树数据
     Object.assign(permissionDataList.value, data)
-    getCheckedPermissionList(permissionDataList.value)
     // 打开抽屉
     drawerVisible.value = true
   }
@@ -252,6 +259,7 @@ const defaultProps = {
   </el-dialog>
   <!-- 分配角色表单 -->
   <el-drawer v-model="drawerVisible" title="分配权限">
+    <!-- 权限树 -->
     <el-tree
       style="max-width: 600px"
       :data="permissionDataList"

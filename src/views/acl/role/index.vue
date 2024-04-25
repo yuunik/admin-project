@@ -9,7 +9,9 @@ import type { Permission } from '@/types/acl/permission'
 import {
   getPermissionListByRoleIdAPI,
   assignPermissionToRoleAPI,
+  deletePermissionByRoleIdAPI,
 } from '@/apis/acl/permission'
+import { get } from 'node_modules/axios/index.d.cts'
 
 // 分页数据初始化
 let pageData = reactive<PageData>({
@@ -209,6 +211,28 @@ const assignRolePermissions = async () => {
     drawerVisible.value = false
   }
 }
+
+// 删除角色的权限
+const deletePermissionByRoleId = async (roleId: number) => {
+  // 调用接口, 删除角色的权限
+  const {
+    data: { code },
+  } = await deletePermissionByRoleIdAPI(roleId)
+  if (code === 200) {
+    // 提示成功信息
+    ElMessage.success('删除角色权限成功')
+    // 关闭抽屉
+    drawerVisible.value = false
+    // 刷新角色列表
+    // window.location.reload()
+    getRoleList()
+  } else {
+    // 提示失败信息
+    ElMessage.error('删除角色权限失败')
+    // 关闭抽屉
+    drawerVisible.value = false
+  }
+}
 </script>
 
 <template>
@@ -251,9 +275,16 @@ const assignRolePermissions = async () => {
           >
             编辑
           </el-button>
-          <el-button type="danger" size="default" icon="Delete" round>
-            删除
-          </el-button>
+          <el-popconfirm
+            :title="`确认删除${row.roleName}吗？`"
+            @confirm="deletePermissionByRoleId(row.id as number)"
+          >
+            <template #reference>
+              <el-button type="danger" size="default" icon="Delete" round>
+                删除
+              </el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
       <!-- 空状态 -->

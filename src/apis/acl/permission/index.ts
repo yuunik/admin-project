@@ -8,7 +8,9 @@ enum PermissionAPI {
   // 获取权限菜单列表
   GET_PERMISSION_LIST_BY_ROLE_ID = '/admin/acl/permission/toAssign/',
   // 给角色分配权限
-  ASSIGN_PERMISSION_TO_ROLE = '/admin/acl/permission/doAssign/',
+  ASSIGN_PERMISSION_TO_ROLE = '/admin/acl/permission/doAssign',
+  // 删除角色的权限
+  DELETE_PERMISSION_FROM_ROLE = '/admin/acl/permission/remove/',
 }
 
 // 获取权限菜单列表
@@ -32,4 +34,11 @@ export const assignPermissionToRoleAPI = (query: AssignPermissionParams) =>
       PermissionAPI.ASSIGN_PERMISSION_TO_ROLE +
       `?roleId=${query.roleId}&permissionId=${query.permissionId}`,
     method: 'POST',
+  })
+
+// 删除角色的权限
+export const deletePermissionByRoleIdAPI = (roleId: number) =>
+  http<ResType<any>>({
+    url: PermissionAPI.DELETE_PERMISSION_FROM_ROLE + roleId,
+    method: 'DELETE',
   })

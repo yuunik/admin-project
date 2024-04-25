@@ -270,6 +270,12 @@ const defaultProps = {
       :props="defaultProps"
       check-on-click-node
     />
+    <template #footer>
+      <el-button round @click="drawerVisible = false">取消</el-button>
+      <el-button type="primary" round @click="drawerVisible = false">
+        确定
+      </el-button>
+    </template>
   </el-drawer>
 </template>
 

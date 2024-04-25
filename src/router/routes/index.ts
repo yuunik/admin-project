@@ -69,7 +69,7 @@ const routes = [
       {
         name: 'User',
         path: '/acl/user',
-        component: () => import('@/views/acl/User/index.vue'),
+        component: () => import('@/views/acl/user/index.vue'),
         meta: {
           icon: 'User',
           isShow: true,
@@ -77,9 +77,9 @@ const routes = [
         },
       },
       {
-        name: 'Role',
+        name: 'role',
         path: '/acl/role',
-        component: () => import('@/views/acl/Role/index.vue'),
+        component: () => import('@/views/acl/role/index.vue'),
         meta: {
           icon: 'Avatar',
           isShow: true,
@@ -89,7 +89,7 @@ const routes = [
       {
         name: 'Permission',
         path: '/acl/permission',
-        component: () => import('@/views/acl/Permission/index.vue'),
+        component: () => import('@/views/acl/permission/index.vue'),
         meta: {
           icon: 'Memo',
           isShow: true,

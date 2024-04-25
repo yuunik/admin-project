@@ -235,6 +235,14 @@ const deletePermissionByRoleId = async (roleId: number) => {
     drawerVisible.value = false
   }
 }
+
+// 搜索角色
+const searchRole = () => {
+  // 获取角色列表
+  getRoleList()
+  // 清空搜索词
+  keyword.value = ''
+}
 </script>
 
 <template>
@@ -244,7 +252,7 @@ const deletePermissionByRoleId = async (roleId: number) => {
         <el-input placeholder="请输入角色名称" v-model="keyword" />
       </el-form-item>
       <el-form-item class="item">
-        <el-button type="primary" round>搜索</el-button>
+        <el-button type="primary" round :disabled="!keyword" @click="searchRole">搜索</el-button>
         <el-button round>重置</el-button>
       </el-form-item>
     </el-form>

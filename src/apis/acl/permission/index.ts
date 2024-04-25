@@ -9,6 +9,8 @@ enum PermissionAPI {
   GET_PERMISSION_LIST_BY_ROLE_ID = '/admin/acl/permission/toAssign/',
   // 给角色分配权限
   ASSIGN_PERMISSION_TO_ROLE = '/admin/acl/permission/doAssign',
+  // 获取所有权限菜单列表
+  GET_ALL_PERMISSION_LIST = '/admin/acl/permission',
 }
 
 // 获取权限菜单列表
@@ -32,4 +34,11 @@ export const assignPermissionToRoleAPI = (query: AssignPermissionParams) =>
       PermissionAPI.ASSIGN_PERMISSION_TO_ROLE +
       `?roleId=${query.roleId}&permissionId=${query.permissionId}`,
     method: 'POST',
+  })
+
+// 获取所有权限菜单列表
+export const getPermissionListAPI = () =>
+  http<ResType<Permission[]>>({
+    url: PermissionAPI.GET_ALL_PERMISSION_LIST,
+    method: 'GET',
   })

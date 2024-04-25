@@ -1,7 +1,11 @@
 <script setup lang="ts" name="Role">
 import { ref, onMounted, reactive } from 'vue'
 import { FormRules } from 'element-plus'
-import { deleteRoleByIdAPI, getRoleInfoByIdAPI, getRoleListAPI } from '@/apis/acl/role'
+import {
+  deleteRoleByIdAPI,
+  getRoleInfoByIdAPI,
+  getRoleListAPI,
+} from '@/apis/acl/role'
 import type { PageData } from '@/types/common'
 import type { UserRole } from '@/types/acl/role'
 import { addOrEditRoleAPI } from '@/apis/acl/role'

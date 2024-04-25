@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Role">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, nextTick } from 'vue'
 import { FormRules } from 'element-plus'
 import {
   deleteRoleByIdAPI,
@@ -14,6 +14,8 @@ import {
   getPermissionListByRoleIdAPI,
   assignPermissionToRoleAPI,
 } from '@/apis/acl/permission'
+import { useLayoutSettingStore } from '@/store'
+import { storeToRefs } from 'pinia'
 
 // 分页数据初始化
 let pageData = reactive<PageData>({
@@ -243,6 +245,21 @@ const searchRole = () => {
   // 清空搜索词
   keyword.value = ''
 }
+
+// 获取设置的状态管理库
+const layoutSettingStore = useLayoutSettingStore()
+// 获取是否刷新的标记
+const { isRefresh } = storeToRefs(layoutSettingStore)
+// 重置按键的回调
+const reset = () => {
+  // 刷新
+  isRefresh.value = true
+  // 更新后, 刷新标记重置
+  nextTick(() => {
+    // 不刷新
+    isRefresh.value = false
+  })
+}
 </script>
 
 <template>
@@ -252,8 +269,15 @@ const searchRole = () => {
         <el-input placeholder="请输入角色名称" v-model="keyword" />
       </el-form-item>
       <el-form-item class="item">
-        <el-button type="primary" round :disabled="!keyword" @click="searchRole">搜索</el-button>
-        <el-button round>重置</el-button>
+        <el-button
+          type="primary"
+          round
+          :disabled="!keyword"
+          @click="searchRole"
+        >
+          搜索
+        </el-button>
+        <el-button round @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
   </el-card>

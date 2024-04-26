@@ -113,15 +113,11 @@ const addOrUpdatePermission = async () => {
 // 删除权限
 const deletePermission = async (id: number) => {
   try {
-    const result = await ElMessageBox.confirm(
-      '是否删除该权限, 是否继续?',
-      '提示',
-      {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      },
-    )
+    await ElMessageBox.confirm('是否删除该权限, 是否继续?', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
     // 确认删除
     const {
       data: { code },

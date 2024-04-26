@@ -9,16 +9,16 @@ export type Permission = {
   // 权限菜单名称
   name: string
   // 权限值
-  code?: string
+  code: string
   toCode?: string
   // 类型
-  type: number
+  type?: number
   // 状态码
   status?: number
   // 权限菜单的等级
   level: number
   // 是否被勾选
-  select: boolean
+  select?: boolean
   // 子菜单
   children?: Permission[]
 }

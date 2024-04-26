@@ -48,6 +48,7 @@ router.beforeEach(async (to, _, next) => {
       // 跳转回首页
       next('/')
     } else {
+      // 获取用户信息
       // 访问每个路由时, 查询是否有获取到用户信息
       // 没有则发送请求, 获取用户信息
       if (userStore.userInfo) {

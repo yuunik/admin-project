@@ -13,8 +13,10 @@ enum PermissionAPI {
   GET_ALL_PERMISSION_LIST = '/admin/acl/permission',
   // 新增权限
   ADD_PERMISSION = '/admin/acl/permission/save',
-  // 更新表单
+  // 更新权限
   UPDATE_PERMISSION = '/admin/acl/permission/update',
+  // 删除权限
+  DELETE_PERMISSION = '/admin/acl/permission/remove/',
 }
 
 // 获取权限菜单列表
@@ -68,3 +70,13 @@ export const addOrUpdatePermissionAPI = (permission: Permission) => {
     })
   }
 }
+
+/**
+ * 删除权限
+ * @param permissionId 权限ID
+ */
+export const deletePermissionAPI = (permissionId: number) =>
+  http<ResType<any>>({
+    url: PermissionAPI.DELETE_PERMISSION + permissionId,
+    method: 'DELETE',
+  })

@@ -98,7 +98,7 @@ const quitSystem = async () => {
   align-items: center;
 
   .user-avatar {
-    border: 1px solid var(--el-button-bg-color);
+    border: 1px solid #DCDFE6;
     margin: 0 12px;
     cursor: pointer;
     transition: 0.25s all linear;

@@ -41,8 +41,8 @@ const { websiteName } = setting
     <svg-icon
       name="welcome"
       class="homepage-picture"
-      width="450px"
-      height="450px"
+      width="50%"
+      height="50%"
     />
   </div>
 </template>
@@ -91,6 +91,7 @@ const { websiteName } = setting
     justify-content: center;
     align-items: center;
     flex: 1;
+    height: calc(100% - 170.06px);
   }
 }
 </style>

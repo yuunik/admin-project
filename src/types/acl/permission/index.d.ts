@@ -8,6 +8,7 @@ export type Permission = {
   pid: number
   // 权限菜单名称
   name: string
+  // 权限值
   code?: string
   toCode?: string
   // 类型

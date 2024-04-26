@@ -19,6 +19,35 @@ const getPermissionList = async () => {
 onMounted(() => {
   getPermissionList()
 })
+
+// 添加菜单/功能的表单显隐
+const addFormVisible = ref<boolean>(false)
+// 是否操作功能相关的动作标记
+const isThirdLevel = ref<boolean>(false)
+// 打开添加菜单/添加功能的模态框
+const openAddModal = (flag: boolean) => {
+  // 记录为编辑状态
+  isEdit.value = false
+  // 是否操作功能相关的动作标记
+  isThirdLevel.value = flag
+  // 显示模态框
+  addFormVisible.value = true
+}
+
+// 是否为编辑状态
+const isEdit = ref<boolean>(false)
+// 打开编辑菜单/功能的模态框
+const openEditModal = (flag: boolean) => {
+  // 记录为编辑状态
+  isEdit.value = true
+  // 是否操作功能相关的动作标记
+  isThirdLevel.value = flag
+  // 显示模态框
+  addFormVisible.value = true
+}
+
+// 权限表单数据
+const permissionFormData = ref<Permission>()
 </script>
 
 <template>
@@ -40,6 +69,7 @@ onMounted(() => {
             icon="Plus"
             text
             :style="{ opacity: permission.level !== 4 ? 1 : 0 }"
+            @click="openAddModal(permission.level === 3 ? true : false)"
           >
             {{ permission.level === 3 ? '添加功能' : '添加菜单' }}
           </el-button>
@@ -49,6 +79,7 @@ onMounted(() => {
             icon="Edit"
             text
             v-if="permission.level !== 1"
+            @click="openEditModal(permission.level === 3 ? true : false)"
           >
             编辑
           </el-button>
@@ -64,6 +95,32 @@ onMounted(() => {
         </template>
       </el-table-column>
     </el-table>
+    <!-- 添加与编辑的表单 -->
+    <el-dialog
+      :title="
+        isThirdLevel
+          ? isEdit
+            ? '编辑功能'
+            : '添加功能'
+          : isEdit
+            ? '编辑菜单'
+            : '添加菜单'
+      "
+      v-model="addFormVisible"
+    >
+      <el-form>
+        <el-form-item label="名称">
+          <el-input placeholder="请输入菜单名称" />
+        </el-form-item>
+        <el-form-item label="权限">
+          <el-input placeholder="请输入权限数值" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button icon="Close" text>取消</el-button>
+        <el-button type="primary" icon="Select" text>确认</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 

@@ -11,6 +11,10 @@ enum PermissionAPI {
   ASSIGN_PERMISSION_TO_ROLE = '/admin/acl/permission/doAssign',
   // 获取所有权限菜单列表
   GET_ALL_PERMISSION_LIST = '/admin/acl/permission',
+  // 新增权限
+  ADD_PERMISSION = '/admin/acl/permission/save',
+  // 更新表单
+  UPDATE_PERMISSION = '/admin/acl/permission/update',
 }
 
 // 获取权限菜单列表
@@ -42,3 +46,25 @@ export const getPermissionListAPI = () =>
     url: PermissionAPI.GET_ALL_PERMISSION_LIST,
     method: 'GET',
   })
+
+/**
+ * 新增或更新权限
+ * @param permission 权限对象
+ */
+export const addOrUpdatePermissionAPI = (permission: Permission) => {
+  if (permission.id) {
+    // 编辑权限
+    return http<ResType<any>>({
+      url: PermissionAPI.UPDATE_PERMISSION,
+      method: 'PUT',
+      data: permission,
+    })
+  } else {
+    // 新增权限
+    return http<ResType<any>>({
+      url: PermissionAPI.ADD_PERMISSION,
+      method: 'POST',
+      data: permission,
+    })
+  }
+}

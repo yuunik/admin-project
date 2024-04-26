@@ -64,9 +64,9 @@ const router = useRouter()
 // 是否处于加载状态
 const isLoading = ref<boolean>(false)
 // 获取时间提示信息
-// msg --- 问候语
+// greeting --- 问候语
 // timeIcon --- 当前时间图标
-const { msg, timeIcon } = getTime()
+const { greeting, timeIcon } = getTime()
 
 // 获取路由对象
 const {
@@ -87,7 +87,7 @@ const submitForm = async () => {
     ElNotification({
       icon: timeIcon,
       message: '登录成功',
-      title: msg,
+      title: greeting,
     })
     // 路由跳转
     router.push((redirect as string) || '/')

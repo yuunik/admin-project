@@ -11,11 +11,11 @@ $base-menu-logo-height: 50px;
 $base-logo-title-fontSize: 30px;
 
 // 菜单栏折叠后的宽度
-$fold-menu-width: 4%;
+$fold-menu-width: 80px;
 
 // 导航区 和 内容区 折叠后的共有属性
 %fold-common {
-  width: 96%;
-  left: 4%;
+  width: calc(100vw - 80px);
+  left: 80px;
 }
 

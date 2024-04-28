@@ -16,6 +16,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
 
 <template>
   <div class="layout-container">
+    <!-- 侧边菜单栏 -->
     <aside class="layout-aside" :class="{ fold: isFold }">
       <!-- 侧边菜单标题 -->
       <div class="aside-title">
@@ -64,6 +65,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
       justify-content: center;
       flex-wrap: wrap;
     }
+
     .menu-list {
       height: calc(100vh - $base-menu-logo-height);
       color: #fff;
@@ -74,6 +76,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
     }
   }
 
+  // tabbar 样式
   .layout-tabbar {
     width: 82%;
     height: 10%;
@@ -89,6 +92,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
     }
   }
 
+  // 内容区样式
   .layout-main {
     width: 82%;
     height: 90%;
@@ -97,15 +101,12 @@ const { isFold } = storeToRefs(layoutSettingStore)
     left: 18%;
     padding: 20px;
     box-sizing: border-box;
-    overflow: auto;
+    overflow: hidden;
     transition: 0.25s all linear;
 
+    // 折叠样式
     &.fold {
       @extend %fold-common;
-    }
-
-    .content {
-      height: 2000px;
     }
   }
 }

@@ -4,12 +4,12 @@ import Logo from './components/Logo/index.vue'
 import Menu from './components/Menu/index.vue'
 import Content from './components/Content/index.vue'
 import Tabbar from './components/Tabbar/index.vue'
-import { useUserStore, useLayoutSettingStore } from '@/store'
+import { useUserStore, useSettingStore } from '@/store'
 
 // 获取用户的状态管理库
 const userStore = useUserStore()
 // 获取状态管理库
-const layoutSettingStore = useLayoutSettingStore()
+const layoutSettingStore = useSettingStore()
 // 获取是否折叠的标记
 const { isFold } = storeToRefs(layoutSettingStore)
 </script>
@@ -29,6 +29,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
           background-color="#001529"
           :default-active="$route.path"
           :collapse="isFold"
+          active-text-color="#3A937E"
         >
           <!-- 菜单 -->
           <Menu :menuList="userStore.menuRoute" />

@@ -1,11 +1,11 @@
 <script setup lang="ts" name="Logo">
 import { storeToRefs } from 'pinia'
 import basicSetting from '@/setting.ts'
-import { useLayoutSettingStore } from '@/store'
+import { useSettingStore } from '@/store'
 
 const { logo, isLoadingLogo, websiteName } = basicSetting
 // 获取状态管理库
-const layoutSettingStore = useLayoutSettingStore()
+const layoutSettingStore = useSettingStore()
 // 获取是否折叠的标记
 const { isFold } = storeToRefs(layoutSettingStore)
 </script>
@@ -39,7 +39,16 @@ const { isFold } = storeToRefs(layoutSettingStore)
     font-size: $base-logo-title-fontSize;
     font-style: italic;
     -webkit-text-stroke: 0.8px #000;
-    text-shadow: 1px 1px 10px #fff;
+    transition: 0.25s all linear;
+  }
+}
+
+// 暗黑模式下的样式
+html.dark {
+  .logo-container {
+    .website-name {
+      text-shadow: 1px 1px 5px #fff;
+    }
   }
 }
 </style>

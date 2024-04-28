@@ -11,7 +11,7 @@ import {
   getUserRoleListAPI,
 } from '@/apis/acl/user'
 import type { User } from '@/types/acl/user'
-import { useLayoutSettingStore } from '@/store'
+import { useSettingStore } from '@/store'
 import { UserRole } from '@/types/acl/role'
 
 // 分页器数据对象初始化
@@ -332,7 +332,7 @@ const searchUser = () => {
 }
 
 // 获取设置的状态管理库
-const layoutSettingStore = useLayoutSettingStore()
+const layoutSettingStore = useSettingStore()
 // 获取方法
 const { changeIsRefresh } = layoutSettingStore
 </script>

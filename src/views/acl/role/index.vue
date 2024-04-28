@@ -14,7 +14,7 @@ import {
   getPermissionListByRoleIdAPI,
   assignPermissionToRoleAPI,
 } from '@/apis/acl/permission'
-import { useLayoutSettingStore } from '@/store'
+import { useSettingStore } from '@/store'
 import { storeToRefs } from 'pinia'
 
 // 分页数据初始化
@@ -247,7 +247,7 @@ const searchRole = () => {
 }
 
 // 获取设置的状态管理库
-const layoutSettingStore = useLayoutSettingStore()
+const layoutSettingStore = useSettingStore()
 // 获取是否刷新的标记
 const { isRefresh } = storeToRefs(layoutSettingStore)
 // 重置按键的回调

@@ -5,7 +5,7 @@ import type { PageData } from '@/types/common'
 import { deleteSPUAPI, getSPUListAPI } from '@/apis/product/spu'
 import type { SPU } from '@/types/product/spu'
 import { useCategoryStore } from '@/store'
-import SPUForm from '@/views/product/spu/components/SpuForm/index.vue'
+import SpuForm from '@/views/product/spu/components/SpuForm/index.vue'
 import SKUForm from '@/views/product/spu/components/SkuForm/index.vue'
 import { getSkuByIdAPI, getSkuListBySpuIdAPI } from '@/apis/product/sku'
 import { Sku } from '@/types/product/sku'
@@ -87,7 +87,7 @@ const changeScene = ({
 }
 
 // SpuForm 模板对象
-const spuFormRef = ref<InstanceType<typeof SPUForm>>()
+const spuFormRef = ref<InstanceType<typeof SpuForm>>()
 
 // 添加 spu
 const addSpu = () => {
@@ -264,7 +264,7 @@ onMounted(async () => {
       <!-- 分页器 -->
       <Pagination :getList="getSPUList" ref="paginationRef" />
     </div>
-    <SPUForm
+    <SpuForm
       class="spu-content"
       v-show="scene === 1"
       @changeScene="changeScene"

@@ -1,11 +1,12 @@
 <script setup lang="ts" name="Setting">
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
 import userAvatar from '@/assets/images/userAvatar.jpg'
-import { useUserStore, useLayoutSettingStore } from '@/store'
+import { useUserStore, useSettingStore } from '@/store'
 
 // 获取基础设置的状态管理库
-const layoutSettingStore = useLayoutSettingStore()
+const layoutSettingStore = useSettingStore()
 // 获取修改是否刷新的方法
 const { changeIsRefresh } = layoutSettingStore
 
@@ -53,6 +54,45 @@ const quitSystem = async () => {
     },
   })
 }
+
+// 系统主题色
+const primaryColor = ref<string>('#409EFF')
+
+// 预定义颜色列表
+const predefineColors = ref<string[]>([
+  '#409EFF',
+  '#67C23A',
+  '#E6A23C',
+  '#F56C6C',
+  '#909399',
+])
+
+// 处理颜色改变的回调
+const setPrimaryColor = () => {
+  const element = document.documentElement
+  element.style.setProperty('--el-color-primary', primaryColor.value)
+}
+
+// 获取设置的状态管理库
+const settingStore = useSettingStore()
+// 获取暗黑模式
+const { isDarkMode } = storeToRefs(settingStore)
+// 设置暗黑模式
+const { changeDarkMode } = settingStore
+
+// 组件挂载后执行
+onMounted(() => {
+  /**
+   * 暗黑模式判断
+   */
+  // 获取根节点
+  const htmlElement = document.documentElement
+  if (isDarkMode.value) {
+    htmlElement.classList.add('dark')
+  } else {
+    htmlElement.classList.remove('dark')
+  }
+})
 </script>
 
 <template>
@@ -74,7 +114,33 @@ const quitSystem = async () => {
       @click="getFullScreenMode"
     />
     <!-- 用户设置 -->
-    <el-button plain size="small" circle icon="Setting" />
+    <el-popover title="系统设置" placement="bottom" trigger="hover" width="300">
+      <!-- 设置内容 -->
+      <el-form>
+        <el-form-item label="主题颜色">
+          <el-color-picker
+            v-model="primaryColor"
+            show-alpha
+            :predefine="predefineColors"
+            :teleported="false"
+            @change="setPrimaryColor"
+          />
+        </el-form-item>
+        <!-- 模式切换器 -->
+        <el-form-item label="暗黑模式">
+          <el-switch
+            active-action-icon="Moon"
+            inactive-action-icon="Sunny"
+            v-model="isDarkMode"
+            @change="(value) => changeDarkMode(value as boolean)"
+            active-color="#2c2c2c"
+          />
+        </el-form-item>
+      </el-form>
+      <template #reference>
+        <el-button plain size="small" circle icon="Setting" />
+      </template>
+    </el-popover>
     <!-- 用户头像 -->
     <el-avatar :src="userAvatar" size="small" class="user-avatar" />
     <!-- 退出 -->
@@ -121,5 +187,32 @@ const quitSystem = async () => {
       margin-right: 5px;
     }
   }
+}
+
+// switch 样式
+:deep(.el-switch) {
+  .el-switch__core {
+    background-color: #f2f2f2;
+  }
+}
+
+// 激活样式
+:deep(.is-checked) {
+  .el-switch__core {
+    background-color: #2c2c2c;
+    border: 1px solid #4c4d4f;
+
+    .el-switch__action {
+      color: #fff;
+      font-weight: bolder;
+    }
+  }
+}
+
+// switch 未激活的图标样式
+:deep(.el-switch__action) {
+  background-color: transparent;
+  color: black;
+  font-weight: bolder;
 }
 </style>

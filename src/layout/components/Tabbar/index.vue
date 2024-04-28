@@ -18,7 +18,6 @@ import Setting from '@/layout/components/Tabbar/components/Setting/index.vue'
   display: flex;
   justify-content: space-between;
   align-items: center;
-  // background-image: linear-gradient(to right, #fff, #ddd, #fff);
   box-sizing: border-box;
   border-radius: 4px;
   border: 1px solid #dcdfe6;
@@ -30,6 +29,17 @@ import Setting from '@/layout/components/Tabbar/components/Setting/index.vue'
 
   .setting {
     margin-right: 20px;
+  }
+}
+
+// 暗黑模式时的样式
+html.dark {
+  .tabbar {
+    border: 1px solid #414243;
+
+    &:hover {
+      box-shadow: none;
+    }
   }
 }
 </style>

@@ -1,13 +1,13 @@
 <script setup lang="ts" name="Content">
 // 路由组件, 可实现过渡动效
 import { ref, watch, nextTick } from 'vue'
-import { useLayoutSettingStore } from '@/store'
+import { useSettingStore } from '@/store'
 
 // 控制路由显示组件显隐的回调
 const isNotRefresh = ref<boolean>(true)
 
 // 获取基础设置的状态管理库
-const layoutSettingStore = useLayoutSettingStore()
+const layoutSettingStore = useSettingStore()
 
 // 监听 isRefresh 的变化
 watch(

@@ -8,6 +8,8 @@ import ElementPlus from 'element-plus'
 // elementPluS 中文包
 //@ts-expect-error 无相关类型声明文件
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+// elmentPlus 暗黑模式
+import 'element-plus/theme-chalk/dark/css-vars.css'
 // 引入路由器
 import router from '@/router'
 import App from './App.vue'

@@ -1,9 +1,9 @@
 <script setup lang="ts" name="Breadcrumb">
-import { useLayoutSettingStore } from '@/store'
+import { useSettingStore } from '@/store'
 import { storeToRefs } from 'pinia'
 
 // 获取状态管理库
-const layoutSettingStore = useLayoutSettingStore()
+const layoutSettingStore = useSettingStore()
 // 获取是否折叠的标记
 const { isFold } = storeToRefs(layoutSettingStore)
 // 获取修改折叠标记的方法

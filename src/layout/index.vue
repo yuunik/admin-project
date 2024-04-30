@@ -19,7 +19,10 @@ const { changeIsFold } = settingStore
 window.addEventListener('resize', () => {
   if (window.innerWidth < 1730) {
     // 打开折叠
-    changeIsFold()
+    changeIsFold(true)
+  } else {
+    // 关闭折叠
+    changeIsFold(false)
   }
 })
 </script>

@@ -24,6 +24,7 @@ const { isFold } = storeToRefs(layoutSettingStore)
   padding-left: 10px;
   box-sizing: border-box;
   height: $base-menu-logo-height;
+  margin-top: 10px;
 
   &.fold {
     padding: 0;

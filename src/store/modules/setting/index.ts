@@ -15,10 +15,8 @@ const useSettingStore = defineStore('setting', () => {
   // 修改是否折叠
   const changeIsFold = (foldValue?: boolean) => {
     if (foldValue) {
-      console.log(1)
       isFold.value = foldValue
     } else {
-      console.log(2)
       isFold.value = !isFold.value
     }
   }

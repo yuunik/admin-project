@@ -5,7 +5,7 @@ const basicSetting = {
   // 是否需要网站图标
   isLoadingLogo: true,
   // 网站名称
-  websiteName: 'Chows 甄选平台',
+  websiteName: "Chow's 甄选平台",
 }
 
 export default basicSetting

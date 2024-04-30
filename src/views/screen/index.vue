@@ -1,10 +1,10 @@
 <script setup lang="ts"></script>
 
 <template>
-  我是 Screen
-  <el-button type="primary" size="default" @click="$router.go(-1)">
-    返回上一级
-  </el-button>
+  <div class="screen">
+    <div class="screen-title">123</div>
+    <div class="screen-content">456</div>
+  </div>
 </template>
 
 <style scoped lang="scss"></style>

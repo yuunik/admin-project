@@ -13,9 +13,9 @@ const { changeIsFold } = layoutSettingStore
 <template>
   <div class="breadcrumb-container">
     <!-- 图标 -->
-    <el-icon class="icon-collapse" @click="changeIsFold">
+    <el-icon class="icon-collapse" @click="() => changeIsFold()">
       <!-- 展开 -->
-      <component :is="isFold ? 'Fold' : 'Expand'" />
+      <component :is="isFold ? 'Expand' : 'Fold'" />
     </el-icon>
     <!-- 面包屑 -->
     <el-breadcrumb separator-icon="ArrowRight" class="breadcrumb">

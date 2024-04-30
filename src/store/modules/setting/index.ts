@@ -13,7 +13,15 @@ const useSettingStore = defineStore('setting', () => {
   const isDarkMode = ref<boolean>(GET_DARKMODE())
 
   // 修改是否折叠
-  const changeIsFold = () => (isFold.value = !isFold.value)
+  const changeIsFold = (foldValue?: boolean) => {
+    if (foldValue) {
+      console.log(1)
+      isFold.value = foldValue
+    } else {
+      console.log(2)
+      isFold.value = !isFold.value
+    }
+  }
 
   // 修改是否刷新
   const changeIsRefresh = async () => {

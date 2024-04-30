@@ -12,6 +12,16 @@ const userStore = useUserStore()
 const settingStore = useSettingStore()
 // 获取是否折叠的标记
 const { isFold } = storeToRefs(settingStore)
+// 获取修改折叠标记的方法
+const { changeIsFold } = settingStore
+
+// 监听窗口大小
+window.addEventListener('resize', () => {
+  if (window.innerWidth < 1730) {
+    // 打开折叠
+    changeIsFold()
+  }
+})
 </script>
 
 <template>
@@ -58,6 +68,7 @@ const { isFold } = storeToRefs(settingStore)
     height: 100%;
     background-color: $base-menu-background-color;
     overflow: hidden;
+    transition: 0.25s all linear;
 
     &.fold {
       width: $fold-menu-width;
@@ -83,9 +94,9 @@ const { isFold } = storeToRefs(settingStore)
     position: fixed;
     top: 0;
     left: 18%;
-    transition: 0.25s all linear;
     padding: 10px;
     box-sizing: border-box;
+    transition: 0.25s all linear;
 
     &.fold {
       @extend %fold-common;

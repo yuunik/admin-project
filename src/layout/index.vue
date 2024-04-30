@@ -9,9 +9,9 @@ import { useUserStore, useSettingStore } from '@/store'
 // 获取用户的状态管理库
 const userStore = useUserStore()
 // 获取状态管理库
-const layoutSettingStore = useSettingStore()
+const settingStore = useSettingStore()
 // 获取是否折叠的标记
-const { isFold } = storeToRefs(layoutSettingStore)
+const { isFold } = storeToRefs(settingStore)
 </script>
 
 <template>

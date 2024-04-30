@@ -76,7 +76,7 @@ const setPrimaryColor = () => {
 // 获取设置的状态管理库
 const settingStore = useSettingStore()
 // 获取暗黑模式
-const { isDarkMode } = storeToRefs(settingStore)
+const { isDarkMode, isFold } = storeToRefs(settingStore)
 // 设置暗黑模式
 const { changeDarkMode } = settingStore
 

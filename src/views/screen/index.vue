@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import * as echarts from 'echarts'
+// echart 水球图插件
+import 'echarts-liquidfill'
 import ScreenHeader from './components/ScreenHeader/index.vue'
 import ChartBox from './components/ChartBox/index.vue'
 
@@ -46,6 +49,55 @@ const getFullScreen = () => {
 
 // 缩放方案五: 高度铺满, 宽度等比例放大
 const visitorNumber = ref<string>('215908')
+
+// 水球图实例
+const liquidfillRef = ref<HTMLDivElement>()
+
+// 初始化水球图
+const initialLiquidfill = () => {
+  const myChart = echarts.init(liquidfillRef.value)
+  myChart.setOption({
+    //标题组件
+    title: {
+      text: '水球图',
+    },
+    //x|y轴组件
+    xAxis: {},
+    yAxis: {},
+    //系列:决定你展示什么样的图形图标
+    series: {
+      type: 'liquidFill', //系列
+      data: [0.6, 0.4, 0.2], //展示的数据
+      waveAnimation: true, //动画
+      animationDuration: 3,
+      animationDurationUpdate: 0,
+      radius: '100%', //半径
+      outline: {
+        //外层边框颜色设置
+        show: true,
+        borderDistance: 8,
+        itemStyle: {
+          color: 'skyblue',
+          borderColor: '#294D99',
+          borderWidth: 8,
+          shadowBlur: 20,
+          shadowColor: 'rgba(0, 0, 0, 0.25)',
+        },
+      },
+    },
+    //布局组件
+    grid: {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    },
+  })
+}
+onMounted(() => {
+  // 初始化水球图
+  initialLiquidfill()
+})
 </script>
 
 <template>
@@ -75,6 +127,7 @@ const visitorNumber = ref<string>('215908')
               </span>
               <span class="unit">人</span>
             </div>
+            <div class="chart" ref="liquidfillRef"></div>
           </ChartBox>
           <ChartBox chart-title="男女比例" class="gender-ratio" />
           <ChartBox chart-title="年龄比例" class="age-ratio" />
@@ -175,6 +228,12 @@ const visitorNumber = ref<string>('215908')
               background: url(../../assets/images/screen/total.png) no-repeat 0
                 0 / 100% 100%;
             }
+          }
+
+          // 水球图
+          .chart {
+            height: 200px;
+            margin-top: 20px;
           }
         }
 

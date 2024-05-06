@@ -1,9 +1,10 @@
 import SvgIcon from './SvgIcon/index.vue'
 import Pagination from './Pagination/index.vue'
 import Category from './Category/index.vue'
+import ChartBox from './ChartBox/index.vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-const globalComponents: any = { SvgIcon, Pagination, Category }
+const globalComponents: any = { SvgIcon, Pagination, Category, ChartBox }
 
 // 注册全局组件的自定义插件
 const GlobalComponentsPlugin = {

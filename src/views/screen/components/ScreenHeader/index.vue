@@ -37,7 +37,10 @@ onBeforeUnmount(() => {
     <div class="homepage-btn" @click="$router.push('/')">首页</div>
   </div>
   <!-- 标题 -->
-  <div class="title">智慧旅游可视化大数据平台</div>
+  <div class="header-center">
+    <div class="title">智慧旅游可视化大数据平台</div>
+    <div class="warning-info">平台高峰预警信息（ 2条 ）</div>
+  </div>
   <div class="header-right">
     <!-- 统计报告按钮 -->
     <div class="reports-btn" @click="showReports">统计报告</div>
@@ -92,21 +95,35 @@ onBeforeUnmount(() => {
   }
 }
 
-/* 标题样式 */
-.title {
+.header-center {
   flex: 1;
-  height: 74px;
-  background: url(../../../../assets/images/screen/dataScreen-header-center-bg.png)
-    no-repeat 0 0/ 100% 100%;
-  font:
-    40px 'Microsoft YaHei',
-    Arial,
-    Helvetica,
-    sans-serif;
-  color: #29fcff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* 标题样式 */
+  .title {
+    height: 74px;
+    background: url(../../../../assets/images/screen/dataScreen-header-center-bg.png)
+      no-repeat 0 0/ 100% 100%;
+    font:
+      40px 'Microsoft YaHei',
+      Arial,
+      Helvetica,
+      sans-serif;
+    color: #29fcff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .warning-info {
+    width: 622px;
+    height: 44px;
+    background: url(../../../../assets/images/screen/dataScreen-header-warn-bg.png)
+      no-repeat 0 0 / 100% 100%;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 44px;
+    color: #fff;
+    font-weight: bold;
+  }
 }
 
 .header-right {

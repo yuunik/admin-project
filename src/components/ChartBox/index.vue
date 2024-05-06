@@ -1,4 +1,5 @@
-<script setup lang="ts">
+<script setup lang="ts" name="ChartBox">
+// 图标容器组件
 interface Props {
   chartTitle: string
 }
@@ -20,8 +21,8 @@ defineProps<Props>()
 
 <style scoped lang="scss">
 .chart-box {
-  background: url(../../../../assets/images/screen/dataScreen-main-lb.png)
-    no-repeat 0 0 / 100% 100%;
+  background: url(../../assets/images/screen/dataScreen-main-lb.png) no-repeat 0
+    0 / 100% 100%;
 
   .header {
     .chart-title {
@@ -35,13 +36,14 @@ defineProps<Props>()
       width: 68px;
       height: 7px;
       margin: 10px 0 0 20px;
-      background: url(../../../../assets/images/screen/dataScreen-title.png)
-        no-repeat 0 0 / 100% 100%;
+      background: url(../../assets/images/screen/dataScreen-title.png) no-repeat
+        0 0 / 100% 100%;
       display: block;
     }
   }
 
   .content {
+    height: calc(100% - 35.48px);
   }
 }
 </style>

@@ -1,9 +1,23 @@
 <script setup lang="ts" name="Screen">
 import { ref, onMounted } from 'vue'
+// 大屏顶部组件
 import ScreenHeader from './components/ScreenHeader/index.vue'
+// 实时游客统计图表
 import Tourist from './components/Tourist/index.vue'
+// 男女比例图表
 import Age from './components/Age/index.vue'
+// 年龄比例图表
 import Gender from './components/Gender/index.vue'
+// 地图组件
+import Map from './components/Map/index.vue'
+// 游客趋势图表
+import Tendency from './components/Tendency/index.vue'
+// 热门景区排行图表
+import Rank from './components/Rank/index.vue'
+// 年度游客量对比
+import Year from './components/Year/index.vue'
+// 预约渠道数据统计图表
+import Count from './components/Count/index.vue'
 
 // 大屏模板实例
 const containerRef = ref<HTMLDivElement>()
@@ -70,12 +84,21 @@ const getFullScreen = () => {
         <!-- 中间内容区 -->
         <div class="center">
           <!-- 地图 -->
-          <div class="map">map</div>
+          <div class="map">
+            <h1>Map</h1>
+          </div>
           <!-- 游客趋势图 -->
-          <div class="chart-tendencies">tendencies</div>
+          <Tendency class="chart-tendencies" />
         </div>
         <!-- 右侧图表 -->
-        <div class="chart-right">right</div>
+        <div class="chart-right">
+          <!-- 热门景区排行 -->
+          <Rank class="chart-top" />
+          <!-- 年度游客量对比 -->
+          <Year class="chart-annual" />
+          <!-- 预约渠道数据统计 -->
+          <Count class="chart-reservation" />
+        </div>
       </main>
     </div>
   </div>
@@ -138,11 +161,44 @@ const getFullScreen = () => {
         }
       }
 
+      .center {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        margin: 80px 10px 0;
+
+        .map {
+          flex: 3.5;
+          border: 1px solid #abc;
+          border-radius: 20px;
+        }
+
+        .chart-tendencies {
+          flex: 1.5;
+          margin: 10px 0;
+        }
+      }
+
       .chart-right {
         width: 450px;
         height: 1010px;
         margin-top: 20px;
-        background-color: yellowgreen;
+        display: flex;
+        flex-direction: column;
+
+        .chart-top {
+          flex: 1;
+        }
+
+        .chart-annual {
+          flex: 1;
+          margin: 10px 0;
+        }
+
+        .chart-reservation {
+          flex: 1;
+          margin-bottom: 10px;
+        }
       }
     }
   }

@@ -62,12 +62,12 @@ onBeforeUnmount(() => {
   }
 
   .current-time {
-    width: 200px;
+    width: calc(100% - 150px);
     height: 50px;
     line-height: 50px;
-    margin-left: 10px;
     color: #29fcff;
     float: left;
+    text-align: center;
   }
 
   /* 首页按钮样式 */

@@ -1,5 +1,5 @@
 <script setup lang="ts" name="ScreenHeader">
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import dayjs from 'dayjs'
 
 // 统计报告按钮的回调

@@ -12,6 +12,8 @@ import { useUserStore } from '@/store'
 import { GET_TOKEN } from '@/utils'
 // 引入基础设置
 import basicSetting from '@/setting.ts'
+import { getUserInfoAPI } from '@/apis/user'
+import type { UserInfo } from '@/types/user'
 
 // 路由器
 const router = createRouter({
@@ -26,12 +28,28 @@ const router = createRouter({
   },
 })
 
+// 关闭加载圆圈
+nprogress.configure({ showSpinner: false })
+
 // 全局路由前置守卫
 router.beforeEach(async (to, _, next) => {
-  // 关闭加载圆圈
-  nprogress.configure({ showSpinner: false })
   // 进度条开始加载
   nprogress.start()
+
+  // 获取用户信息
+  const getUserInfo = async () => {
+    const result = await getUserInfoAPI()
+    const {
+      data: { code, data },
+    } = result
+    if (code === 200) {
+      // 保存用户信息
+      userStore.userInfo = data as UserInfo
+      return 'ok'
+    } else {
+      return Promise.reject(new Error('获取用户信息失败'))
+    }
+  }
   // 修改网站标题
   document.title = `${basicSetting.websiteName} ~ ${to.meta.title}`
   // 获取用户状态库
@@ -56,7 +74,7 @@ router.beforeEach(async (to, _, next) => {
         next()
       } else {
         // 没有用户信息, 则获取用户信息
-        await userStore.getUserInfo()
+        getUserInfo()
         next()
       }
     }

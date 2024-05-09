@@ -1,4 +1,4 @@
-// 路由表
+// 常量路由表
 const constantRoutes = [
   {
     name: 'layout',
@@ -52,7 +52,7 @@ const constantRoutes = [
   },
 ]
 
-// 异步路由
+// 异步路由表
 export const asyncRoutes = [
   {
     name: 'Acl',
@@ -152,7 +152,7 @@ export const asyncRoutes = [
   },
 ]
 
-// 任意路由
+// 任意路由表
 export const anyRoutes = {
   // 任意路由
   name: 'Any',

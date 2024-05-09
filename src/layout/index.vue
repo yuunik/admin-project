@@ -115,7 +115,7 @@ window.addEventListener('resize', () => {
     left: 18%;
     padding: 20px;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: auto;
     transition: 0.25s all linear;
 
     // 折叠样式

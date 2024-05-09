@@ -34,9 +34,9 @@ let userStore: any = null
 router.beforeEach(async (to, _, next) => {
   // 进度条开始加载
   nprogress.start()
-  if (!userStore) {
-    userStore = useUserStore()
-  }
+  // 重置用户的状态管理库
+  userStore = null
+  userStore = useUserStore()
 
   // 修改网站标题
   document.title = `${basicSetting.websiteName} ~ ${to.meta.title}`
@@ -61,7 +61,8 @@ router.beforeEach(async (to, _, next) => {
       } else {
         // 没有用户信息, 则获取用户信息
         await userStore.getUserInfo()
-        next()
+        // 页面重新加载完成时, 才刷新路由
+        next({ ...to })
       }
     }
   } else {

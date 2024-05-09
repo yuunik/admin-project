@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import _ from 'lodash'
 import { LoginReq, UserInfo } from '@/types/user'
 import { loginAPI, getUserInfoAPI, logoutAPI } from '@/apis/user'
 import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN, filterRoutes } from '@/utils'
@@ -48,9 +49,8 @@ const useUserStore = defineStore('user', () => {
     if (code === 200) {
       // 保存用户信息
       userInfo.value = data as UserInfo
-      const filterRoute = filterRoutes(asyncRoutes, data.routes)
+      const filterRoute = filterRoutes(_.cloneDeep(asyncRoutes), data.routes)
       menuRoute.value = [...constantRoutes, ...filterRoute, anyRoutes]
-      console.log(menuRoute)
       filterRoute.forEach((route) => {
         router.addRoute(route)
       })

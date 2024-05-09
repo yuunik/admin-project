@@ -3,22 +3,23 @@ import { createRouter, createWebHistory } from 'vue-router'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-expect-error 进度条管理包无类型申明文件
 import nprogress from 'nprogress'
+// 关闭加载圆圈
+nprogress.configure({ showSpinner: false })
 import { ElMessage } from 'element-plus'
 // 引入进度条样式
 import 'nprogress/nprogress.css'
 // 引入路由表
-import routes from './routes'
+import constantRoutes from './routes'
+import { asyncRoutes, anyRoutes } from './routes'
 import { useUserStore } from '@/store'
 import { GET_TOKEN } from '@/utils'
 // 引入基础设置
 import basicSetting from '@/setting.ts'
-import { getUserInfoAPI } from '@/apis/user'
-import type { UserInfo } from '@/types/user'
 
 // 路由器
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  routes: constantRoutes,
   // 滚动行为
   scrollBehavior: () => {
     return {
@@ -27,33 +28,18 @@ const router = createRouter({
     }
   },
 })
-
-// 关闭加载圆圈
-nprogress.configure({ showSpinner: false })
+let userStore: any = null
 
 // 全局路由前置守卫
 router.beforeEach(async (to, _, next) => {
   // 进度条开始加载
   nprogress.start()
-
-  // 获取用户信息
-  const getUserInfo = async () => {
-    const result = await getUserInfoAPI()
-    const {
-      data: { code, data },
-    } = result
-    if (code === 200) {
-      // 保存用户信息
-      userStore.userInfo = data as UserInfo
-      return 'ok'
-    } else {
-      return Promise.reject(new Error('获取用户信息失败'))
-    }
+  if (!userStore) {
+    userStore = useUserStore()
   }
+
   // 修改网站标题
   document.title = `${basicSetting.websiteName} ~ ${to.meta.title}`
-  // 获取用户状态库
-  const userStore = useUserStore()
   // 判断有无 token
   if (GET_TOKEN()) {
     // 用户登录
@@ -74,7 +60,7 @@ router.beforeEach(async (to, _, next) => {
         next()
       } else {
         // 没有用户信息, 则获取用户信息
-        getUserInfo()
+        await userStore.getUserInfo()
         next()
       }
     }
@@ -100,8 +86,9 @@ router.afterEach(() => {
   // 进度条结束加载
   nprogress.done()
 })
+
 // 分别导出
-export { routes }
+export { constantRoutes, asyncRoutes, anyRoutes }
 
 // 默认导出
 export default router

@@ -12,6 +12,7 @@ defineProps<Props>()
 // 菜单跳转
 const router = useRouter()
 const goMenu = (menu: any) => {
+  console.log(menu)
   router.push(menu.index)
 }
 </script>

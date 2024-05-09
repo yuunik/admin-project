@@ -1,5 +1,5 @@
 // 路由表
-const routes = [
+const constantRoutes = [
   {
     name: 'layout',
     redirect: 'home',
@@ -41,16 +41,6 @@ const routes = [
     },
   },
   {
-    // 任意路由
-    name: 'Any',
-    path: '/:patchName',
-    component: () => import('@/views/error/index.vue'),
-    meta: {
-      title: '随机匹配',
-      isShow: false,
-    },
-  },
-  {
     name: 'Screen',
     path: '/screen',
     component: () => import('@/views/screen/index.vue'),
@@ -60,6 +50,10 @@ const routes = [
       title: '数据大屏',
     },
   },
+]
+
+// 异步路由
+export const asyncRoutes = [
   {
     name: 'Acl',
     path: '/acl',
@@ -77,7 +71,7 @@ const routes = [
         },
       },
       {
-        name: 'role',
+        name: 'Role',
         path: '/acl/role',
         component: () => import('@/views/acl/role/index.vue'),
         meta: {
@@ -110,7 +104,7 @@ const routes = [
     component: () => import('@/layout/index.vue'),
     children: [
       {
-        name: 'trademark',
+        name: 'Trademark',
         path: '/product/trademark',
         component: () => import('@/views/product/trademark/index.vue'),
         meta: {
@@ -130,7 +124,7 @@ const routes = [
         },
       },
       {
-        name: 'spu',
+        name: 'Spu',
         path: '/product/spu',
         component: () => import('@/views/product/spu/index.vue'),
         meta: {
@@ -158,4 +152,16 @@ const routes = [
   },
 ]
 
-export default routes
+// 任意路由
+export const anyRoutes = {
+  // 任意路由
+  name: 'Any',
+  path: '/:patchName',
+  component: () => import('@/views/error/index.vue'),
+  meta: {
+    title: '随机匹配',
+    isShow: false,
+  },
+}
+
+export default constantRoutes

@@ -1,15 +1,15 @@
 <script setup lang="ts" name="Spu">
 import { onMounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
 import type { PageData } from '@/types/common'
 import { deleteSPUAPI, getSPUListAPI } from '@/apis/product/spu'
 import type { SPU } from '@/types/product/spu'
 import { useCategoryStore } from '@/store'
 import SpuForm from '@/views/product/spu/components/SpuForm/index.vue'
 import SKUForm from '@/views/product/spu/components/SkuForm/index.vue'
-import { getSkuByIdAPI, getSkuListBySpuIdAPI } from '@/apis/product/sku'
-import { Sku } from '@/types/product/sku'
-import { useRoute } from 'vue-router'
+import { getSkuListBySpuIdAPI } from '@/apis/product/sku'
+import type { Sku } from '@/types/product/sku'
 
 // 是否展示其他页面的标记
 const isCategoryDisabled = ref<boolean>(false)

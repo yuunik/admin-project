@@ -1,18 +1,18 @@
 import { defineStore } from 'pinia'
 import type { RouteRecordRaw } from 'vue-router'
 import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 import { LoginReq, UserInfo } from '@/types/user'
 import { loginAPI, getUserInfoAPI, logoutAPI } from '@/apis/user'
-import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from '@/utils'
-import { routes } from '@/router'
-import { ElMessage } from 'element-plus'
+import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN, filterRoutes } from '@/utils'
+import router, { constantRoutes, asyncRoutes, anyRoutes } from '@/router'
 
 // 创建 store
 const useUserStore = defineStore('user', () => {
   // 用户 token
   let token: any | null = GET_TOKEN()
   // 路由表信息
-  const menuRoute: RouteRecordRaw[] = routes
+  const menuRoute = ref<RouteRecordRaw[]>(constantRoutes)
   // 用户信息
   const userInfo = ref<UserInfo | undefined>()
 
@@ -48,6 +48,12 @@ const useUserStore = defineStore('user', () => {
     if (code === 200) {
       // 保存用户信息
       userInfo.value = data as UserInfo
+      const filterRoute = filterRoutes(asyncRoutes, data.routes)
+      menuRoute.value = [...constantRoutes, ...filterRoute, anyRoutes]
+      console.log(menuRoute)
+      filterRoute.forEach((route) => {
+        router.addRoute(route)
+      })
       return 'ok'
     } else {
       return Promise.reject(new Error('获取用户信息失败'))

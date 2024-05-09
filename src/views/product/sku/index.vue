@@ -1,5 +1,5 @@
 <script setup lang="ts" name="Sku">
-import { onMounted, ref, Fragment } from 'vue'
+import { onMounted, ref } from 'vue'
 import Pagination from '@/components/Pagination/index.vue'
 import {
   cancelSaleSkuAPI,
@@ -161,6 +161,7 @@ const deleteSku = async (skuId: number) => {
               circle
               :icon="sku.isSale ? 'Download' : 'Upload'"
               @click="handleSaleSku(sku)"
+              v-btn-permission="`btn.Sku.updown`"
             />
           </el-tooltip>
           <el-tooltip content="编辑 sku ">
@@ -170,6 +171,7 @@ const deleteSku = async (skuId: number) => {
               circle
               icon="Edit"
               @click="editSku"
+              v-btn-permission="`btn.Sku.update`"
             />
           </el-tooltip>
           <el-tooltip content="查看 sku 详情">
@@ -179,6 +181,7 @@ const deleteSku = async (skuId: number) => {
               circle
               icon="InfoFilled"
               @click="showSkuInfo(sku.id as number)"
+              v-btn-permission="`btn.Sku.detail`"
             />
           </el-tooltip>
           <el-popconfirm
@@ -186,7 +189,13 @@ const deleteSku = async (skuId: number) => {
             @confirm="deleteSku(sku.id as number)"
           >
             <template #reference>
-              <el-button type="danger" size="default" circle icon="Delete" />
+              <el-button
+                type="danger"
+                size="default"
+                circle
+                icon="Delete"
+                v-btn-permission="`btn.Sku.remove`"
+              />
             </template>
           </el-popconfirm>
         </template>

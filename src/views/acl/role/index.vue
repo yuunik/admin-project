@@ -282,7 +282,14 @@ const reset = () => {
     </el-form>
   </el-card>
   <el-card class="role-container">
-    <el-button type="primary" round @click="addRole">添加角色</el-button>
+    <el-button
+      type="primary"
+      round
+      @click="addRole"
+      v-btn-permission="`btn.Role.add`"
+    >
+      添加角色
+    </el-button>
     <el-table class="role-table" border :data="roleList">
       <el-table-column type="index" label="序号" align="center" />
       <el-table-column label="id" align="center" prop="id" />
@@ -297,6 +304,7 @@ const reset = () => {
             icon="Plus"
             round
             @click="openRoleDrawer(row)"
+            v-btn-permission="`btn.Role.assgin`"
           >
             分配权限
           </el-button>
@@ -306,6 +314,7 @@ const reset = () => {
             icon="Edit"
             round
             @click="editRole(role.id as number)"
+            v-btn-permission="`btn.Role.update`"
           >
             编辑
           </el-button>
@@ -314,7 +323,13 @@ const reset = () => {
             @confirm="deletePermissionByRoleId(row.id as number)"
           >
             <template #reference>
-              <el-button type="danger" size="default" icon="Delete" round>
+              <el-button
+                type="danger"
+                size="default"
+                icon="Delete"
+                round
+                v-btn-permission="`btn.Role.remove`"
+              >
                 删除
               </el-button>
             </template>

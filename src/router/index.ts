@@ -61,7 +61,7 @@ router.beforeEach(async (to, _, next) => {
       } else {
         // 没有用户信息, 则获取用户信息
         await userStore.getUserInfo()
-        // 页面重新加载完成时, 才刷新路由
+        // 页面重新加载完成时, 才放行
         next({ ...to })
       }
     }

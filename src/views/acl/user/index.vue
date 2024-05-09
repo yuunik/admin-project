@@ -367,6 +367,7 @@ const { changeIsRefresh } = layoutSettingStore
       size="default"
       icon="Plus"
       @click="() => openDialog()"
+      v-btn-permission="`btn.User.add`"
     >
       添加用户
     </el-button>
@@ -376,6 +377,7 @@ const { changeIsRefresh } = layoutSettingStore
       icon="Delete"
       :disabled="!isBatchDelete"
       @click="batchDeleteUser"
+      v-btn-permission="`btn.User.remove`"
     >
       批量删除
     </el-button>
@@ -406,6 +408,7 @@ const { changeIsRefresh } = layoutSettingStore
             size="default"
             icon="User"
             @click="openRoleForm(user)"
+            v-btn-permission="`btn.User.assgin`"
           >
             分配角色
           </el-button>
@@ -414,6 +417,7 @@ const { changeIsRefresh } = layoutSettingStore
             size="default"
             icon="Edit"
             @click="openDialog(user)"
+            v-btn-permission="`btn.User.update`"
           >
             编辑用户信息
           </el-button>

@@ -196,6 +196,7 @@ onMounted(async () => {
         plain
         :disabled="!selectedThirdCategoryId"
         @click="addSpu"
+        v-btn-permission="`btn.Spu.add`"
       >
         添加SPU
       </el-button>
@@ -218,6 +219,7 @@ onMounted(async () => {
                 icon="Plus"
                 plain
                 @click="addSku(spu)"
+                v-btn-permission="`btn.Spu.addsku`"
               />
             </el-tooltip>
 
@@ -229,6 +231,7 @@ onMounted(async () => {
                 icon="Edit"
                 plain
                 @click="editSpu(spu)"
+                v-btn-permission="`btn.Spu.update`"
               />
             </el-tooltip>
             <!-- 查看 sku 信息 -->
@@ -243,6 +246,7 @@ onMounted(async () => {
                 icon="InfoFilled"
                 plain
                 @click="viewSkuInfo(spu.id as number)"
+                v-btn-permission="`btn.Spu.skus`"
               />
             </el-tooltip>
             <!-- 删除 spu -->
@@ -253,6 +257,7 @@ onMounted(async () => {
                 icon="Delete"
                 plain
                 @click="deleteSpu(spu.id as number)"
+                v-btn-permission="`btn.Spu.delete`"
               />
             </el-tooltip>
           </template>

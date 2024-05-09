@@ -1,7 +1,5 @@
 <script setup lang="ts" name="Trademark">
 import { ref, watch, reactive, onMounted, nextTick, markRaw } from 'vue'
-//@ts-expect-error '无组件声明文件类型'
-import Chinese from 'element-plus/dist/locale/zh-cn.mjs'
 import type {
   FormInstance,
   FormRules,
@@ -258,6 +256,7 @@ const deleteTrademark = async (id: number) => {
       size="default"
       icon="Plus"
       @click="() => openFormDialog()"
+      v-btn-permission="`btn.Trademark.add`"
     >
       添加品牌
     </el-button>
@@ -286,10 +285,20 @@ const deleteTrademark = async (id: number) => {
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template #default="{ row: { id } }">
-          <el-button type="primary" icon="Edit" @click="openFormDialog(id)">
+          <el-button
+            type="primary"
+            icon="Edit"
+            @click="openFormDialog(id)"
+            v-btn-permission="`btn.Trademark.update`"
+          >
             编辑
           </el-button>
-          <el-button type="danger" icon="Delete" @click="deleteTrademark(id)">
+          <el-button
+            type="danger"
+            icon="Delete"
+            @click="deleteTrademark(id)"
+            v-btn-permission="`btn.Trademark.remove`"
+          >
             删除
           </el-button>
         </template>

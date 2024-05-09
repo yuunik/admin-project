@@ -159,6 +159,7 @@ const deletePermission = async (id: number) => {
             @click="
               openAddModal(permission.level === 3 ? true : false, permission)
             "
+            v-btn-permission="`btn.Permission.add`"
           >
             {{ permission.level === 3 ? '添加功能' : '添加菜单' }}
           </el-button>
@@ -171,6 +172,7 @@ const deletePermission = async (id: number) => {
             @click="
               openEditModal(permission.level === 3 ? true : false, permission)
             "
+            v-btn-permission="`btn.Permission.update`"
           >
             编辑
           </el-button>
@@ -181,6 +183,7 @@ const deletePermission = async (id: number) => {
             text
             v-if="permission.level !== 1"
             @click="deletePermission(permission.id as number)"
+            v-btn-permission="`btn.Permission.remove`"
           >
             删除
           </el-button>

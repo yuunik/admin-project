@@ -215,6 +215,7 @@ onBeforeUnmount(() => {
           icon="Plus"
           :disabled="!selectedThirdCategoryId"
           @click="addAttr"
+          v-btn-permission="`btn.Attr.add`"
         >
           添加属性
         </el-button>
@@ -245,6 +246,7 @@ onBeforeUnmount(() => {
                 size="default"
                 icon="Edit"
                 @click="editAttrInfo(row)"
+                v-btn-permission="`btn.Attr.update`"
               />
               <el-popconfirm
                 title="是否删除该属性"
@@ -254,7 +256,12 @@ onBeforeUnmount(() => {
                 @confirm="deleteAttrInfo(row.id as number)"
               >
                 <template #reference>
-                  <el-button type="danger" size="default" icon="Delete" />
+                  <el-button
+                    type="danger"
+                    size="default"
+                    icon="Delete"
+                    v-btn-permission="`btn.Attr.remove`"
+                  />
                 </template>
               </el-popconfirm>
             </template>

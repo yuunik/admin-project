@@ -17,6 +17,8 @@ import App from './App.vue'
 import GlobalComponentsPlugin from '@/components'
 // 引入全局样式
 import '@/styles/index.scss'
+// 获取按钮权限自定义指令
+import { permission } from '@/directives'
 
 // 创建 app
 const app = createApp(App)
@@ -32,6 +34,9 @@ app.use(GlobalComponentsPlugin)
 app.use(pinia)
 // 注册路由器
 app.use(router)
+
+// 使用自定义指令
+permission(app)
 
 // 渲染页面
 app.mount('#app')

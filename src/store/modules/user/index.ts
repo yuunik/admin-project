@@ -49,6 +49,7 @@ const useUserStore = defineStore('user', () => {
     if (code === 200) {
       // 保存用户信息
       userInfo.value = data as UserInfo
+      // 获取用户的动态路由
       const filterRoute = filterRoutes(_.cloneDeep(asyncRoutes), data.routes)
       menuRoute.value = [...constantRoutes, ...filterRoute, anyRoutes]
       filterRoute.forEach((route) => {

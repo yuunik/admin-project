@@ -1,8 +1,12 @@
-# Vue 3 + TypeScript + Vite
+# 后台管理系统模板
 
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-## Recommended IDE Setup
+## 启动步骤
+
+本项目只能使用 pnpm 下载工具,
+请通过 npm i -g pnpm 下载该工具。
+项目可通过 pnpm dev 启动。
 
 - [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 

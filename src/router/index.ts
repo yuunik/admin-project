@@ -39,7 +39,7 @@ router.beforeEach(async (to, _, next) => {
   userStore = useUserStore()
 
   // 修改网站标题
-  document.title = `${basicSetting.websiteName} ~ ${to.meta.title}`
+  document.title = `${basicSetting.websiteName}/${to.meta.title}`
   // 判断有无 token
   if (GET_TOKEN()) {
     // 用户登录

@@ -8,6 +8,7 @@ const constantRoutes = [
     children: [
       {
         path: '/home',
+        name: 'home',
         component: () => import('@/views/home/index.vue'),
         meta: {
           title: '首页',
@@ -156,10 +157,10 @@ export const asyncRoutes = [
 export const anyRoutes = {
   // 任意路由
   name: 'Any',
-  path: '/:patchName',
+  path: '/:patchName(.*)*',
   component: () => import('@/views/error/index.vue'),
   meta: {
-    title: '随机匹配',
+    title: '错误页',
     isShow: false,
   },
 }

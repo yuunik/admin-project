@@ -51,8 +51,9 @@ const useUserStore = defineStore('user', () => {
       userInfo.value = data as UserInfo
       // 获取用户的动态路由
       const filterRoute = filterRoutes(_.cloneDeep(asyncRoutes), data.routes)
-      menuRoute.value = [...constantRoutes, ...filterRoute, anyRoutes]
-      filterRoute.forEach((route) => {
+      const userRoutes = [...filterRoute, anyRoutes]
+      menuRoute.value = [...constantRoutes, ...userRoutes]
+      userRoutes.forEach((route) => {
         router.addRoute(route)
       })
       return 'ok'

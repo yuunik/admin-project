@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 // 引入进度条插件
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-//@ts-expect-error 进度条管理包无类型申明文件
 import nprogress from 'nprogress'
 // 关闭加载圆圈
 nprogress.configure({ showSpinner: false })

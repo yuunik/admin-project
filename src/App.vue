@@ -1,17 +1,4 @@
-<script setup lang="ts">
-import { onMounted } from 'vue'
-import { loginAPI } from '@/apis/user'
-
-// 用户登录
-const login = async () => {
-  const result = await loginAPI({ username: 'root', password: 'root' })
-}
-onMounted(() => {
-  login()
-})
-
-login()
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <!-- 一级路由出口 -->

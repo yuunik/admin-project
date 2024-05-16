@@ -1,6 +1,6 @@
 // axios 二次封装
 import axios from 'axios'
-import { useUserStore } from '@/store'
+import { GET_TOKEN } from '@/utils/token.ts'
 
 // 项目基地址
 const baseURL = import.meta.env.VITE_APP_BASE_API
@@ -14,10 +14,9 @@ const http = axios.create({
 // 请求拦截器
 http.interceptors.request.use(
   (config) => {
-    const userStore = useUserStore()
-    if (userStore.token) {
+    if (GET_TOKEN()) {
       // 添加 token
-      config.headers.token = userStore.token
+      config.headers.token = GET_TOKEN()
     }
 
     return config
